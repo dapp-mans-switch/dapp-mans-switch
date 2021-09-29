@@ -50,6 +50,11 @@ This Staker continuously receives X tokens from the users who uploaded a secret 
 This Staker, once the time of a share came to open it, has Y hours (maybe 24) to use the webpage and click "reveal and upload secret share".
 If he does so, he receives his share of the reward for unlocking the secret. If opens and publishes the shared secret not within the timeframe, his staked X tokens will be burned (or redistributed among honest responsible stakers for that secret?).
 
+**DISCUSSION 1**: I think the stake should only be lost if the decryption is premature.
+Failure to decrypt should not be punished, the staker simply loses out on the decryption reward.
+
+**DISCUSSION: 2**: The forfeited tokens could also be used to pay for gas or be distributed to the decryption rewards of all secrets the offending staker has secret shares to.
+
 
 # tokenomics
 
