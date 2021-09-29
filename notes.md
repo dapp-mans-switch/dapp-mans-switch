@@ -12,7 +12,7 @@ Secret
 ----------------------
 Staker
 
-- `int: pub_key` 
+- `int: pub_key`
 - `array<(int, time)>: [(enc_secret_share, opening_time)]`
 - `int: amount_staked`
 - `time: staker_until`
@@ -44,10 +44,10 @@ Staker
 
 # staking, staking rewards and burning of staked tokens
 
-A wallet holding X tokens can go to the webpage and klick a button, specify `staker_until` and `amount_staked`. `can_receive_new_shares` is set to `True`.
+A wallet holding X tokens can go to the webpage and click a button, specify `staker_until` and `amount_staked`. `can_receive_new_shares` is set to `True`.
 This Staker will only be eligible for receiving shares that expire `<= staker_until`, he can extend his staking time afterwards.
-This Staker continously receives X tokens from the users who uploaded a secret and received a share of that secret.
-This Staker, once the time of a share came to open it, has Y hours (maybe 24) to use the webpage and click "reveal and upload secret share". 
+This Staker continuously receives X tokens from the users who uploaded a secret and received a share of that secret.
+This Staker, once the time of a share came to open it, has Y hours (maybe 24) to use the webpage and click "reveal and upload secret share".
 If he does so, he receives his share of the reward for unlocking the secret. If opens and publishes the shared secret not within the timeframe, his staked X tokens will be burned (or redistributed among honest responsible stakers for that secret?).
 
 
@@ -58,7 +58,7 @@ If he does so, he receives his share of the reward for unlocking the secret. If 
 * If you have tokens, you can stake them and get rewarded for your honesty and work of opening and publishing secrets at the right time.
 
 ## upload of a secret
-* ON CHAIN 1,000 tokens (let's reffer to them as lottery winner tokens) are selected per upload of a secret, at random
+* ON CHAIN 1,000 tokens (let's refer to them as lottery winner tokens) are selected per upload of a secret, at random
 * the owners of these lottery winner tokens receive one secret share of the uploaded secret's decryption key
 
 * 50% of the `total_reward_tokens` are distributed among the *honest* lottery winner token holders at after the expiry time of the secret.
@@ -68,4 +68,4 @@ We call a lottery winner token holder honest if he follows the protocol.
 ### example
 * suppose a secret with expiry in 50 days and `total_reward_tokens = 100,000` has been uploaded. (lets assume daily payout)
 * 1st half: each lottery winner token's wallet gets $50,000/1,000/50 = 1$ tokens per day. If one wallet happens to hold 10 such lucky tokens, it gets 10 tokens per day.
-* 2nd half: after the expiry time of the uploaded secret, if the holder of that lucky token opens and publishes his secret share in the required timeframe, he receives $50,000/1,000 = 50$ tokens.
+* 2nd half: after the expiry time of the uploaded secret, if the holder of that lucky token opens and publishes his secret share in the required time frame, he receives $50,000/1,000 = 50$ tokens.
