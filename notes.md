@@ -12,7 +12,7 @@ Secret
 ----------------------
 Staker
 
-- `int: pub_key` 
+- `int: pub_key`
 - `array<(int, time)>: [(enc_secret_share, opening_time)]`
 - `int: amount_staked`
 - `time: staker_until`
@@ -27,6 +27,7 @@ Staker
 * a fresh keypair pub_key, priv_key
 * 1000 secret shares of the priv_key
 * encrypts S with pub_key => ctxt(S)
+* adds an amount X of tokens to be paid to the stakers
 
 ### U gets from the backend (ON CHAIN):
 * ready list of 1000 randomly selected Stakers
