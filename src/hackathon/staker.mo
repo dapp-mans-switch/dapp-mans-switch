@@ -20,9 +20,8 @@ actor {
 
     public func insert(name: Text, amount: Nat, days:Nat): async Nat {
         let newStaker = {name; amount; days};
-        stakers.put(next, newStaker);
-        next += 1;
-        next-1;
+        stakers.put(stakers.size()+1, newStaker);
+        return stakers.size()-1;
     };
 
     public query func lookup(id: Nat) : async ?Staker {
