@@ -4,11 +4,27 @@ type Staker =
    days: nat;
    name: text;
  };
+type Secret = 
+ record {
+   author_id: nat;
+   expiry_time: int;
+   heartbeat_freq: nat;
+   key_holders: vec nat;
+   keys: vec nat;
+   last_heartbeat: int;
+   payload: text;
+   revealed: vec bool;
+   reward: nat;
+   secret_id: nat;
+   valid: bool;
+ };
 service : {
+  addSecret: (text, nat, int, nat, vec nat, vec nat) -> (nat);
   addStaker: (text, nat, nat) -> (nat);
   editStaker: (nat, text, nat, nat) -> (bool);
   greet: (text) -> (text);
   listAllStakers: () -> (vec Staker) query;
+  lookupSecret: (nat) -> (opt Secret) query;
   lookupStaker: (nat) -> (opt Staker) query;
   removeStaker: (nat) -> (bool);
 }

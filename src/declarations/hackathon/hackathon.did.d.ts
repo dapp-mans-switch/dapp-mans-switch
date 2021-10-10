@@ -1,6 +1,27 @@
 import type { Principal } from '@dfinity/principal';
+export interface Secret {
+  'reward' : bigint,
+  'valid' : boolean,
+  'keys' : Array<bigint>,
+  'key_holders' : Array<bigint>,
+  'secret_id' : bigint,
+  'heartbeat_freq' : bigint,
+  'revealed' : Array<boolean>,
+  'last_heartbeat' : bigint,
+  'expiry_time' : bigint,
+  'author_id' : bigint,
+  'payload' : string,
+}
 export interface Staker { 'days' : bigint, 'name' : string, 'amount' : bigint }
 export interface _SERVICE {
+  'addSecret' : (
+      arg_0: string,
+      arg_1: bigint,
+      arg_2: bigint,
+      arg_3: bigint,
+      arg_4: Array<bigint>,
+      arg_5: Array<bigint>,
+    ) => Promise<bigint>,
   'addStaker' : (arg_0: string, arg_1: bigint, arg_2: bigint) => Promise<
       bigint
     >,
@@ -12,6 +33,7 @@ export interface _SERVICE {
     ) => Promise<boolean>,
   'greet' : (arg_0: string) => Promise<string>,
   'listAllStakers' : () => Promise<Array<Staker>>,
+  'lookupSecret' : (arg_0: bigint) => Promise<[] | [Secret]>,
   'lookupStaker' : (arg_0: bigint) => Promise<[] | [Staker]>,
   'removeStaker' : (arg_0: bigint) => Promise<boolean>,
 }
