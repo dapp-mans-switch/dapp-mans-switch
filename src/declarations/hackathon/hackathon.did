@@ -1,3 +1,14 @@
+type Staker = 
+ record {
+   amount: nat;
+   days: nat;
+   name: text;
+ };
 service : {
+  addStaker: (text, nat, nat) -> (nat);
+  editStaker: (nat, text, nat, nat) -> (bool);
   greet: (text) -> (text);
+  listAllStakers: () -> (vec Staker) query;
+  lookupStaker: (nat) -> (opt Staker) query;
+  removeStaker: (nat) -> (bool);
 }
