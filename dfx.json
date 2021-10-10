@@ -4,6 +4,10 @@
       "main": "src/hackathon/main.mo",
       "type": "motoko"
     },
+    "staker": {
+      "main": "src/hackathon/staker.mo",
+      "type": "motoko"
+    },
     "hackathon_assets": {
       "dependencies": [
         "hackathon"

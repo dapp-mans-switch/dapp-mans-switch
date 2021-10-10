@@ -7,7 +7,7 @@ import Buffer "mo:base/Buffer";
 
 actor {
 
-    let eq: (Nat,Nat) ->Bool = func(x, y) { x == y };
+    let eq: (Nat,Nat) -> Bool = func(x, y) { x == y };
 
     type Staker = {
         name: Text;
