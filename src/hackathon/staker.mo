@@ -5,60 +5,60 @@ import Hash "mo:base/Hash";
 import List "mo:base/List";
 import Buffer "mo:base/Buffer";
 
-actor {
+import Types "./types";
 
-    let eq: (Nat,Nat) -> Bool = func(x, y) { x == y };
+module {
+    type Staker = Types.Staker;
 
-    type Staker = {
-        name: Text;
-        amount: Nat;
-        days: Nat;
-    };
+    public class StakerManager() {
 
-    stable var next : Nat = 1;
-    let stakers = Map.HashMap<Nat, Staker>(0, eq, Hash.hash);
+        let eq: (Nat,Nat) -> Bool = func(x, y) { x == y };
 
-    public func insert(name: Text, amount: Nat, days:Nat): async Nat {
-        let newStaker = {name; amount; days};
-        stakers.put(next, newStaker);
-        next += 1;
-        next-1;
-    };
+        let stakers = Map.HashMap<Nat, Staker>(0, eq, Hash.hash);
 
-    public query func lookup(id: Nat) : async ?Staker {
-        stakers.get(id);
-    };
+        public func insert(name: Text, amount: Nat, days:Nat): Nat {
+            let newStaker = {name; amount; days};
+            let id = stakers.size();
+            stakers.put(id, newStaker);
+            return id;
+        };
 
-    public func remove(id: Nat): async Bool {
-        let removedStaker = stakers.remove(id);
+        public func lookup(id: Nat) : ?Staker {
+            stakers.get(id);
+        };
 
-        // check if staker was removed
-        switch (removedStaker) {
-            case null {
+        public func remove(id: Nat): Bool {
+            let removedStaker = stakers.remove(id);
+
+            // check if staker was removed
+            switch (removedStaker) {
+                case null {
+                    false;
+                };
+                case (? v) {
+                    true;
+                };
+            }
+        };
+
+        public func edit(id: Nat, name: Text, amount: Nat, days:Nat) : Bool {
+            let stakerRemoved = remove(id);
+            if (stakerRemoved == true) {
+                stakers.put(id, {name; amount; days});
+                true;
+            } else {
                 false;
             };
-            case (? v) {
-                true;
+        };
+
+        public func listAll() : [Staker] {
+            let allStakers = Buffer.Buffer<Staker>(0);
+            for ((id, s) in stakers.entries()) {
+                allStakers.add(s);
             };
-        }
-    };
-
-    public func edit(id: Nat, name: Text, amount: Nat, days:Nat) : async Bool {
-        let stakerRemoved = await remove(id);
-        if (stakerRemoved == true) {
-            stakers.put(id, {name; amount; days});
-            true;
-        } else {
-            false;
+            return allStakers.toArray();
         };
-    };
 
-    public query func listAll() : async [Staker] {
-        let allStakers = Buffer.Buffer<Staker>(0);
-        for ((id, s) in stakers.entries()) {
-            allStakers.add(s);
-        };
-        return allStakers.toArray();
-    };
+    }
 
 };
