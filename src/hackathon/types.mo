@@ -16,9 +16,9 @@ module {
         payload: Text; 
         reward: Nat;
 
-        expiry_time: Int; // nanoseconds since 1970-01-01
+        expiry_time: Int; // seconds since 1970-01-01
         last_heartbeat: Int;
-        heartbeat_freq: Nat; // every heartbeat_freq a heartbeat has to be sent
+        heartbeat_freq: Int; // every heartbeat_freq a heartbeat has to be sent
 
         // key at position i is encrypted with public key of staker at position i in key_holders,
         // once the key is decrypted the correspoding entry in revealed is set to true, 

@@ -36,4 +36,9 @@ export interface _SERVICE {
   'lookupSecret' : (arg_0: bigint) => Promise<[] | [Secret]>,
   'lookupStaker' : (arg_0: bigint) => Promise<[] | [Staker]>,
   'removeStaker' : (arg_0: bigint) => Promise<boolean>,
+  'revealKey' : (arg_0: bigint, arg_1: bigint, arg_2: bigint) => Promise<
+      boolean
+    >,
+  'sendHearbeat' : (arg_0: bigint, arg_1: bigint) => Promise<boolean>,
+  'shouldReveal' : (arg_0: bigint) => Promise<boolean>,
 }

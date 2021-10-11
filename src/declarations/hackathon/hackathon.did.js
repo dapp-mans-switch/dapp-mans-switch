@@ -10,7 +10,7 @@ export const idlFactory = ({ IDL }) => {
     'keys' : IDL.Vec(IDL.Nat),
     'key_holders' : IDL.Vec(IDL.Nat),
     'secret_id' : IDL.Nat,
-    'heartbeat_freq' : IDL.Nat,
+    'heartbeat_freq' : IDL.Int,
     'revealed' : IDL.Vec(IDL.Bool),
     'last_heartbeat' : IDL.Int,
     'expiry_time' : IDL.Int,
@@ -23,7 +23,7 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Nat,
           IDL.Int,
-          IDL.Nat,
+          IDL.Int,
           IDL.Vec(IDL.Nat),
           IDL.Vec(IDL.Nat),
         ],
@@ -41,6 +41,9 @@ export const idlFactory = ({ IDL }) => {
     'lookupSecret' : IDL.Func([IDL.Nat], [IDL.Opt(Secret)], ['query']),
     'lookupStaker' : IDL.Func([IDL.Nat], [IDL.Opt(Staker)], ['query']),
     'removeStaker' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'revealKey' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Nat], [IDL.Bool], []),
+    'sendHearbeat' : IDL.Func([IDL.Nat, IDL.Nat], [IDL.Bool], []),
+    'shouldReveal' : IDL.Func([IDL.Nat], [IDL.Bool], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };
