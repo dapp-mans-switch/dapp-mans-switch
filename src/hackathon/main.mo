@@ -4,6 +4,9 @@ import Types "./types";
 import Staker "./staker";
 import Secret "./secret";
 
+import Counter "./counter";
+
+import Principal "mo:base/Principal";
 
 actor {
     type Staker = Types.Staker;
@@ -13,6 +16,15 @@ actor {
         return "New forum post: " # content # "!!!";
     };
 
+    // use msg for authentification like in https://github.com/dfinity/linkedup/blob/master/src/linkedup/main.mo ?
+    public shared(msg) func sharedGreet(content : Text) : async Text {
+        return "New forum post: " # content # "!!! from " # Principal.toText(msg.caller);
+    };
+
+    public func getCounter(init: Nat) : async Counter.Counter {
+        let t = await Counter.Counter(init);
+        return t;
+    };
 
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();

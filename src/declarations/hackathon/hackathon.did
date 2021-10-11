@@ -18,10 +18,16 @@ type Secret =
    secret_id: nat;
    valid: bool;
  };
+type Counter = 
+ service {
+   getCount: () -> (nat) query;
+   updateCount: (nat) -> (bool);
+ };
 service : {
   addSecret: (text, nat, int, int, vec nat, vec nat) -> (nat);
   addStaker: (text, nat, nat) -> (nat);
   editStaker: (nat, text, nat, nat) -> (bool);
+  getCounter: (nat) -> (Counter);
   greet: (text) -> (text);
   listAllStakers: () -> (vec Staker) query;
   lookupSecret: (nat) -> (opt Secret) query;
@@ -29,5 +35,6 @@ service : {
   removeStaker: (nat) -> (bool);
   revealKey: (nat, nat, nat) -> (bool);
   sendHearbeat: (nat, nat) -> (bool);
+  sharedGreet: (text) -> (text);
   shouldReveal: (nat) -> (bool) query;
 }

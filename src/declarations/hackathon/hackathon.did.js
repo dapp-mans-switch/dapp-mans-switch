@@ -1,4 +1,8 @@
 export const idlFactory = ({ IDL }) => {
+  const Counter = IDL.Service({
+    'getCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'updateCount' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  });
   const Staker = IDL.Record({
     'days' : IDL.Nat,
     'name' : IDL.Text,
@@ -36,6 +40,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Bool],
         [],
       ),
+    'getCounter' : IDL.Func([IDL.Nat], [Counter], []),
     'greet' : IDL.Func([IDL.Text], [IDL.Text], []),
     'listAllStakers' : IDL.Func([], [IDL.Vec(Staker)], ['query']),
     'lookupSecret' : IDL.Func([IDL.Nat], [IDL.Opt(Secret)], ['query']),
@@ -43,6 +48,7 @@ export const idlFactory = ({ IDL }) => {
     'removeStaker' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'revealKey' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Nat], [IDL.Bool], []),
     'sendHearbeat' : IDL.Func([IDL.Nat, IDL.Nat], [IDL.Bool], []),
+    'sharedGreet' : IDL.Func([IDL.Text], [IDL.Text], []),
     'shouldReveal' : IDL.Func([IDL.Nat], [IDL.Bool], ['query']),
   });
 };

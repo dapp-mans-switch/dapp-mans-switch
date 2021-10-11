@@ -1,4 +1,8 @@
 import type { Principal } from '@dfinity/principal';
+export interface Counter {
+  'getCount' : () => Promise<bigint>,
+  'updateCount' : (arg_0: bigint) => Promise<boolean>,
+}
 export interface Secret {
   'reward' : bigint,
   'valid' : boolean,
@@ -31,6 +35,7 @@ export interface _SERVICE {
       arg_2: bigint,
       arg_3: bigint,
     ) => Promise<boolean>,
+  'getCounter' : (arg_0: bigint) => Promise<Principal>,
   'greet' : (arg_0: string) => Promise<string>,
   'listAllStakers' : () => Promise<Array<Staker>>,
   'lookupSecret' : (arg_0: bigint) => Promise<[] | [Secret]>,
@@ -40,5 +45,6 @@ export interface _SERVICE {
       boolean
     >,
   'sendHearbeat' : (arg_0: bigint, arg_1: bigint) => Promise<boolean>,
+  'sharedGreet' : (arg_0: string) => Promise<string>,
   'shouldReveal' : (arg_0: bigint) => Promise<boolean>,
 }
