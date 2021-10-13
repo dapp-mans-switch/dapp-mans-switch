@@ -74,3 +74,14 @@ section {
         background-position:20vw;
     }
 }
+
+
+form {
+    margin: 20px auto 20px auto;
+    line-height: 2;
+    width: 50%;    
+}
+
+table {
+    margin: 0px auto 0px auto;
+}

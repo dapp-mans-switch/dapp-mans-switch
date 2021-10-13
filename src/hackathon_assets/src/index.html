@@ -19,12 +19,26 @@
     <h1>Dead Man’s Switch</h1>
     <h3>using Proof of Stake</h3>
     regularly verify that you are alive, otherwise your uploaded files will get published
-    <a class="rainbow-button" data-text="Staker" style="width: 200px"></a>
+    <a class="rainbow-button" data-text="Staker" id="staker_button" style="width: 200px"></a>
     <a class="rainbow-button" data-text="Uploader" style="width: 220px"></a>
     <div style="text-align: center">
         <video width="500" autoplay loop>
             <source src = "/assets/key_animation.mov">
         </video>
     </div>
+    
+    <a class="rainbow-button" data-text="Show Stakes" id="show_stakes_button" style="width: 280px"></a>
+
+    <form id="staker_form" style="display: none;">
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount" name="amount"> <br>
+        <label for="duration">Duration (Days):</label>
+        <input type="text" id="duration" name="duration"> <br>
+        <label for="no_new_stakes">Don't receive new shares</label>
+        <input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes">
+        <a class="rainbow-button" data-text="Start Stake" id="add_new_stake_button" style="width: 300px"></a>
+        <br>
+    </form>
+    
 </body>
 </html>
