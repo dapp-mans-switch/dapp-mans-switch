@@ -17,12 +17,13 @@ actor {
     };
 
     // use msg for authentification like in https://github.com/dfinity/linkedup/blob/master/src/linkedup/main.mo ?
+    // see https://sdk.dfinity.org/docs/language-guide/caller-id.html
     public shared(msg) func sharedGreet(content : Text) : async Text {
         return "New forum post: " # content # "!!! from " # Principal.toText(msg.caller);
     };
 
-    public func getCounter(init: Nat) : async Counter.Counter {
-        let t = await Counter.Counter(init);
+    public shared(msg) func getCounter(init: Nat) : async Counter.Counter {
+        let t = await Counter.Counter(msg.caller, init);
         return t;
     };
 

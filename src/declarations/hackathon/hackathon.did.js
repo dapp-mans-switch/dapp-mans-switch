@@ -1,7 +1,7 @@
 export const idlFactory = ({ IDL }) => {
   const Counter = IDL.Service({
-    'getCount' : IDL.Func([], [IDL.Nat], ['query']),
-    'updateCount' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'getCount' : IDL.Func([], [IDL.Int], ['query']),
+    'updateCount' : IDL.Func([IDL.Int], [IDL.Bool], []),
   });
   const Staker = IDL.Record({
     'days' : IDL.Nat,

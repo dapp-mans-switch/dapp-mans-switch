@@ -20,8 +20,8 @@ type Secret =
  };
 type Counter = 
  service {
-   getCount: () -> (nat) query;
-   updateCount: (nat) -> (bool);
+   getCount: () -> (int) query;
+   updateCount: (int) -> (bool);
  };
 service : {
   addSecret: (text, nat, int, int, vec nat, vec nat) -> (nat);
