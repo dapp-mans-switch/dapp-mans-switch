@@ -6,10 +6,10 @@ type Staker =
  };
 type Secret = 
  record {
-   author_id: nat;
+   author_id: principal;
    expiry_time: int;
    heartbeat_freq: int;
-   key_holders: vec nat;
+   key_holders: vec principal;
    keys: vec nat;
    last_heartbeat: int;
    payload: text;
@@ -24,7 +24,7 @@ type Counter =
    updateCount: (int) -> (bool);
  };
 service : {
-  addSecret: (text, nat, int, int, vec nat, vec nat) -> (nat);
+  addSecret: (text, nat, int, int, vec principal) -> (nat);
   addStaker: (text, nat, nat) -> (nat);
   editStaker: (nat, text, nat, nat) -> (bool);
   getCounter: (nat) -> (Counter);
@@ -34,7 +34,7 @@ service : {
   lookupStaker: (nat) -> (opt Staker) query;
   removeStaker: (nat) -> (bool);
   revealKey: (nat, nat, nat) -> (bool);
-  sendHearbeat: (nat, nat) -> (bool);
+  sendHearbeat: (nat) -> (bool);
   sharedGreet: (text) -> (text);
   shouldReveal: (nat) -> (bool) query;
 }

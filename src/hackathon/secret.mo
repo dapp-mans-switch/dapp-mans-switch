@@ -23,11 +23,12 @@ module {
             return Time.now() / 1_000_000_000;
         };
 
-        public func insert(author_id: Nat, payload: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, key_holders: [Nat], keys: [Nat]): Nat {
+        public func insert(author_id: Principal, payload: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, key_holders: [Principal]): Nat {
 
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
-            let revealed = Array.tabulate<Bool>(key_holders.size(), func(i:Nat) : Bool {false}); //ugly hack Array.init<Bool>(key_holders.size(), false);
+            let revealed = Array.tabulate<Bool>(key_holders.size(), func(i:Nat) : Bool {false});
+            let keys = Array.tabulate<Nat>(key_holders.size(), func(i:Nat) : Nat {0});
             let valid = true;
 
             let newSecret = {
@@ -57,7 +58,7 @@ module {
             secrets.get(id);
         };
 
-        public func sendHearbeat(author_id: Nat, secret_id: Nat) : Bool {
+        public func sendHearbeat(author_id: Principal, secret_id: Nat) : Bool {
             let secret = secrets.get(secret_id);
 
             switch secret {
@@ -109,29 +110,14 @@ module {
             
         };
 
-        public func revealKey(secret_id: Nat, key_holder: Nat, key: Nat) : Bool {
+        public func revealKey(secret_id: Nat, key_holder: Principal, key: Nat, atIndex: Nat) : Bool {
             let secret = secrets.get(secret_id);
              switch secret {
                 case null { return false };
                 case (? secret) {
 
-                    // check if key_holder is indeed holder for secret and get his index in list
-                    var match: Bool = false;
-                    var index: Nat = 0;
-                    label kh for (other_key_holder in secret.key_holders.vals()) {
-                        if (key_holder == other_key_holder) {
-                            match := true;
-                            break kh;
-                        };
-                        index += 1;
-                    };
-
-                    if (not match) {
-                        D.print("No match");
-                        return false;
-                    };
-                    D.print("Index: " # Nat.toText(index));
-
+                    // check if key_holder is indeed holder for secret
+                    assert(secret.key_holders[atIndex] == key_holder);
                     
                     let revealOk = shouldReveal(secret_id);
             
@@ -142,7 +128,31 @@ module {
                         payout := -10; // TODO
                     };
 
-                    // TODO: update keys and revealed at index
+                    let newKeys: [Nat] = Array.tabulate<Nat>(secret.keys.size(), func(i: Nat) : Nat {
+                        if ( i == atIndex ) { key } else { secret.keys[i] } 
+                    });
+
+                    let newRevealed: [Bool] = Array.tabulate<Bool>(secret.revealed.size(), func(i: Nat) : Bool {
+                        if ( i == atIndex ) { true } else { secret.revealed[i] } 
+                    });
+
+                    let newSecret = {
+                        secret_id = secret.secret_id;
+                        author_id = secret.author_id;
+                        
+                        payload = secret.payload;
+                        reward = secret.reward;
+                        
+                        expiry_time = secret.expiry_time;
+                        last_heartbeat = secret.last_heartbeat;
+                        heartbeat_freq = secret.heartbeat_freq;
+                        
+                        key_holders = secret.key_holders;
+                        keys = newKeys; // update
+                        revealed = newRevealed; // update
+                        valid = secret.valid
+                    };
+                    secrets.put(secret_id, newSecret);
 
                     return true;
                 };

@@ -12,25 +12,18 @@ export const idlFactory = ({ IDL }) => {
     'reward' : IDL.Nat,
     'valid' : IDL.Bool,
     'keys' : IDL.Vec(IDL.Nat),
-    'key_holders' : IDL.Vec(IDL.Nat),
+    'key_holders' : IDL.Vec(IDL.Principal),
     'secret_id' : IDL.Nat,
     'heartbeat_freq' : IDL.Int,
     'revealed' : IDL.Vec(IDL.Bool),
     'last_heartbeat' : IDL.Int,
     'expiry_time' : IDL.Int,
-    'author_id' : IDL.Nat,
+    'author_id' : IDL.Principal,
     'payload' : IDL.Text,
   });
   return IDL.Service({
     'addSecret' : IDL.Func(
-        [
-          IDL.Text,
-          IDL.Nat,
-          IDL.Int,
-          IDL.Int,
-          IDL.Vec(IDL.Nat),
-          IDL.Vec(IDL.Nat),
-        ],
+        [IDL.Text, IDL.Nat, IDL.Int, IDL.Int, IDL.Vec(IDL.Principal)],
         [IDL.Nat],
         [],
       ),
@@ -47,7 +40,7 @@ export const idlFactory = ({ IDL }) => {
     'lookupStaker' : IDL.Func([IDL.Nat], [IDL.Opt(Staker)], ['query']),
     'removeStaker' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'revealKey' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Nat], [IDL.Bool], []),
-    'sendHearbeat' : IDL.Func([IDL.Nat, IDL.Nat], [IDL.Bool], []),
+    'sendHearbeat' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'sharedGreet' : IDL.Func([IDL.Text], [IDL.Text], []),
     'shouldReveal' : IDL.Func([IDL.Nat], [IDL.Bool], ['query']),
   });
