@@ -1,0 +1,13 @@
+@import "main.css";
+
+body {
+    background-color:white;
+    color: black;
+}
+
+
+
+.rainbow-button:after {
+    color: black;
+    background-color: white;
+}
