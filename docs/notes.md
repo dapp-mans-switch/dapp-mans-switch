@@ -66,10 +66,11 @@ Failure to decrypt should not be punished, the staker simply loses out on the de
 ## upload of a secret
 * ON CHAIN 1,000 tokens (let's refer to them as lottery winner tokens) are selected per upload of a secret, at random
 * the owners of these lottery winner tokens receive one secret share of the uploaded secret's decryption key
-
 * 50% of the `total_reward_tokens` are distributed among the *honest* lottery winner token holders at after the expiry time of the secret.
 We call a lottery winner token holder honest if he follows the protocol.
 * the other 50% of the `total_reward_tokens` are continuously (say every day) paid proportionally among all the honest lottery winner token holders.
+
+If we don't create our own token we could also just aggregate the amount of ICP that is staked and divide the probability of receiving a secret share between them.
 
 ### example
 * suppose a secret with expiry in 50 days and `total_reward_tokens = 100,000` has been uploaded. (lets assume daily payout)
