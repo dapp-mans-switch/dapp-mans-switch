@@ -20,6 +20,7 @@ export default function Staker() {
     if (isNaN(a) || isNaN(d) || a < 0 || a < 0) {
       alert("amount and duration must be positive integer");
     } else {
+      document.getElementById("staker_form").reset();
       const newStakerId = await hackathon.registerStaker("Staker1", public_key, a, d);
       alert(newStakerId);
     }
