@@ -4,6 +4,8 @@ export const idlFactory = ({ IDL }) => {
     'updateCount' : IDL.Func([IDL.Int], [IDL.Bool], []),
   });
   const Staker = IDL.Record({
+    'id' : IDL.Principal,
+    'public_key' : IDL.Nat,
     'days' : IDL.Nat,
     'name' : IDL.Text,
     'amount' : IDL.Nat,
@@ -27,17 +29,16 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Nat],
         [],
       ),
-    'addStaker' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [IDL.Nat], []),
-    'editStaker' : IDL.Func(
-        [IDL.Nat, IDL.Text, IDL.Nat, IDL.Nat],
-        [IDL.Bool],
-        [],
-      ),
     'getCounter' : IDL.Func([IDL.Nat], [Counter], []),
     'greet' : IDL.Func([IDL.Text], [IDL.Text], []),
     'listAllStakers' : IDL.Func([], [IDL.Vec(Staker)], ['query']),
     'lookupSecret' : IDL.Func([IDL.Nat], [IDL.Opt(Secret)], ['query']),
     'lookupStaker' : IDL.Func([IDL.Nat], [IDL.Opt(Staker)], ['query']),
+    'registerStaker' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Nat, IDL.Nat],
+        [IDL.Nat],
+        [],
+      ),
     'removeStaker' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'revealKey' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Nat], [IDL.Bool], []),
     'sendHearbeat' : IDL.Func([IDL.Nat], [IDL.Bool], []),

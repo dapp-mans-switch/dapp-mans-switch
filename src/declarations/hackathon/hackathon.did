@@ -2,7 +2,9 @@ type Staker =
  record {
    amount: nat;
    days: nat;
+   id: principal;
    name: text;
+   public_key: nat;
  };
 type Secret = 
  record {
@@ -25,13 +27,12 @@ type Counter =
  };
 service : {
   addSecret: (text, nat, int, int, vec principal) -> (nat);
-  addStaker: (text, nat, nat) -> (nat);
-  editStaker: (nat, text, nat, nat) -> (bool);
   getCounter: (nat) -> (Counter);
   greet: (text) -> (text);
   listAllStakers: () -> (vec Staker) query;
   lookupSecret: (nat) -> (opt Secret) query;
   lookupStaker: (nat) -> (opt Staker) query;
+  registerStaker: (text, nat, nat, nat) -> (nat);
   removeStaker: (nat) -> (bool);
   revealKey: (nat, nat, nat) -> (bool);
   sendHearbeat: (nat) -> (bool);

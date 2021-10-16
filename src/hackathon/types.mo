@@ -2,9 +2,9 @@
 
 module {
     public type Staker = {
-        //staker_id: Principal;
+        id: Principal;
         name: Text;
-        //public_key: Nat;
+        public_key: Nat;
         amount: Nat;
         days: Nat;
     };

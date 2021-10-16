@@ -16,10 +16,11 @@ export default function Staker() {
     // TODO: replace "Staker1" by identification Auth
     let a = parseInt(amount);
     let d = parseInt(duration);
+    let public_key = 1234; // TODO
     if (isNaN(a) || isNaN(d) || a < 0 || a < 0) {
       alert("amount and duration must be positive integer");
     } else {
-      const newStakerId = await hackathon.addStaker("Staker1", a, d);
+      const newStakerId = await hackathon.registerStaker("Staker1", public_key, a, d);
       alert(newStakerId);
     }
   }

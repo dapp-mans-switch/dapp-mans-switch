@@ -110,10 +110,10 @@ module {
             
         };
 
-        public func revealKey(secret_id: Nat, key_holder: Principal, key: Nat, atIndex: Nat) : Bool {
+        public func revealKey(secret_id: Nat, key_holder: Principal, key: Nat, atIndex: Nat) : ?Int {
             let secret = secrets.get(secret_id);
              switch secret {
-                case null { return false };
+                case null { return null };
                 case (? secret) {
 
                     // check if key_holder is indeed holder for secret
@@ -154,7 +154,7 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
 
-                    return true;
+                    return ?payout;
                 };
             };
         };

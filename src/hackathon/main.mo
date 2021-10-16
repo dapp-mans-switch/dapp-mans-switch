@@ -8,6 +8,8 @@ import Counter "./counter";
 
 import Principal "mo:base/Principal";
 
+import D "mo:base/Debug";
+
 actor {
     type Staker = Types.Staker;
     type Secret = Types.Secret;
@@ -30,8 +32,11 @@ actor {
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
-    public func addStaker(name: Text, amount: Nat, days:Nat): async Nat { 
-        stakerManager.insert(name, amount, days);
+    // dfx canister call hackathon registerStaker '("Markus", 1234, 10, 10)'
+    public shared(msg) func registerStaker(name: Text, public_key: Nat, amount: Nat, days: Nat): async Nat { 
+        let id = msg.caller;
+        D.print("staker id " # Principal.toText(id));
+        stakerManager.insert(id, name, public_key, amount, days);
     };
 
     public query func lookupStaker(id: Nat) : async ?Staker {
@@ -42,9 +47,10 @@ actor {
         stakerManager.remove(id);
     };
 
-    public func editStaker(id: Nat, name: Text, amount: Nat, days:Nat) : async Bool {
+    /*
+    public func editStaker(id: Principal, name: Text, amount: Nat, days:Nat) : async Bool {
         stakerManager.edit(id, name, amount, days);
-    };
+    };*/
 
     public query func listAllStakers() : async [Staker] {
         stakerManager.listAll();
@@ -77,8 +83,20 @@ actor {
     };
 
     // dfx canister call hackathon revealKey '(0,5)'
-    public shared(msg)  func revealKey(secret_id: Nat, key: Nat, atIndex: Nat): async Bool  {
+    public shared(msg) func revealKey(secret_id: Nat, key: Nat, atIndex: Nat): async Bool  {
         let key_holder = msg.caller;
-        secretManager.revealKey(secret_id, key_holder, key, atIndex);
+        let payoutAmount = secretManager.revealKey(secret_id, key_holder, key, atIndex);
+
+        switch payoutAmount {
+            case null { return false };
+            case (? payoutAmount) { 
+                return payout(key_holder, payoutAmount);
+            };
+        };
     };
+
+    private func payout(staker_id: Principal, payout: Int) : Bool {
+        // TODO 
+        return true;
+    }
 };
