@@ -28,7 +28,7 @@ module {
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
             let revealed = Array.tabulate<Bool>(key_holders.size(), func(i:Nat) : Bool {false});
-            let keys = Array.tabulate<Nat>(key_holders.size(), func(i:Nat) : Nat {0});
+            let keys = Array.tabulate<Text>(key_holders.size(), func(i:Nat) : Text {"nokey"});
             let valid = true;
 
             let newSecret = {
@@ -110,7 +110,7 @@ module {
 
         };
 
-        public func revealKey(secret_id: Nat, key_holder: Principal, key: Nat, atIndex: Nat) : ?Int {
+        public func revealKey(secret_id: Nat, key_holder: Principal, key: Text, atIndex: Nat) : ?Int {
             let secret = secrets.get(secret_id);
              switch secret {
                 case null { return null };
@@ -128,7 +128,7 @@ module {
                         payout := -10; // TODO
                     };
 
-                    let newKeys: [Nat] = Array.tabulate<Nat>(secret.keys.size(), func(i: Nat) : Nat {
+                    let newKeys: [Text] = Array.tabulate<Text>(secret.keys.size(), func(i: Nat) : Text {
                         if ( i == atIndex ) { key } else { secret.keys[i] }
                     });
 

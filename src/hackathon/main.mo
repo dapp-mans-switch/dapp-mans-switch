@@ -29,7 +29,7 @@ actor {
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
     // dfx canister call hackathon registerStaker '("Markus", 1234, 10, 10)'
-    public shared(msg) func registerStaker(name: Text, public_key: Nat, amount: Nat, days: Nat): async Nat {
+    public shared(msg) func registerStaker(name: Text, public_key: Text, amount: Nat, days: Nat): async Nat {
         let id = msg.caller;
         D.print("staker id " # Principal.toText(id));
         stakerManager.insert(id, name, public_key, amount, days);
@@ -80,7 +80,7 @@ actor {
     };
 
     // dfx canister call hackathon revealKey '(0,5)'
-    public shared(msg) func revealKey(secret_id: Nat, key: Nat, atIndex: Nat): async Bool  {
+    public shared(msg) func revealKey(secret_id: Nat, key: Text, atIndex: Nat): async Bool  {
         let key_holder = msg.caller;
         let payoutAmount = secretManager.revealKey(secret_id, key_holder, key, atIndex);
 

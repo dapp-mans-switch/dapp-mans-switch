@@ -18,7 +18,7 @@ module {
         // TODO: allow 1 staker multiple stakes?
         let stakers = Map.HashMap<Nat, Staker>(0, eq, Hash.hash);
 
-        public func insert(id: Principal, name: Text, public_key: Nat, amount: Nat, days:Nat) : Nat {
+        public func insert(id: Principal, name: Text, public_key: Text, amount: Nat, days:Nat) : Nat {
             let newStaker = {id; name; public_key; amount; days};
             let stake_id = stakers.size();
             stakers.put(stake_id, newStaker);

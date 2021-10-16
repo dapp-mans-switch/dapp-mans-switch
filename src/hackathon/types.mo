@@ -2,7 +2,7 @@ module {
     public type Staker = {
         id: Principal;
         name: Text;
-        public_key: Nat;
+        public_key: Text;
         amount: Nat;
         days: Nat;
     };
@@ -22,7 +22,7 @@ module {
         // key at position i is encrypted with public key of staker at position i in key_holders,
         // once the key is decrypted the correspoding entry in revealed is set to true,
         key_holders: [Principal]; // staker ids
-        keys: [Nat];
+        keys: [Text];
         revealed: [Bool];
 
         valid: Bool;
