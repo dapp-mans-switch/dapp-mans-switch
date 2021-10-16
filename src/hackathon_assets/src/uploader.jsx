@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto'
 import { split, join } from 'shamir'
 import { floor } from 'mathjs'
 import * as asymCrypto from 'asymmetric-crypto'
+import { isFunctionOrConstructorTypeNode } from '../../../node_modules/typescript/lib/typescript'
 
 export default function Uploader() {
     const SHARES = 3
@@ -25,15 +26,36 @@ export default function Uploader() {
     }
 
     // needs private key of uploader for signature
-    function encryptShare(data, uploaderPrivateKey, stakerPublicKey) {
-        const encrypted = crypto.encrypt(data, stakerPublicKey, uploaderPrivateKey)
-        return encrypted
+    function encryptKeyShare(share, uploaderPrivateKey, stakerPublicKey) {
+        const shareb64 = keyShareToBase64(share)
+        const encrypted = asymCrypto.encrypt(shareb64, stakerPublicKey, uploaderPrivateKey)
+        return encrypted.data + '.' + encrypted.nonce
     }
 
     // needs public key of uploader to verify authenticity
-    function decryptShare(ctxtAndNonce, stakerPrivateKey, uploaderPublicKey) {
-        const decrypted = crypto.decrypt(ctxtAndNonce.data, ctxtAndNonce.nonce, uploaderPublicKey, stakerPrivateKey)
-        return decrypted
+    function decryptKeyShare(data, stakerPrivateKey, uploaderPublicKey) {
+        const ctxtAndNonce = data.split('.')
+        const decrypted = asymCrypto.decrypt(ctxtAndNonce[0], ctxtAndNonce[1], uploaderPublicKey, stakerPrivateKey)
+        return base64ToKeyShare(decrypted)
+    }
+
+    function encryptMultipleKeyShares(shares, uploaderPrivateKey, stakerPublicKeys) {
+        let encryptedShares = []
+        for (let i = 0; i < stakerPublicKeys.length; i++) {
+            const encShare = encryptKeyShare(shares[i+1], uploaderPrivateKey, stakerPublicKeys[i])
+            console.log(encShare)
+            encryptedShares.push(encShare)
+        }
+        return encryptedShares
+    }
+
+
+    function keyShareToBase64(keyShare) {
+        return Buffer.from(keyShare).toString('base64')
+    }
+
+    function base64ToKeyShare(data) {
+        return new Uint8Array(Buffer.from(data, 'base64'))
     }
     
     function test() {
@@ -41,17 +63,41 @@ export default function Uploader() {
         const uploaderKeyPair = asymCrypto.keyPair()
         const uploaderPrivateKey = uploaderKeyPair.secretKey
         const uploaderPublicKey = uploaderKeyPair.publicKey
+        // staker1 generates a key pair
+        const staker1KeyPair = asymCrypto.keyPair()
+        const staker1PrivateKey = staker1KeyPair.secretKey
+        const staker1PublicKey = staker1KeyPair.publicKey
+        // staker2 generates a key pair
+        const staker2KeyPair = asymCrypto.keyPair()
+        const staker2PrivateKey = staker2KeyPair.secretKey
+        const staker2PublicKey = staker2KeyPair.publicKey
+        // staker3 generates a key pair
+        const staker3KeyPair = asymCrypto.keyPair()
+        const staker3PrivateKey = staker3KeyPair.secretKey
+        const staker3PublicKey = staker3KeyPair.publicKey
 
-        // share the private key
-        const keyShares = computeKeyShares(uploaderPrivateKey)
-        delete keyShares[1]
+        const stakerPublicKeys = [staker1PublicKey, staker2PublicKey, staker3PublicKey]
         
-        const reconstructedPrivateKey = reconstructPrivateKey(keyShares)
+        // TEST
+
+        // compute sharing of private key
+        const keyShares = computeKeyShares(uploaderPrivateKey)
+        // encrypt shares with pub key of stakers
+        const encryptedKeyShares = encryptMultipleKeyShares(keyShares, uploaderPrivateKey, stakerPublicKeys)
+        console.log(encryptedKeyShares)
+
+        // lets say one keyshare of the 3 got lost
+        const share1 = decryptKeyShare(encryptedKeyShares[0], staker1PrivateKey, uploaderPublicKey)
+        const share2 = decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey)
+        const shares = {1: share1, 2: share2}
+        const reconstructedPrivateKey = reconstructPrivateKey(shares)
+
         console.log(reconstructedPrivateKey == uploaderPrivateKey)
 
         // regenerate a public key from a secret key
-        // const pubKey = crypto.fromSecretKey(keyPair.secretKey).publicKey
+        // const pubKey = asmCrypto.fromSecretKey(keyPair.secretKey).publicKey
     }
+
     
     return (
         <div>
