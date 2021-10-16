@@ -4,7 +4,6 @@ import { randomBytes } from 'crypto'
 import { split, join } from 'shamir'
 import { floor } from 'mathjs'
 import * as asymCrypto from 'asymmetric-crypto'
-import { isFunctionOrConstructorTypeNode } from '../../../node_modules/typescript/lib/typescript'
 
 export default function Uploader() {
     const SHARES = 3
@@ -49,7 +48,6 @@ export default function Uploader() {
         return encryptedShares
     }
 
-
     function keyShareToBase64(keyShare) {
         return Buffer.from(keyShare).toString('base64')
     }
@@ -86,7 +84,7 @@ export default function Uploader() {
         const encryptedKeyShares = encryptMultipleKeyShares(keyShares, uploaderPrivateKey, stakerPublicKeys)
         console.log(encryptedKeyShares)
 
-        // lets say one keyshare of the 3 got lost
+        // lets say one of the 3 keyshares got lost
         const share1 = decryptKeyShare(encryptedKeyShares[0], staker1PrivateKey, uploaderPublicKey)
         const share2 = decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey)
         const shares = {1: share1, 2: share2}
