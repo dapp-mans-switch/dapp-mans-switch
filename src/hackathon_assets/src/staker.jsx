@@ -1,5 +1,4 @@
 import * as React from "react";
-import { render } from "react-dom";
 import { hackathon } from "../../declarations/hackathon";
 import routToPage from './router';
 

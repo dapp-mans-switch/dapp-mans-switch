@@ -42,7 +42,6 @@ export default function Uploader() {
         let encryptedShares = []
         for (let i = 0; i < stakerPublicKeys.length; i++) {
             const encShare = encryptKeyShare(shares[i+1], uploaderPrivateKey, stakerPublicKeys[i])
-            console.log(encShare)
             encryptedShares.push(encShare)
         }
         return encryptedShares
