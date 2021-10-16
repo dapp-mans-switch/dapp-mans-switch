@@ -15,5 +15,5 @@ node_modules/
 dist/
 
 package-lock.json
-src/declarations
+src/declarations/
 
