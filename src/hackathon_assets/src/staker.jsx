@@ -17,7 +17,7 @@ export default function Staker() {
     let a = parseInt(amount);
     let d = parseInt(duration);
     let public_key = 1234; // TODO
-    if (isNaN(a) || isNaN(d) || a < 0 || a < 0) {
+    if (isNaN(a) || isNaN(d) || a <= 0 || d <= 0) {
       alert("amount and duration must be positive integer");
     } else {
       document.getElementById("staker_form").reset();
