@@ -1,22 +1,17 @@
-import * as React from "react"
-import routToPage from "./router"
-import { randomBytes } from "crypto"
-import { split, join } from "shamir"
-import { floor } from "mathjs"
+import * as React from 'react'
+import routToPage from './router'
+import { randomBytes } from 'crypto'
+import { split, join } from 'shamir'
+import { floor } from 'mathjs'
+import * as asymCrypto from 'asymmetric-crypto'
 
 export default function Uploader() {
-    
-    function getFreshKeyPair() {
-        let elliptic = require('elliptic')
-        let ec = new elliptic.ec('secp256k1')
-        return ec.genKeyPair()
-    }
+    const SHARES = 3
+    const MIN_SHARES_TO_RECOVER = floor(SHARES/2)+1
+
     
     function computeKeyShares(private_key) {
         // https://dev.to/simbo1905/shamir-s-secret-sharing-scheme-in-javascript-2o3g
-        const SHARES = 10
-        const MIN_SHARES_TO_RECOVER = floor(SHARES/2)+1
-
         const utf8Encoder = new TextEncoder()
         const secretBytes = utf8Encoder.encode(private_key)
         const parts = split(randomBytes, SHARES, MIN_SHARES_TO_RECOVER, secretBytes)
@@ -28,19 +23,34 @@ export default function Uploader() {
         const utf8Decoder = new TextDecoder()
         return utf8Decoder.decode(recovered)
     }
+
+    // needs private key of uploader for signature
+    function encryptShare(data, uploaderPrivateKey, stakerPublicKey) {
+        const encrypted = crypto.encrypt(data, stakerPublicKey, uploaderPrivateKey)
+        return encrypted
+    }
+
+    // needs public key of uploader to verify authenticity
+    function decryptShare(ctxtAndNonce, stakerPrivateKey, uploaderPublicKey) {
+        const decrypted = crypto.decrypt(ctxtAndNonce.data, ctxtAndNonce.nonce, uploaderPublicKey, stakerPrivateKey)
+        return decrypted
+    }
     
     function test() {
-        const keyPair = getFreshKeyPair()
-        const privateKeyHex = keyPair.getPrivate("hex")
+        // uploader generates a key pair
+        const uploaderKeyPair = asymCrypto.keyPair()
+        const uploaderPrivateKey = uploaderKeyPair.secretKey
+        const uploaderPublicKey = uploaderKeyPair.publicKey
 
-        const keyShares = computeKeyShares(privateKeyHex)
+        // share the private key
+        const keyShares = computeKeyShares(uploaderPrivateKey)
         delete keyShares[1]
-        delete keyShares[2]
-        delete keyShares[3]
-        delete keyShares[4]
         
-        const reconstructedPrivateKeyHex = reconstructPrivateKey(keyShares)
-        console.log(reconstructedPrivateKeyHex == privateKeyHex)
+        const reconstructedPrivateKey = reconstructPrivateKey(keyShares)
+        console.log(reconstructedPrivateKey == uploaderPrivateKey)
+
+        // regenerate a public key from a secret key
+        // const pubKey = crypto.fromSecretKey(keyPair.secretKey).publicKey
     }
     
     return (
