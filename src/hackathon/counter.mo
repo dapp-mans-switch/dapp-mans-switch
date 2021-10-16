@@ -1,4 +1,3 @@
-
 /*
 Maybe use actors instead of static types?
 

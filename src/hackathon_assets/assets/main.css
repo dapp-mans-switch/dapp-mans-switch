@@ -48,7 +48,7 @@ section {
     align-items:center;
     justify-content:center;
     font-weight:bold;
-    font-size:2vw;
+    font-size: 1em;
     color: rgba(0, 0, 0, 1);
 }
 
@@ -79,7 +79,7 @@ section {
 form {
     margin: 20px auto 20px auto;
     line-height: 2;
-    width: 50%;    
+    width: 50%;
 }
 
 table {
