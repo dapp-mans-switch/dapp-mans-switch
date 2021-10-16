@@ -1,58 +1,46 @@
-import * as React from "react";
-import routToPage from './router';
+import * as React from "react"
+import routToPage from "./router"
+import { randomBytes } from "crypto"
+import { split, join } from "shamir"
+import { floor } from "mathjs"
 
 export default function Uploader() {
-    const PRIME = 115232748277998069089258273806792254226421333260171207744191778681748141500493
     
-    
-    function generateKeyPair() {
-        //var SHA256 = require("crypto-js/sha256");
-        let elliptic = require('elliptic');
-        let ec = new elliptic.ec('secp256k1');
-        let keyPair = ec.genKeyPair();
-        
-        return keyPair
+    function getFreshKeyPair() {
+        let elliptic = require('elliptic')
+        let ec = new elliptic.ec('secp256k1')
+        return ec.genKeyPair()
     }
     
-    
-    function computeShares(private_key) {
-        const { split, join } = require('shamir');
-        // crypto module
-        const CryptoJS = require("crypto-js");
-        //const a = require("crypto")
-        const { createHmac } = await import('crypto');
+    function computeKeyShares(private_key) {
+        // https://dev.to/simbo1905/shamir-s-secret-sharing-scheme-in-javascript-2o3g
+        const SHARES = 10
+        const MIN_SHARES_TO_RECOVER = floor(SHARES/2)+1
 
-        console.log(CryptoJS.lib.WordArray.random(128))
+        const utf8Encoder = new TextEncoder()
+        const secretBytes = utf8Encoder.encode(private_key)
+        const parts = split(randomBytes, SHARES, MIN_SHARES_TO_RECOVER, secretBytes)
+        return parts
+    }
 
-        // the total number of shares
-        const PARTS = 5;
-        // the minimum required to recover
-        const QUORUM = 3;
-        // you can use any polyfill to covert between string and Uint8Array
-        const utf8Encoder = new TextEncoder();
-        const utf8Decoder = new TextDecoder();
-        
-        const secret = 'hello there';
-        const secretBytes = utf8Encoder.encode(secret);
-        // parts is a object whos keys are the part number and 
-        // values are shares of type Uint8Array
-        const parts = split(CryptoJS.lib.WordArray.random, PARTS, QUORUM, secretBytes);
-        // we only need QUORUM parts to recover the secret
-        // to prove this we will delete two parts
-        delete parts[2];
-        delete parts[3];
-        // we can join three parts to recover the original Unit8Array
-        const recovered = join(parts);
-        // prints 'hello there'
-        console.log(utf8Decoder.decode(recovered));
+    function reconstructPrivateKey(shares) {
+        const recovered = join(shares)
+        const utf8Decoder = new TextDecoder()
+        return utf8Decoder.decode(recovered)
     }
     
-    async function test() {
-        let keyPair = generateKeyPair()
-        console.log(keyPair.getPrivate().toString());
-        console.log(keyPair.getPublic("hex"));
+    function test() {
+        const keyPair = getFreshKeyPair()
+        const privateKeyHex = keyPair.getPrivate("hex")
+
+        const keyShares = computeKeyShares(privateKeyHex)
+        delete keyShares[1]
+        delete keyShares[2]
+        delete keyShares[3]
+        delete keyShares[4]
         
-        computeShares(keyPair.getPrivate().toString())
+        const reconstructedPrivateKeyHex = reconstructPrivateKey(keyShares)
+        console.log(reconstructedPrivateKeyHex == privateKeyHex)
     }
     
     return (
@@ -63,4 +51,4 @@ export default function Uploader() {
             <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>
         </div>
         )
-    };
+    }
