@@ -1,13 +1,13 @@
-import Map "mo:base/HashMap";
-import Text "mo:base/Text";
-import Nat "mo:base/Nat";
+import Array "mo:base/Array";
+import D "mo:base/Debug";
 import Hash "mo:base/Hash";
 import List "mo:base/List";
-import Array "mo:base/Array";
+import Map "mo:base/HashMap";
+import Nat "mo:base/Nat";
+import Text "mo:base/Text";
 import Time "mo:base/Time";
-import Types "./types";
 
-import D "mo:base/Debug";
+import Types "./types";
 
 module {
     type Secret = Types.Secret;
@@ -34,14 +34,14 @@ module {
             let newSecret = {
                 secret_id;
                 author_id;
-                
+
                 payload;
                 reward;
-                
+
                 expiry_time;
                 last_heartbeat;
                 heartbeat_freq;
-                
+
                 key_holders;
                 keys;
                 revealed;
@@ -75,14 +75,14 @@ module {
                     let newSecret = {
                         secret_id = secret.secret_id;
                         author_id = secret.author_id;
-                        
+
                         payload = secret.payload;
                         reward = secret.reward;
-                        
+
                         expiry_time = secret.expiry_time;
                         last_heartbeat = heartbeat; // update heartbeat
                         heartbeat_freq = secret.heartbeat_freq;
-                        
+
                         key_holders = secret.key_holders;
                         keys = secret.keys;
                         revealed = secret.revealed;
@@ -107,7 +107,7 @@ module {
                     return revealOk;
                 };
             };
-            
+
         };
 
         public func revealKey(secret_id: Nat, key_holder: Principal, key: Nat, atIndex: Nat) : ?Int {
@@ -118,9 +118,9 @@ module {
 
                     // check if key_holder is indeed holder for secret
                     assert(secret.key_holders[atIndex] == key_holder);
-                    
+
                     let revealOk = shouldReveal(secret_id);
-            
+
                     var payout: Int = 0;
                     if revealOk {
                         payout := 10; // TODO
@@ -129,24 +129,24 @@ module {
                     };
 
                     let newKeys: [Nat] = Array.tabulate<Nat>(secret.keys.size(), func(i: Nat) : Nat {
-                        if ( i == atIndex ) { key } else { secret.keys[i] } 
+                        if ( i == atIndex ) { key } else { secret.keys[i] }
                     });
 
                     let newRevealed: [Bool] = Array.tabulate<Bool>(secret.revealed.size(), func(i: Nat) : Bool {
-                        if ( i == atIndex ) { true } else { secret.revealed[i] } 
+                        if ( i == atIndex ) { true } else { secret.revealed[i] }
                     });
 
                     let newSecret = {
                         secret_id = secret.secret_id;
                         author_id = secret.author_id;
-                        
+
                         payload = secret.payload;
                         reward = secret.reward;
-                        
+
                         expiry_time = secret.expiry_time;
                         last_heartbeat = secret.last_heartbeat;
                         heartbeat_freq = secret.heartbeat_freq;
-                        
+
                         key_holders = secret.key_holders;
                         keys = newKeys; // update
                         revealed = newRevealed; // update

@@ -1,10 +1,10 @@
-import Map "mo:base/HashMap";
-import Text "mo:base/Text";
-import Nat "mo:base/Nat";
+import Buffer "mo:base/Buffer";
 import Hash "mo:base/Hash";
 import List "mo:base/List";
-import Buffer "mo:base/Buffer";
+import Map "mo:base/HashMap";
+import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
+import Text "mo:base/Text";
 
 import Types "./types";
 
@@ -43,7 +43,8 @@ module {
             }
         };
 
-        /*public func edit(id: Principal, name: Text, amount: Nat, days:Nat) : Bool {
+        /*
+        public func edit(id: Principal, name: Text, amount: Nat, days:Nat) : Bool {
             let stakerRemoved = remove(id);
             if (stakerRemoved == true) {
                 stakers.put(id, {id; name; amount; days});
@@ -51,7 +52,8 @@ module {
             } else {
                 false;
             };
-        };*/
+        };
+        */
 
         public func listAll() : [Staker] {
             let allStakers = Buffer.Buffer<Staker>(0);
@@ -60,7 +62,5 @@ module {
             };
             return allStakers.toArray();
         };
-
     }
-
 };
