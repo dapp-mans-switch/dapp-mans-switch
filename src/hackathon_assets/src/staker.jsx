@@ -7,8 +7,8 @@ import routToPage from './router';
 export default function Staker() {
 
   const [amount, setAmount] = React.useState('');
-  const [duration, setDuration] = React.useState('');  
-  const [myStakes, setMyStakes] = React.useState(''); 
+  const [duration, setDuration] = React.useState('');
+  const [myStakes, setMyStakes] = React.useState('');
 
 
   async function addStaker() {
@@ -26,12 +26,12 @@ export default function Staker() {
     }
   }
 
-  
+
   async function listAllStakers() {
     let stakes = await hackathon.listAllStakers();
-    
+
     var table = document.getElementById("stakerTable");
-    
+
     let col_names = ["name", "amount", "days"];
     table.innerHTML = "";
 
@@ -41,7 +41,6 @@ export default function Staker() {
       tabCell.innerHTML = cn
     }
 
-
     stakes.map(function (s) {
       var tr = table.insertRow(-1);
       for (const cn of col_names) {
@@ -49,8 +48,8 @@ export default function Staker() {
         tabCell.innerHTML = s[cn];
       }
     });
-
   }
+
 
   return (
     <div>
@@ -62,8 +61,10 @@ export default function Staker() {
         <input id="stakeAmount" type="text" onChange={(ev) => setAmount(ev.target.value)}/> <br/>
         <label htmlFor="stakeDuration">Duration (Days):</label>
         <input id="stakeDuration" type="text" onChange={(ev) => setDuration(ev.target.value)}/> <br/>
+        {/* TODO: this option needs to be toggleable for each stake, so it has to be moved to the stake list */}
         <label htmlFor="no_new_stakes">Don't receive new shares</label>
         <input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes"/>
+
         <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 300}}></a>
         <br/>
       </form>
@@ -72,7 +73,7 @@ export default function Staker() {
       <button onClick={listAllStakers}>List my Stakes</button>
 
       <table id="stakerTable" border={2} cellPadding={5}/>
-      
+
       <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>
     </div>
   );
