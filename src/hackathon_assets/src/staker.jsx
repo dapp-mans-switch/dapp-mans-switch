@@ -1,6 +1,7 @@
 import * as React from "react";
 import { hackathon } from "../../declarations/hackathon";
 import routToPage from './router';
+import { generateKeyPair } from "./crypto";
 
 
 export default function Staker() {
@@ -11,17 +12,18 @@ export default function Staker() {
 
 
   async function addStaker() {
-    console.log("Staker request sent");
-    // TODO: replace "Staker1" by identification Auth
     let a = parseInt(amount);
     let d = parseInt(duration);
-    let public_key = 1234; // TODO
+    const keyPair = generateKeyPair()
+    console.log(keyPair.privateKey)
+
     if (isNaN(a) || isNaN(d) || a <= 0 || d <= 0) {
       alert("amount and duration must be positive integer");
     } else {
       document.getElementById("staker_form").reset();
-      const newStakerId = await hackathon.registerStaker("Staker1", public_key, a, d);
-      alert(newStakerId);
+      // TODO: replace "Staker1" by identification Auth
+      const newStakerId = await hackathon.registerStaker("Staker1", keyPair.publicKey, a, d);
+      alert(`new staker created with id: ${newStakerId}\nyour private key is: ${keyPair.privateKey}`);
     }
   }
 
