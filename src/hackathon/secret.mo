@@ -6,6 +6,7 @@ import Map "mo:base/HashMap";
 import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
+import Buffer "mo:base/Buffer";
 
 import Types "./types";
 
@@ -160,6 +161,14 @@ module {
                     return ?payout;
                 };
             };
+        };
+
+         public func listAll() : [Secret] {
+            let allSecrets = Buffer.Buffer<Secret>(0);
+            for ((id, s) in secrets.entries()) {
+                allSecrets.add(s);
+            };
+            return allSecrets.toArray();
         };
 
     }

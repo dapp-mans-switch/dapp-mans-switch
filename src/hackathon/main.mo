@@ -59,15 +59,19 @@ actor {
     var secretManager: Secret.SecretManager = Secret.SecretManager();
 
     // dfx canister call hackathon addSecretToStaker '(0, 0)'
-    public func addSecretToStaker(id: Nat, secret_id: Nat): async Bool {
-        let s = secretManager.lookup(secret_id);
-        switch s {
-            case null { return false };
-            case (? s) {
-                let res = stakerManager.addSecret(id, secret_id);
-                return res;
-            };
-        };
+    // public func addSecretToStaker(id: Nat, secret_id: Nat): async Bool {
+    //     let s = secretManager.lookup(secret_id);
+    //     switch s {
+    //         case null { return false };
+    //         case (? s) {
+    //             let res = stakerManager.addSecret(id, secret_id);
+    //             return res;
+    //         };
+    //     };
+    // };
+
+    public query func listAllSecrets() : async [Secret] {
+        secretManager.listAll();
     };
 
     // dfx canister call hackathon addSecret '("secret", "uploaderpubkey", 10, 1635724799, 86400, vec {"share1"; "share2"}, \

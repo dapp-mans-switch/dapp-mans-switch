@@ -10,29 +10,29 @@ export default function Staker() {
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
   const [stakerId, setStakerId] = React.useState('')
-  const [secretId, setSecretId] = React.useState('')
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
   async function revealSecretShare() {
     // TODO
     let stakerIdInt
-    let secretIdInt
     try {
       stakerIdInt = getNaturalNumber(stakerId)
-      secretIdInt = getNaturalNumber(secretId)
     } catch (error) {
       console.log(error)
       alert('Invalid numbers entered')
       return
     }
+
     let staker = await hackathon.lookupStaker(stakerIdInt)
-    let secret = await hackathon.lookupSecret(secretIdInt)
     staker = staker[0]
-    secret = secret[0]
     console.log(staker)
-    console.log(secret)
-    const decryptedShare = crypto.decryptKeyShare(secret['shares'][stakerIdInt], stakerPrivateKey, secret['uploader_public_key'])
-    console.log(decryptedShare)
+
+    let secrets = await hackathon.listAllSecrets()
+    console.log(secrets)
+
+
+    //const decryptedShare = crypto.decryptKeyShare(secret['shares'][stakerIdInt], stakerPrivateKey, secret['uploader_public_key'])
+    //console.log(decryptedShare)
   }
 
   async function addStaker() {
@@ -51,7 +51,7 @@ export default function Staker() {
 
     document.getElementById('staker_form').reset()
     // TODO: replace 'Staker1' by identification Auth
-    const newStakerId = await hackathon.registerStaker('Sakter1', keyPair.publicKey, amountInt, durationInt)
+    const newStakerId = await hackathon.registerStaker('Staker', keyPair.publicKey, amountInt, durationInt)
     downloadPrivateKey(keyPair.privateKey, newStakerId)
     alert(`New staker created with id: ${newStakerId}.\nThe private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
   }
@@ -118,9 +118,7 @@ export default function Staker() {
         <label htmlFor="stakerId">Enter your staker ID:</label>
         <input id="stakerId" type="number" onChange={(ev) => setStakerId(ev.target.value)}/>
         <br/>
-        <label htmlFor="secretId">Enter the secret's ID:</label>
-        <input id="secretId" type="number" onChange={(ev) => setSecretId(ev.target.value)}/>
-        <br/>
+
         <label htmlFor="stakerPrivateKey">Enter your private key:</label>
         <input id="stakerPrivateKey" type="text" onChange={(ev) => setStakerPrivateKey(ev.target.value)}/>
         

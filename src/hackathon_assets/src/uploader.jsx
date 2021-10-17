@@ -4,7 +4,7 @@ import * as helpers from './helpers'
 import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 
-const TEST = false
+const TEST = true
 
 export default function Uploader() {
 
@@ -25,9 +25,6 @@ export default function Uploader() {
     }
     
     async function uploadSecret() {
-        const s = await hackathon.lookupSecret(5)
-        console.log(s)
-
         let input
         if (TEST) {
             testSecretEnDecryption()

@@ -5,7 +5,8 @@ module {
         public_key: Text;
         amount: Nat;
         days: Nat;
-        secrets: [Nat];
+        //secrets: [Nat];
+        staker_id: Nat;
     };
 
     public type Secret = {
