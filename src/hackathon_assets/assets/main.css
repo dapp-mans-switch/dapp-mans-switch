@@ -1,9 +1,14 @@
 body {
     font-family: sans-serif;
     font-size: 1.5rem;
-    background-color:black;
-    color: white;
+    background-color:#E0E5EC;
+    color: black;
     text-align: center;
+}
+
+h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 img {
@@ -49,7 +54,7 @@ section {
     justify-content:center;
     font-weight:bold;
     font-size: 1em;
-    color: rgba(0, 0, 0, 1);
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
 .rainbow-button:after {
@@ -58,8 +63,8 @@ section {
     border-radius: 7px;
     width: calc(100% + 10px);
     height: calc(100% + 10px);
-    color: white;
-    background-color: rgba(0, 0, 0, 1);
+    color: rgb(0, 0, 0);
+    background-color: #E0E5EC;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -76,12 +81,39 @@ section {
 }
 
 
-form {
-    margin: 20px auto 20px auto;
+.panel {
+    margin: 30px auto 40px auto;
+    padding: 10px;
     line-height: 2;
     width: 50%;
+    border-radius: 20px;
+    background: rgb(239,238,238);
+    background-color:#E0E5EC;
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
+        -9px -9px 16px  rgba(255,255,255, 0.5);
+
+}
+
+form {
+    padding: 0 50px 0 50px;
+}
+
+input {
+    width: 100%;
+}
+
+span {
+    display: block;
+    overflow: hidden;
+    padding-right: 10px;
+    padding-left: 20px;
+}
+
+label {
+    float: left;
 }
 
 table {
     margin: 0px auto 0px auto;
+    width: 100%;
 }

@@ -56,6 +56,13 @@ export default function Staker() {
     alert(`New staker created with id: ${newStakerId}.\nThe private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
   }
 
+  async function removeStaker(id) {
+    const deleted = await hackathon.removeStaker(id)
+    if (deleted == false) {
+      alert("cannot delete staker with id: " + id)
+    }
+  }
+
   // write private key to file and safe to downloads
   // staker_id is prepended to the file name
   function downloadPrivateKey(privateKey, staker_id) {
@@ -73,10 +80,11 @@ export default function Staker() {
 
   async function listAllStakers() {
     const stakes = await hackathon.listAllStakers()
+    console.log(stakes)
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['name', 'amount', 'days']
+    const col_names = ['steaker_id', 'name', 'amount', 'days']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -84,6 +92,9 @@ export default function Staker() {
       const tabCell = tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
+    // const deleteCell = tr.insertCell(-1)
+    // deleteCell.innerHTML = "delete"
+
 
     stakes.map(function (s) {
       const tr = table.insertRow(-1)
@@ -91,46 +102,57 @@ export default function Staker() {
         const tabCell = tr.insertCell(-1)
         tabCell.innerHTML = s[cn]
       }
+      const deleteButton = document.createElement('button')
+      deleteButton.innerHTML = "delete"
+      const deleteButtonCell = tr.insertCell(-1)
+      // deleteButtonCell.onClick = removeStaker(s[]))
+      deleteButtonCell.appendChild(deleteButton)
+
     });
   }
 
+  React.useEffect(() => {
+    listAllStakers()
+  })
 
   return (
     <div>
       <h1>Staker</h1>
       This is the Staker's page.
 
-      <form id="staker_form">
-        <label htmlFor="stakeAmount">Amount:</label>
-        <input id="stakeAmount" type="number" onChange={(ev) => setAmount(ev.target.value)}/> <br/>
-        <label htmlFor="stakeDuration">Duration (Days):</label>
-        <input id="stakeDuration" type="number" onChange={(ev) => setDuration(ev.target.value)}/> <br/>
-        {/* TODO: this option needs to be toggleable for each stake, so it has to be moved to the stake list */}
-        <label htmlFor="no_new_stakes">Don't receive new shares</label>
-        <input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes"/>
+      <div class="panel">
+        <h2>Create new Stake</h2>
+        <form>
+          <label htmlFor="stakeAmount">Amount:</label>
+          <span><input id="stakeAmount" type="number" onChange={(ev) => setAmount(ev.target.value)}/></span>
+          <label htmlFor="stakeDuration">Duration (Days):</label>
+          <span><input id="stakeDuration" type="number" onChange={(ev) => setDuration(ev.target.value)}/></span>
+          {/* TODO: this option needs to be toggleable for each stake, so it has to be moved to the stake list */}
+          <label htmlFor="no_new_stakes">Don't receive new shares</label>
+          <span><input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes"/></span>
+        </form>
+        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 200}}></a>
+      </div>
 
-        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 220}}></a>
-        <br/>
-      </form>
+      <div class="panel">
+        <h2>My Stakes</h2>
+        <table id="stakerTable" cellPadding={5}/>
+      </div>
 
-
-      <h1>Reveal a secret share</h1>
-        <label htmlFor="stakerId">Enter your staker ID:</label>
-        <input id="stakerId" type="number" onChange={(ev) => setStakerId(ev.target.value)}/>
-        <br/>
-
-        <label htmlFor="stakerPrivateKey">Enter your private key:</label>
-        <input id="stakerPrivateKey" type="text" onChange={(ev) => setStakerPrivateKey(ev.target.value)}/>
-        
-        <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} class="rainbow-button" style={{width: 300}}></a>
-
-
-      <h2>My Stakes</h2>
-      <button onClick={listAllStakers}>List my Stakes</button>
-
-      <table id="stakerTable" border={2} cellPadding={5}/>
+      <div class="panel">
+        <h2>Reveal a secret share</h2>
+        <form>
+          <label htmlFor="stakerId">Enter your staker ID:</label>
+          <span><input id="stakerId" type="number" onChange={(ev) => setStakerId(ev.target.value)}/></span>
+          <label htmlFor="stakerPrivateKey">Enter your private key:</label>
+          <span><input id="stakerPrivateKey" type="text" onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
+        </form>
+        <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} class="rainbow-button" style={{width: 330}}></a>
+      </div>
 
       <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>
     </div>
   );
+
 };
+
