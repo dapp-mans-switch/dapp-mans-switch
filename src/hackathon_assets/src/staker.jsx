@@ -51,19 +51,20 @@ export default function Staker() {
 
     document.getElementById('staker_form').reset()
     // TODO: replace 'Staker1' by identification Auth
-    const newStakerId = await hackathon.registerStaker('Staker1', keyPair.publicKey, amountInt, durationInt)
-    downloadPrivateKey(keyPair.privateKey)
-    alert(`New staker created with id: ${newStakerId}, pls back up ur private key ;): ${keyPair.privateKey}`)
+    const newStakerId = await hackathon.registerStaker('Sakter1', keyPair.publicKey, amountInt, durationInt)
+    downloadPrivateKey(keyPair.privateKey, newStakerId)
+    alert(`New staker created with id: ${newStakerId}.\nThe private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
   }
 
   // write private key to file and safe to downloads
-  function downloadPrivateKey(privateKey) {
+  // staker_id is prepended to the file name
+  function downloadPrivateKey(privateKey, staker_id) {
     if (privateKey == null) {
       alert("Please create your private key first")
     }
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(privateKey));
-    element.setAttribute('download', 'private_key');
+    element.setAttribute('download', staker_id + '_private_key');
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
