@@ -15,13 +15,16 @@ module {
     public class StakerManager() {
 
         let eq: (Nat,Nat) -> Bool = func(x, y) { x == y };
+        // make next stable in production
+        var next : Nat = 1;
 
         // TODO: allow 1 staker multiple stakes?
         let stakers = Map.HashMap<Nat, Staker>(0, eq, Hash.hash);
 
         public func insert(id: Principal, name: Text, public_key: Text, amount: Nat, days: Nat) : Nat {
             //let secrets = Array.tabulate<Nat>(0, func(i:Nat) : Nat {0});
-            let staker_id = stakers.size();
+            let staker_id = next;
+            next += 1;
             let newStaker = {id; name; public_key; amount; days; staker_id};
             stakers.put(staker_id, newStaker);
             staker_id;

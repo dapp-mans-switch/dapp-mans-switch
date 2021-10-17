@@ -68,13 +68,16 @@ export default function Staker() {
     const newStakerId = await hackathon.registerStaker('Staker', keyPair.publicKey, amountInt, durationInt)
     downloadPrivateKey(keyPair.privateKey, newStakerId)
     alert(`New staker created with id: ${newStakerId}.\nThe private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+    listAllStakers()
   }
 
   async function removeStaker(id) {
+    console.log("geemmmma: " + id)
     const deleted = await hackathon.removeStaker(id)
     if (deleted == false) {
       alert("cannot delete staker with id: " + id)
     }
+    listAllStakers()
   }
 
   // write private key to file and safe to downloads
@@ -93,12 +96,16 @@ export default function Staker() {
   }
 
   async function listAllStakers() {
-    const stakes = await hackathon.listAllStakers()
+    let stakes = await hackathon.listAllStakers()
+    stakes.sort(function(a, b) { 
+      return - (parseInt(b.staker_id) - parseInt(a.staker_id));
+    });
+
     console.log(stakes)
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['steaker_id', 'name', 'amount', 'days']
+    const col_names = ['staker_id', 'name', 'amount', 'days']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -116,12 +123,12 @@ export default function Staker() {
         const tabCell = tr.insertCell(-1)
         tabCell.innerHTML = s[cn]
       }
+      const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
       deleteButton.innerHTML = "delete"
-      const deleteButtonCell = tr.insertCell(-1)
-      // deleteButtonCell.onClick = removeStaker(s[]))
+      deleteButton.className = "deleteButton"
+      deleteButton.addEventListener("click", () => { removeStaker(s['staker_id'])})
       deleteButtonCell.appendChild(deleteButton)
-
     });
   }
 
@@ -136,7 +143,7 @@ export default function Staker() {
 
       <div class="panel">
         <h2>Create new Stake</h2>
-        <form>
+        <form id="staker_form">
           <label htmlFor="stakeAmount">Amount:</label>
           <span><input id="stakeAmount" type="number" onChange={(ev) => setAmount(ev.target.value)}/></span>
           <label htmlFor="stakeDuration">Duration (Days):</label>
