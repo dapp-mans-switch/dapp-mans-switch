@@ -2,7 +2,7 @@ import * as React from 'react'
 import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 import * as crypto from './crypto'
-import { getPositiveNumber, getNaturalNumber } from './helpers'
+import * as helpers from './helpers'
 
 
 export default function Staker() {
@@ -13,10 +13,9 @@ export default function Staker() {
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
   async function revealSecretShare() {
-    // TODO
     let stakerIdInt
     try {
-      stakerIdInt = getNaturalNumber(stakerId)
+      stakerIdInt = helpers.getNaturalNumber(stakerId)
     } catch (error) {
       console.log(error)
       alert('Invalid numbers entered')
@@ -28,8 +27,11 @@ export default function Staker() {
     console.log(staker)
 
     let secrets = await hackathon.listAllSecrets()
-    console.log(secrets)
+    let relevantSecrets = helpers.getSecretsForStaker(staker['staker_id'], secrets)
+    
+    // TODO check if decryption of secret is allowed (time or heartbeat)
 
+    // TODO
 
     //const decryptedShare = crypto.decryptKeyShare(secret['shares'][stakerIdInt], stakerPrivateKey, secret['uploader_public_key'])
     //console.log(decryptedShare)
@@ -39,8 +41,8 @@ export default function Staker() {
     let amountInt
     let durationInt
     try {
-      amountInt = getPositiveNumber(amount)
-      durationInt = getPositiveNumber(duration)
+      amountInt = helpers.getPositiveNumber(amount)
+      durationInt = helpers.getPositiveNumber(duration)
     } catch (error) {
       console.log(error)
       alert('Amount and duration must be positive numbers!')

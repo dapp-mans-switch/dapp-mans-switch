@@ -31,6 +31,31 @@ export function getPrincipalsOfStakers(stakers) {
     return principals
 }
 
+export function getIdsOfStakers(stakers) {
+    let ids = []
+    for (let i = 0; i < stakers.length; i++) {
+        ids.push(stakers[i]['staker_id'])
+    }
+    return ids
+}
+
+export function getSecretsForStaker(staker_id, secrets) {
+    let relevantSecrets = []
+    for (let i = 0; i < secrets.length; i++) {
+        let shareHolders = secrets[i]['share_holder_ids']
+        for (let j = 0; j < shareHolders.length; j++) {
+            if (shareHolders[j] == staker_id) {
+                relevantSecrets.push(secrets[i])
+            }
+        }
+    }
+    return relevantSecrets
+}
+
+export function decryptSecretShare(staker_id, secret) {
+
+}
+
 export function getPositiveNumber(string) {
     let num = parseInt(string)
     if (isNaN(num) || num <= 0) {

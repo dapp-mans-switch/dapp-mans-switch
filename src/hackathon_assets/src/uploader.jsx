@@ -50,18 +50,18 @@ export default function Uploader() {
 
         // choose stakers
         const stakers = await helpers.drawStakers()
-        console.log(stakers)
         const principals = helpers.getPrincipalsOfStakers(stakers)
         const stakerPublicKeys = helpers.getPublicKeysOfStakers(stakers)
+        const stakerIds = helpers.getIdsOfStakers(stakers)
+        console.log(stakerIds)
 
         // create shares of the private key
         const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
         // encrypt them so only the desired staker can read it
         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
-        console.log(encryptedKeyShares)
-
         // send to backend
-        const newSecretId = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt, input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals)
+        const newSecretId = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
+            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals, stakerIds)
         alert(`Secret with ID ${newSecretId} uploaded!`)
     }
 

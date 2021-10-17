@@ -24,7 +24,7 @@ module {
             return Time.now() / 1_000_000_000;
         };
 
-        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal]): Nat {
+        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal], share_holder_ids: [Nat]): Nat {
 
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
@@ -45,6 +45,7 @@ module {
                 heartbeat_freq;
 
                 key_holders;
+                share_holder_ids;
                 shares;
                 revealed;
                 valid
@@ -87,6 +88,7 @@ module {
                         heartbeat_freq = secret.heartbeat_freq;
 
                         key_holders = secret.key_holders;
+                        share_holder_ids = secret.share_holder_ids;
                         shares = secret.shares;
                         revealed = secret.revealed;
                         valid = secret.valid
@@ -152,6 +154,7 @@ module {
                         heartbeat_freq = secret.heartbeat_freq;
 
                         key_holders = secret.key_holders;
+                        share_holder_ids = secret.share_holder_ids;
                         shares = newShares; // update
                         revealed = newRevealed; // update
                         valid = secret.valid
