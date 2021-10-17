@@ -4,7 +4,7 @@ import * as helpers from './helpers'
 import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 
-const TEST = true
+const TEST = false
 
 export default function Uploader() {
 
@@ -18,14 +18,13 @@ export default function Uploader() {
             throw 'secret must not be empty'
         }
         // TODO validate expirytime input properly
-        const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime()
+        const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
         const rewardInt = helpers.getPositiveNumber(reward)
         const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
         return {secret, rewardInt, expiryTimeInUTCSecs, heartbeatFreqInt}
     }
     
     async function uploadSecret() {
-
         const s = await hackathon.lookupSecret(5)
         console.log(s)
 
