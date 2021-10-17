@@ -3,8 +3,8 @@ import { split, join } from 'shamir'
 import { floor } from 'mathjs'
 import * as asymCrypto from 'asymmetric-crypto'
 
-export const SHARES = 3
-export const MIN_SHARES_TO_RECOVER = floor(SHARES/2)+1
+export const NUMBER_OF_SHARES = 3
+const MIN_SHARES_TO_RECOVER = floor(NUMBER_OF_SHARES/2)+1
 
 export function generateKeyPair() {
     const keyPair = asymCrypto.keyPair()
@@ -12,12 +12,13 @@ export function generateKeyPair() {
     const publicKey = keyPair.publicKey
     return {privateKey, publicKey}
 }
+
 export function computeKeyShares(private_key) {
     // https://dev.to/simbo1905/shamir-s-secret-sharing-scheme-in-javascript-2o3g
     const utf8Encoder = new TextEncoder()
     const secretBytes = utf8Encoder.encode(private_key)
-    const parts = split(randomBytes, SHARES, MIN_SHARES_TO_RECOVER, secretBytes)
-    return parts
+    const shares = split(randomBytes, NUMBER_OF_SHARES, MIN_SHARES_TO_RECOVER, secretBytes)
+    return shares
 }
 
 export function reconstructPrivateKey(shares) {
@@ -27,7 +28,7 @@ export function reconstructPrivateKey(shares) {
 }
 
 // needs private key of uploader for signature
-export function encryptKeyShare(share, uploaderPrivateKey, stakerPublicKey) {
+function encryptKeyShare(share, uploaderPrivateKey, stakerPublicKey) {
     const shareb64 = keyShareToBase64(share)
     const encrypted = asymCrypto.encrypt(shareb64, stakerPublicKey, uploaderPrivateKey)
     return encrypted.data + '.' + encrypted.nonce
@@ -40,6 +41,19 @@ export function decryptKeyShare(data, stakerPrivateKey, uploaderPublicKey) {
     return base64ToKeyShare(decrypted)
 }
 
+export function encryptSecret(secret, uploaderPrivateKey) {
+    const uploaderPublicKey = asymCrypto.fromSecretKey(uploaderPrivateKey).publicKey
+    const encrypted = asymCrypto.encrypt(secret, uploaderPublicKey, uploaderPrivateKey)
+    return encrypted.data + '.' + encrypted.nonce
+}
+
+export function decryptSecret(data, reconstructedUploaderPrivateKey) {
+    const uploaderPublicKey = asymCrypto.fromSecretKey(reconstructedUploaderPrivateKey).publicKey
+    const ctxtAndNonce = data.split('.')
+    const plaintext = asymCrypto.decrypt(ctxtAndNonce[0], ctxtAndNonce[1], uploaderPublicKey, reconstructedUploaderPrivateKey)
+    return plaintext
+}
+
 export function encryptMultipleKeyShares(shares, uploaderPrivateKey, stakerPublicKeys) {
     let encryptedShares = []
     for (let i = 0; i < stakerPublicKeys.length; i++) {
@@ -49,10 +63,10 @@ export function encryptMultipleKeyShares(shares, uploaderPrivateKey, stakerPubli
     return encryptedShares
 }
 
-export function keyShareToBase64(keyShare) {
+function keyShareToBase64(keyShare) {
     return Buffer.from(keyShare).toString('base64')
 }
 
-export function base64ToKeyShare(data) {
+function base64ToKeyShare(data) {
     return new Uint8Array(Buffer.from(data, 'base64'))
 }

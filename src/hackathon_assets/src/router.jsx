@@ -4,6 +4,7 @@ import { render } from "react-dom";
 import Staker from './staker';
 import Uploader from './uploader';
 import Main from './index';
+import Spectator from './spectator'
 
 
 // this is the router
@@ -18,6 +19,9 @@ export default function routToPage(pageName) {
       break;
     case "Main":
       render(<Main />, document.getElementById("app"));
+      break;
+    case "Spectator":
+      render(<Spectator />, document.getElementById("app"));
       break;
     default:
   }

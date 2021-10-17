@@ -2,6 +2,7 @@ import * as React from "react";
 import { hackathon } from "../../declarations/hackathon";
 import routToPage from './router';
 import { generateKeyPair } from "./crypto";
+import { getPositiveNumber } from "./helpers";
 
 
 export default function Staker() {
@@ -12,21 +13,23 @@ export default function Staker() {
 
 
   async function addStaker() {
-    let a = parseInt(amount);
-    let d = parseInt(duration);
+    let amountInt
+    let durationInt
+    try {
+      amountInt = getPositiveNumber(amount)
+      durationInt = getPositiveNumber(duration)
+    } catch {
+      alert('Amount and duration must be positive numbers!')
+      return
+    }
     const keyPair = generateKeyPair()
     console.log(keyPair.privateKey)
 
-    if (isNaN(a) || isNaN(d) || a <= 0 || d <= 0) {
-      alert("amount and duration must be positive integer");
-    } else {
-      document.getElementById("staker_form").reset();
-      // TODO: replace "Staker1" by identification Auth
-      const newStakerId = await hackathon.registerStaker("Staker1", keyPair.publicKey, a, d);
-      alert(`new staker created with id: ${newStakerId}\nyour private key is: ${keyPair.privateKey}`);
-    }
+    document.getElementById("staker_form").reset();
+    // TODO: replace "Staker1" by identification Auth
+    const newStakerId = await hackathon.registerStaker("Staker1", keyPair.publicKey, amountInt, durationInt);
+    alert(`New staker created with id: ${newStakerId}, pls back up ur private key ;): ${keyPair.privateKey}`);
   }
-
 
   async function listAllStakers() {
     let stakes = await hackathon.listAllStakers();
@@ -59,9 +62,9 @@ export default function Staker() {
 
       <form id="staker_form">
         <label htmlFor="stakeAmount">Amount:</label>
-        <input id="stakeAmount" type="text" onChange={(ev) => setAmount(ev.target.value)}/> <br/>
+        <input id="stakeAmount" type="number" onChange={(ev) => setAmount(ev.target.value)}/> <br/>
         <label htmlFor="stakeDuration">Duration (Days):</label>
-        <input id="stakeDuration" type="text" onChange={(ev) => setDuration(ev.target.value)}/> <br/>
+        <input id="stakeDuration" type="number" onChange={(ev) => setDuration(ev.target.value)}/> <br/>
         {/* TODO: this option needs to be toggleable for each stake, so it has to be moved to the stake list */}
         <label htmlFor="no_new_stakes">Don't receive new shares</label>
         <input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes"/>
