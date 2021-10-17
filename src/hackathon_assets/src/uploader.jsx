@@ -68,6 +68,10 @@ export default function Uploader() {
         alert(`Secret with ID ${newSecretId} uploaded!`)
     }
 
+    ///////////////////////////// TESTS /////////////////////////////
+
+    // TODO move to a test file
+
     function testSecretEnDecryption() {
         const uploaderKeyPair = crypto.generateKeyPair()
         const uploaderPrivateKey = uploaderKeyPair.privateKey

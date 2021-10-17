@@ -38,3 +38,11 @@ export function getPositiveNumber(string) {
     } 
     return num
 }
+
+export function getNaturalNumber(string) {
+    let num = parseInt(string)
+    if (isNaN(num) || num < 0) {
+        throw 'could not extract positive number'
+    } 
+    return num
+}

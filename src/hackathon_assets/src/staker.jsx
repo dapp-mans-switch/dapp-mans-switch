@@ -1,14 +1,39 @@
 import * as React from 'react'
 import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
-import { generateKeyPair } from './crypto'
-import { getPositiveNumber } from './helpers'
+import * as crypto from './crypto'
+import { getPositiveNumber, getNaturalNumber } from './helpers'
 
 
 export default function Staker() {
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
+  const [stakerId, setStakerId] = React.useState('')
+  const [secretId, setSecretId] = React.useState('')
+  const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
+
+  async function revealSecretShare() {
+    // TODO
+    let stakerIdInt
+    let secretIdInt
+    try {
+      stakerIdInt = getNaturalNumber(stakerId)
+      secretIdInt = getNaturalNumber(secretId)
+    } catch (error) {
+      console.log(error)
+      alert('Invalid numbers entered')
+      return
+    }
+    let staker = await hackathon.lookupStaker(stakerIdInt)
+    let secret = await hackathon.lookupSecret(secretIdInt)
+    staker = staker[0]
+    secret = secret[0]
+    console.log(staker)
+    console.log(secret)
+    const decryptedShare = crypto.decryptKeyShare(secret['shares'][stakerIdInt], stakerPrivateKey, secret['uploader_public_key'])
+    console.log(decryptedShare)
+  }
 
   async function addStaker() {
     let amountInt
@@ -21,7 +46,7 @@ export default function Staker() {
       alert('Amount and duration must be positive numbers!')
       return
     }
-    const keyPair = generateKeyPair()
+    const keyPair = crypto.generateKeyPair()
     console.log(keyPair.privateKey)
 
     document.getElementById('staker_form').reset()
@@ -71,6 +96,20 @@ export default function Staker() {
         <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 300}}></a>
         <br/>
       </form>
+
+
+      <h1>Reveal a secret share</h1>
+        <label htmlFor="stakerId">Enter your staker ID:</label>
+        <input id="stakerId" type="number" onChange={(ev) => setStakerId(ev.target.value)}/>
+        <br/>
+        <label htmlFor="secretId">Enter the secret's ID:</label>
+        <input id="secretId" type="number" onChange={(ev) => setSecretId(ev.target.value)}/>
+        <br/>
+        <label htmlFor="stakerPrivateKey">Enter your private key:</label>
+        <input id="stakerPrivateKey" type="text" onChange={(ev) => setStakerPrivateKey(ev.target.value)}/>
+        
+        <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} class="rainbow-button" style={{width: 300}}></a>
+
 
       <h2>My Stakes</h2>
       <button onClick={listAllStakers}>List my Stakes</button>
