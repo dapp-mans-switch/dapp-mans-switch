@@ -52,7 +52,22 @@ export default function Staker() {
     document.getElementById('staker_form').reset()
     // TODO: replace 'Staker1' by identification Auth
     const newStakerId = await hackathon.registerStaker('Staker1', keyPair.publicKey, amountInt, durationInt)
+    downloadPrivateKey(keyPair.privateKey)
     alert(`New staker created with id: ${newStakerId}, pls back up ur private key ;): ${keyPair.privateKey}`)
+  }
+
+  // write private key to file and safe to downloads
+  function downloadPrivateKey(privateKey) {
+    if (privateKey == null) {
+      alert("Please create your private key first")
+    }
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(privateKey));
+    element.setAttribute('download', 'private_key');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   }
 
   async function listAllStakers() {
@@ -93,7 +108,7 @@ export default function Staker() {
         <label htmlFor="no_new_stakes">Don't receive new shares</label>
         <input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes"/>
 
-        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 300}}></a>
+        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 220}}></a>
         <br/>
       </form>
 
