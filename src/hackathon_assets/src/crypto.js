@@ -38,7 +38,7 @@ function encryptKeyShare(share, uploaderPrivateKey, stakerPublicKey) {
 export function decryptKeyShare(data, stakerPrivateKey, uploaderPublicKey) {
     const ctxtAndNonce = data.split('.')
     const decrypted = asymCrypto.decrypt(ctxtAndNonce[0], ctxtAndNonce[1], uploaderPublicKey, stakerPrivateKey)
-    return base64ToKeyShare(decrypted)
+    return decrypted
 }
 
 export function encryptSecret(secret, uploaderPrivateKey) {

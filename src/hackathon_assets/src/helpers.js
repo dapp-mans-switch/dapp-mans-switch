@@ -1,10 +1,10 @@
 import { hackathon } from '../../declarations/hackathon'
-import { NUMBER_OF_SHARES } from './crypto'
+import * as crypto from './crypto'
 import { min } from 'mathjs'
 
 export async function drawStakers() {
     const stakers = await hackathon.listAllStakers()
-    let numShares = min(stakers.length, NUMBER_OF_SHARES)
+    let numShares = min(stakers.length, crypto.NUMBER_OF_SHARES)
    
     // TODO draw them with probability proportional to their stake
     // this should also happen in the backend on chain
@@ -39,12 +39,12 @@ export function getIdsOfStakers(stakers) {
     return ids
 }
 
-export function getSecretsForStaker(staker_id, secrets) {
+export function getSecretsForStaker(stakerId, secrets) {
     let relevantSecrets = []
     for (let i = 0; i < secrets.length; i++) {
         let shareHolders = secrets[i]['share_holder_ids']
         for (let j = 0; j < shareHolders.length; j++) {
-            if (shareHolders[j] == staker_id) {
+            if (shareHolders[j] == stakerId) {
                 relevantSecrets.push(secrets[i])
             }
         }
@@ -52,8 +52,21 @@ export function getSecretsForStaker(staker_id, secrets) {
     return relevantSecrets
 }
 
-export function decryptSecretShare(staker_id, secret) {
+export async function decryptStakerSecretShare(stakerId, secret, stakerPrivateKey) {
+    const uploaderPublicKey = secret['uploader_public_key']
+    const holders = secret['share_holder_ids']
+    const shares = secret['shares']
+    let index
+    for (let i = 0; i < holders.length; i++) {
+        if (holders[i] == stakerId) {
+            index = i
+            break
+        }
+    }
+    const decryptedShare = crypto.decryptKeyShare(shares[index], stakerPrivateKey, uploaderPublicKey)
+    const ready = await hackathon.revealKey(secret['secret_id'], decryptedShare, index)
 
+    return ready
 }
 
 export function getPositiveNumber(string) {

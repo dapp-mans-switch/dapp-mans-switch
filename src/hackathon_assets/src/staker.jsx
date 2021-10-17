@@ -24,17 +24,29 @@ export default function Staker() {
 
     let staker = await hackathon.lookupStaker(stakerIdInt)
     staker = staker[0]
-    console.log(staker)
 
     let secrets = await hackathon.listAllSecrets()
     let relevantSecrets = helpers.getSecretsForStaker(staker['staker_id'], secrets)
+    console.log(relevantSecrets)
+
+    for (let i = 0; i < relevantSecrets.length; i++) {
+      
     
-    // TODO check if decryption of secret is allowed (time or heartbeat)
+      // TODO check if decryption of secret is allowed (time or heartbeat)
+      let done
+      try {
+        done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
+        console.log(relevantSecrets[i]['secret_id'])
+        console.log(done)
+        alert('published share')
 
-    // TODO
-
-    //const decryptedShare = crypto.decryptKeyShare(secret['shares'][stakerIdInt], stakerPrivateKey, secret['uploader_public_key'])
-    //console.log(decryptedShare)
+      } catch (error) {
+        console.log(`failed decryption at index ${i}`)
+        console.log(error)
+      }
+      
+    }
+  
   }
 
   async function addStaker() {
