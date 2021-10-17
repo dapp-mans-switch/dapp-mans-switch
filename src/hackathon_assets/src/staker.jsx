@@ -9,8 +9,6 @@ export default function Staker() {
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
-  const [myStakes, setMyStakes] = React.useState('')
-
 
   async function addStaker() {
     let amountInt
@@ -18,7 +16,8 @@ export default function Staker() {
     try {
       amountInt = getPositiveNumber(amount)
       durationInt = getPositiveNumber(duration)
-    } catch {
+    } catch (error) {
+      console.log(error)
       alert('Amount and duration must be positive numbers!')
       return
     }
@@ -32,23 +31,23 @@ export default function Staker() {
   }
 
   async function listAllStakers() {
-    let stakes = await hackathon.listAllStakers()
+    const stakes = await hackathon.listAllStakers()
 
-    var table = document.getElementById('stakerTable')
+    const table = document.getElementById('stakerTable')
 
-    let col_names = ['name', 'amount', 'days']
+    const col_names = ['name', 'amount', 'days']
     table.innerHTML = ''
 
-    var tr = table.insertRow(-1)
+    const tr = table.insertRow(-1)
     for (const cn of col_names) {
-      var tabCell = tr.insertCell(-1)
+      const tabCell = tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
 
     stakes.map(function (s) {
-      var tr = table.insertRow(-1)
+      const tr = table.insertRow(-1)
       for (const cn of col_names) {
-        var tabCell = tr.insertCell(-1)
+        const tabCell = tr.insertCell(-1)
         tabCell.innerHTML = s[cn]
       }
     });

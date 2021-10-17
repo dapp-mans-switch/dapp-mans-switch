@@ -19,12 +19,16 @@ export default function Uploader() {
         }
         // TODO validate expirytime input properly
         const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime()
-        const rewardInt = getPositiveNumber(reward)
-        const heartbeatFreqInt = getPositiveNumber(heartbeatFreq)
+        const rewardInt = helpers.getPositiveNumber(reward)
+        const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
         return {secret, rewardInt, expiryTimeInUTCSecs, heartbeatFreqInt}
     }
     
     async function uploadSecret() {
+
+        const s = await hackathon.lookupSecret(5)
+        console.log(s)
+
         let input
         if (TEST) {
             testSecretEnDecryption()
@@ -33,7 +37,8 @@ export default function Uploader() {
         } else {
             try {
                 input = validateInput(secret, reward, expiryTime, heartbeatFreq)
-            } catch {
+            } catch (error) {
+                console.log(error)
                 alert('Please check your input!')
                 return
             }
@@ -111,7 +116,7 @@ export default function Uploader() {
             <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)} rows="10" cols="50"/>
             <br/>
 
-            <label htmlFor="reward">Reward your Openers with</label>
+            <label htmlFor="reward">Reward stakers opening your secret with</label>
             <input id="reward" type="number" onChange={(ev) => setReward(ev.target.value)}/>
             <label>$HRBT</label>
             <br/>
