@@ -2,6 +2,7 @@ import Buffer "mo:base/Buffer";
 import Hash "mo:base/Hash";
 import List "mo:base/List";
 import Map "mo:base/HashMap";
+import Array "mo:base/Array";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
@@ -18,11 +19,37 @@ module {
         // TODO: allow 1 staker multiple stakes?
         let stakers = Map.HashMap<Nat, Staker>(0, eq, Hash.hash);
 
-        public func insert(id: Principal, name: Text, public_key: Text, amount: Nat, days:Nat) : Nat {
-            let newStaker = {id; name; public_key; amount; days};
+        public func insert(id: Principal, name: Text, public_key: Text, amount: Nat, days: Nat) : Nat {
+            let secrets = Array.tabulate<Nat>(0, func(i:Nat) : Nat {0});
+            let newStaker = {id; name; public_key; amount; days; secrets};
             let stake_id = stakers.size();
             stakers.put(stake_id, newStaker);
             stake_id;
+        };
+
+        public func addSecret(staker_id: Nat, secret_id: Nat) : Bool {
+            let staker = stakers.get(staker_id);
+            switch staker {
+                case null { return false };
+                case (? staker) {
+                    // TODO: authentification
+                    // TODO: disallow adding a secret twice
+
+                    let s = Array.tabulate<Nat>(1, func(i:Nat) : Nat {secret_id});
+                    let newSecrets = Array.append<Nat>(staker.secrets, s);
+                    // TODO: no better way?
+                    let newStaker = {
+                        id = staker.id;
+                        name = staker.name;
+                        public_key = staker.public_key;
+                        amount = staker.amount;
+                        days = staker.days;
+                        secrets = newSecrets;
+                    };
+                    stakers.put(staker_id, newStaker);
+                    return true;
+                };
+            };
         };
 
         public func lookup(id: Nat) : ?Staker {

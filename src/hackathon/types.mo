@@ -5,6 +5,7 @@ module {
         public_key: Text;
         amount: Nat;
         days: Nat;
+        secrets: [Nat];
     };
 
     public type Secret = {
