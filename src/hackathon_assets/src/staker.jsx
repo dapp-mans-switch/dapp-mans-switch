@@ -1,15 +1,15 @@
-import * as React from "react";
-import { hackathon } from "../../declarations/hackathon";
-import routToPage from './router';
-import { generateKeyPair } from "./crypto";
-import { getPositiveNumber } from "./helpers";
+import * as React from 'react'
+import { hackathon } from '../../declarations/hackathon'
+import routToPage from './router'
+import { generateKeyPair } from './crypto'
+import { getPositiveNumber } from './helpers'
 
 
 export default function Staker() {
 
-  const [amount, setAmount] = React.useState('');
-  const [duration, setDuration] = React.useState('');
-  const [myStakes, setMyStakes] = React.useState('');
+  const [amount, setAmount] = React.useState('')
+  const [duration, setDuration] = React.useState('')
+  const [myStakes, setMyStakes] = React.useState('')
 
 
   async function addStaker() {
@@ -25,31 +25,31 @@ export default function Staker() {
     const keyPair = generateKeyPair()
     console.log(keyPair.privateKey)
 
-    document.getElementById("staker_form").reset();
-    // TODO: replace "Staker1" by identification Auth
-    const newStakerId = await hackathon.registerStaker("Staker1", keyPair.publicKey, amountInt, durationInt);
-    alert(`New staker created with id: ${newStakerId}, pls back up ur private key ;): ${keyPair.privateKey}`);
+    document.getElementById('staker_form').reset()
+    // TODO: replace 'Staker1' by identification Auth
+    const newStakerId = await hackathon.registerStaker('Staker1', keyPair.publicKey, amountInt, durationInt)
+    alert(`New staker created with id: ${newStakerId}, pls back up ur private key ;): ${keyPair.privateKey}`)
   }
 
   async function listAllStakers() {
-    let stakes = await hackathon.listAllStakers();
+    let stakes = await hackathon.listAllStakers()
 
-    var table = document.getElementById("stakerTable");
+    var table = document.getElementById('stakerTable')
 
-    let col_names = ["name", "amount", "days"];
-    table.innerHTML = "";
+    let col_names = ['name', 'amount', 'days']
+    table.innerHTML = ''
 
-    var tr = table.insertRow(-1);
+    var tr = table.insertRow(-1)
     for (const cn of col_names) {
-      var tabCell = tr.insertCell(-1);
+      var tabCell = tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
 
     stakes.map(function (s) {
-      var tr = table.insertRow(-1);
+      var tr = table.insertRow(-1)
       for (const cn of col_names) {
-        var tabCell = tr.insertCell(-1);
-        tabCell.innerHTML = s[cn];
+        var tabCell = tr.insertCell(-1)
+        tabCell.innerHTML = s[cn]
       }
     });
   }

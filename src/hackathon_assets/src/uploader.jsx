@@ -1,8 +1,8 @@
 import * as React from 'react'
-import routToPage from './router'
 import * as crypto from './crypto'
-import { hackathon } from "../../declarations/hackathon"
 import * as helpers from './helpers'
+import { hackathon } from '../../declarations/hackathon'
+import routToPage from './router'
 
 const TEST = true
 
@@ -15,7 +15,7 @@ export default function Uploader() {
 
     function validateInput(secret, reward, expiryTime, heartbeatFreq) {
         if (secret == '') {
-            throw "secret must not be empty"
+            throw 'secret must not be empty'
         }
         // TODO validate expirytime input properly
         const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime()
@@ -126,7 +126,7 @@ export default function Uploader() {
             <br/>
 
             <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 300}}/>
-            <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>
+            <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
         </div>
         )
     }

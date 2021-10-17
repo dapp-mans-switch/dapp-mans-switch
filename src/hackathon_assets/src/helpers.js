@@ -1,6 +1,6 @@
-import { hackathon } from "../../declarations/hackathon"
-import { NUMBER_OF_SHARES } from "./crypto"
-import { min } from "mathjs"
+import { hackathon } from '../../declarations/hackathon'
+import { NUMBER_OF_SHARES } from './crypto'
+import { min } from 'mathjs'
 
 export async function drawStakers() {
     const stakers = await hackathon.listAllStakers()
