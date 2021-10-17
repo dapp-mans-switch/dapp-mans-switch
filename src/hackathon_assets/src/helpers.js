@@ -9,7 +9,7 @@ export async function drawStakers() {
     // TODO draw them with probability proportional to their stake
     // this should also happen in the backend on chain
     let chosenStakers = []
-    for (let i = 15; i < 15+numShares; i++) {
+    for (let i = 0; i < numShares; i++) {
         chosenStakers.push(stakers[i])
     }
     return chosenStakers

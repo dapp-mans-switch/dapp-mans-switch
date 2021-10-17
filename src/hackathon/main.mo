@@ -57,10 +57,11 @@ actor {
     // Secret
     var secretManager: Secret.SecretManager = Secret.SecretManager();
 
-    // dfx canister call hackathon addSecret '("secret", 10, 1635724799, 86400, vec {principal "72lwh-lydzc-z7q5x-7z4pd-cy6vi-hsnyv-g42ay-fq5t7-tmyzm-pbubw-uae"; principal "72lwh-lydzc-z7q5x-7z4pd-cy6vi-hsnyv-g42ay-fq5t7-tmyzm-pbubw-uae"})'
-    public shared(msg) func addSecret(payload: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, key_holders: [Principal]): async Nat {
+    // dfx canister call hackathon addSecret '("secret", "uploaderpubkey", 10, 1635724799, 86400, vec {"share1"; "share2"}, \
+    // vec {principal "72lwh-lydzc-z7q5x-7z4pd-cy6vi-hsnyv-g42ay-fq5t7-tmyzm-pbubw-uae"; principal "72lwh-lydzc-z7q5x-7z4pd-cy6vi-hsnyv-g42ay-fq5t7-tmyzm-pbubw-uae"})'
+    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal]): async Nat {
         let author_id = msg.caller;
-        secretManager.insert(author_id, payload, reward, expiry_time, heartbeat_freq, key_holders);
+        secretManager.insert(author_id, payload, uploader_public_key, reward, expiry_time, heartbeat_freq, encrypted_shares, key_holders);
     };
 
     // dfx canister call hackathon lookupSecret 0
@@ -79,10 +80,10 @@ actor {
         return secretManager.shouldReveal(secret_id);
     };
 
-    // dfx canister call hackathon revealKey '(0,5)'
-    public shared(msg) func revealKey(secret_id: Nat, key: Text, atIndex: Nat): async Bool  {
+    // dfx canister call hackathon revealKey '(0,"decrypted_key_share",0)'
+    public shared(msg) func revealKey(secret_id: Nat, share: Text, atIndex: Nat): async Bool  {
         let key_holder = msg.caller;
-        let payoutAmount = secretManager.revealKey(secret_id, key_holder, key, atIndex);
+        let payoutAmount = secretManager.revealKey(secret_id, key_holder, share, atIndex);
 
         switch payoutAmount {
             case null { return false };

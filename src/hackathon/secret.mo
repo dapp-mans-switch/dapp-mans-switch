@@ -23,12 +23,12 @@ module {
             return Time.now() / 1_000_000_000;
         };
 
-        public func insert(author_id: Principal, payload: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, key_holders: [Principal]): Nat {
+        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal]): Nat {
 
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
             let revealed = Array.tabulate<Bool>(key_holders.size(), func(i:Nat) : Bool {false});
-            let keys = Array.tabulate<Text>(key_holders.size(), func(i:Nat) : Text {"nokey"});
+            let shares = encrypted_shares;//Array.tabulate<Text>(key_holders.size(), func(i:Nat) : Text {"nokey"});
             let valid = true;
 
             let newSecret = {
@@ -36,6 +36,7 @@ module {
                 author_id;
 
                 payload;
+                uploader_public_key;
                 reward;
 
                 expiry_time;
@@ -43,7 +44,7 @@ module {
                 heartbeat_freq;
 
                 key_holders;
-                keys;
+                shares;
                 revealed;
                 valid
             };
@@ -77,6 +78,7 @@ module {
                         author_id = secret.author_id;
 
                         payload = secret.payload;
+                        uploader_public_key = secret.uploader_public_key;
                         reward = secret.reward;
 
                         expiry_time = secret.expiry_time;
@@ -84,7 +86,7 @@ module {
                         heartbeat_freq = secret.heartbeat_freq;
 
                         key_holders = secret.key_holders;
-                        keys = secret.keys;
+                        shares = secret.shares;
                         revealed = secret.revealed;
                         valid = secret.valid
                     };
@@ -110,14 +112,14 @@ module {
 
         };
 
-        public func revealKey(secret_id: Nat, key_holder: Principal, key: Text, atIndex: Nat) : ?Int {
+        public func revealKey(secret_id: Nat, key_holder: Principal, share: Text, atIndex: Nat) : ?Int {
             let secret = secrets.get(secret_id);
              switch secret {
                 case null { return null };
                 case (? secret) {
 
                     // check if key_holder is indeed holder for secret
-                    assert(secret.key_holders[atIndex] == key_holder);
+                    // assert(secret.key_holders[atIndex] == key_holder);
 
                     let revealOk = shouldReveal(secret_id);
 
@@ -128,8 +130,8 @@ module {
                         payout := -10; // TODO
                     };
 
-                    let newKeys: [Text] = Array.tabulate<Text>(secret.keys.size(), func(i: Nat) : Text {
-                        if ( i == atIndex ) { key } else { secret.keys[i] }
+                    let newShares: [Text] = Array.tabulate<Text>(secret.shares.size(), func(i: Nat) : Text {
+                        if ( i == atIndex ) { share } else { secret.shares[i] }
                     });
 
                     let newRevealed: [Bool] = Array.tabulate<Bool>(secret.revealed.size(), func(i: Nat) : Bool {
@@ -141,6 +143,7 @@ module {
                         author_id = secret.author_id;
 
                         payload = secret.payload;
+                        uploader_public_key = secret.uploader_public_key;
                         reward = secret.reward;
 
                         expiry_time = secret.expiry_time;
@@ -148,7 +151,7 @@ module {
                         heartbeat_freq = secret.heartbeat_freq;
 
                         key_holders = secret.key_holders;
-                        keys = newKeys; // update
+                        shares = newShares; // update
                         revealed = newRevealed; // update
                         valid = secret.valid
                     };

@@ -46,6 +46,7 @@ export default function Uploader() {
         // uploader generates a fresh key pair
         const uploaderKeyPair = crypto.generateKeyPair()
         const uploaderPrivateKey = uploaderKeyPair.privateKey
+        const uploaderPublicKey = uploaderKeyPair.publicKey
 
         // encrypt the secret
         const encryptedSecret = crypto.encryptSecret(input.secret, uploaderPrivateKey)
@@ -56,17 +57,15 @@ export default function Uploader() {
         const principals = helpers.getPrincipalsOfStakers(stakers)
         const stakerPublicKeys = helpers.getPublicKeysOfStakers(stakers)
 
-        // send to backend
-        const newSecretId = await hackathon.addSecret(encryptedSecret, input.rewardInt, input.expiryTimeInUTCSecs, input.heartbeatFreqInt, principals)
-        alert(`Secret with ID ${newSecretId} uploaded!`)
-
         // create shares of the private key
         const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
-
         // encrypt them so only the desired staker can read it
         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
         console.log(encryptedKeyShares)
-        // TODO distribute encrypted keyshares to stakers        
+
+        // send to backend
+        const newSecretId = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt, input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals)
+        alert(`Secret with ID ${newSecretId} uploaded!`)
     }
 
     function testSecretEnDecryption() {
