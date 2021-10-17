@@ -30,9 +30,8 @@ export default function Staker() {
     console.log(relevantSecrets)
 
     for (let i = 0; i < relevantSecrets.length; i++) {
-      
-    
       // TODO check if decryption of secret is allowed (time or heartbeat)
+      // TODO check if secret already decrypted (e.g. look for '.' in secret ?)
       let done
       try {
         done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
