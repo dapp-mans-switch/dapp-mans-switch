@@ -150,13 +150,59 @@ export default function Staker() {
     });
   }
 
+  async function listAllRelevantSecrets() {
+    let stakerIdInt
+    try {
+      stakerIdInt = helpers.getNaturalNumber(stakerId)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    let relevantSecrets = await hackathon.listRelevantSecrets(stakerIdInt)
+    relevantSecrets.sort(function(a, b) { 
+      return - (parseInt(b.secret_id) - parseInt(a.secret_id));
+    });
+
+    console.log(relevantSecrets)
+
+    const table = document.getElementById('secretsTable')
+
+    const col_names = ['secret_id', 'n_shares', 'shouldReveal', 'hasRevealed']
+    table.innerHTML = ''
+
+    const tr = table.insertRow(-1)
+    for (const cn of col_names) {
+      const tabCell = tr.insertCell(-1)
+      tabCell.innerHTML = cn
+    }
+
+    relevantSecrets.map(function (s) {
+      const tr = table.insertRow(-1)
+
+      const idCell = tr.insertCell(-1)
+      idCell.innerHTML = s.secret_id
+
+      const sharesCell = tr.insertCell(-1)
+      sharesCell.innerHTML = s.relevantShares.length
+
+      const shouldCell = tr.insertCell(-1)
+      shouldCell.innerHTML = s.shouldReveal
+
+      const hasCell = tr.insertCell(-1)
+      hasCell.innerHTML = s.hasRevealed
+    });
+  }
+
   React.useEffect(() => {
     listAllStakers()
+    listAllRelevantSecrets()
   })
 
   function debug() {
     setStakerId(1)
     listAllStakers()
+    listAllRelevantSecrets()
   }
 
   return (
@@ -181,6 +227,11 @@ export default function Staker() {
       <div class="panel">
         <h2>My Stakes</h2>
         <table id="stakerTable" cellPadding={5}/>
+      </div>
+
+      <div class="panel">
+        <h2>My Secret Shares</h2>
+        <table id="secretsTable" cellPadding={5}/>
       </div>
 
       <div class="panel">
