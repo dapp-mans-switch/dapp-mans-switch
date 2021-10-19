@@ -10,12 +10,15 @@ export default function Staker() {
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
   const [stakerId, setStakerId] = React.useState('')
+  const [revealSecretId, setRevealSecretId] = React.useState('')
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
   async function revealSecretShare() {
     let stakerIdInt
+    let secretId
     try {
       stakerIdInt = helpers.getNaturalNumber(stakerId)
+      secretId = helpers.getNaturalNumber(revealSecretId)
     } catch (error) {
       console.log(error)
       alert('Invalid numbers entered')
@@ -33,36 +36,43 @@ export default function Staker() {
 
     let secret
     for (let i = 0; i < relevantSecrets.length; i++) {
-      secret = relevantSecrets[i]; // only contains shares of staker
-      console.log(secret)
-      // check if decryption of secret is allowed (time or heartbeat)
-      // check if secret already decrypted
-      if (secret.hasRevealed || !secret.shouldReveal) {
-        console.log("Do not reveal")
-        //continue
+      if (relevantSecrets[i].secret_id == secretId) {
+        secret = relevantSecrets[i];
+        break
       }
+    }
 
-      let done
+    if (secret === undefined) {
+      console.log("no secret for secret_id")
+      return
+    }
 
-      try {
-        const uploaderPublicKey = secret['uploader_public_key']
-        const shares = secret['shares']
+    console.log(secret)
 
-        let decryptedShares = []
-        for (let j = 0; j < secret.relevantShares.length; j++) {
-          decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], stakerPrivateKey, uploaderPublicKey))
-        }
-        done = await hackathon.revealAllShares(secret['secret_id'], staker['staker_id'], shares);
-        //done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
+    // check if decryption of secret is allowed (time or heartbeat)
+    // check if secret already decrypted
+    if (secret.hasRevealed || !secret.shouldReveal) {
+      console.log("Do not reveal")
+      return
+    }
 
-        console.log(done)
-        alert('published share')
+    try {
+      const uploaderPublicKey = secret['uploader_public_key']
+      const shares = secret['shares']
 
-      } catch (error) {
-        console.log(`failed decryption`)
-        console.log(error)
+      let decryptedShares = []
+      for (let j = 0; j < secret.relevantShares.length; j++) {
+        decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], stakerPrivateKey, uploaderPublicKey))
       }
-      
+      let done = await hackathon.revealAllShares(secret['secret_id'], staker['staker_id'], shares);
+      //done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
+
+      console.log(done)
+      alert('published share')
+
+    } catch (error) {
+      console.log(`failed decryption`)
+      console.log(error)
     }
   
   }
@@ -164,7 +174,7 @@ export default function Staker() {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
 
-    console.log(relevantSecrets)
+    //console.log(relevantSecrets)
 
     const table = document.getElementById('secretsTable')
 
@@ -181,6 +191,14 @@ export default function Staker() {
       const tr = table.insertRow(-1)
 
       const idCell = tr.insertCell(-1)
+      
+      const secretIdText = document.getElementById('revealSecretId')
+      // TODO: make visibile that cell is clickable
+      idCell.addEventListener("click", function() {
+        console.log(s.secret_id)
+        setRevealSecretId(s.secret_id)
+        secretIdText.value = s.secret_id
+      })
       idCell.innerHTML = s.secret_id
 
       const sharesCell = tr.insertCell(-1)
@@ -239,6 +257,10 @@ export default function Staker() {
         <form>
           <label htmlFor="stakerId">Enter your staker ID:</label>
           <span><input id="stakerId" type="number" onChange={(ev) => setStakerId(ev.target.value)}/></span>
+
+          <label htmlFor="stakerId">Enter secret ID:</label>
+          <span><input id="revealSecretId" type="number" onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
+
           <label htmlFor="stakerPrivateKey">Enter your private key:</label>
           <span><input id="stakerPrivateKey" type="text" onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
         </form>
