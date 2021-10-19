@@ -7,11 +7,13 @@ import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Buffer "mo:base/Buffer";
+import Iter "mo:base/Iter";
 
 import Types "./types";
 
 module {
     type Secret = Types.Secret;
+    type RelevantSecret = Types.RelevantSecret;
     type Staker = Types.Staker;
 
     public class SecretManager() {
@@ -26,9 +28,11 @@ module {
 
         public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal], share_holder_ids: [Nat]): Nat {
 
+            assert (encrypted_shares.size() == share_holder_ids.size());
+
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
-            let revealed = Array.tabulate<Bool>(key_holders.size(), func(i:Nat) : Bool {false});
+            let revealed = Array.freeze(Array.init<Bool>(key_holders.size(), false));
             let shares = encrypted_shares;//Array.tabulate<Text>(key_holders.size(), func(i:Nat) : Text {"nokey"});
             let valid = true;
 
@@ -106,39 +110,44 @@ module {
             switch secret {
                 case null { return false };
                 case (? secret) {
-                    let now = secondsSince1970();
-                    // either secret has expired or last heartbeat is too long ago
-                    let revealOk: Bool = (now > secret.expiry_time) or (now - secret.last_heartbeat > secret.heartbeat_freq);
-                    return revealOk;
+                    return shouldRevealSecret(secret);
                 };
             };
 
         };
 
-        public func revealKey(secret_id: Nat, key_holder: Principal, share: Text, atIndex: Nat) : ?Int {
-            let secret = secrets.get(secret_id);
-             switch secret {
-                case null { return null };
-                case (? secret) {
+        public func shouldRevealSecret(secret: Secret) : Bool {
+            let now = secondsSince1970();
+            // either secret has expired or last heartbeat is too long ago
+            let revealOk: Bool = (now > secret.expiry_time) or (now - secret.last_heartbeat > secret.heartbeat_freq);
+            return revealOk;
+        };
 
+        public func revealAllShares(secret_id: Nat, key_holder: Principal, staker_id: Nat, shares: [Text]) : Bool  {
+            let secret = secrets.get(secret_id);
+            switch secret {
+                case null { return false };
+                case (? secret) {
                     // check if key_holder is indeed holder for secret
                     // assert(secret.key_holders[atIndex] == key_holder);
 
-                    let revealOk = shouldReveal(secret_id);
-
-                    var payout: Int = 0;
-                    if revealOk {
-                        payout := 10; // TODO
-                    } else {
-                        payout := -10; // TODO
+                    var share_counter: Nat = 0;
+                    let _newShares = Array.init<Text>(secret.shares.size(), "");
+                    for (i in Iter.range(0, _newShares.size()-1)) {
+                        //D.print(Nat.toText(i) # " " # Nat.toText(secret.share_holder_ids[i]) # " " # Nat.toText(share_counter));
+                        if (secret.share_holder_ids[i] == staker_id) {
+                            _newShares[i] := shares[share_counter];
+                            share_counter += 1;
+                        } else {
+                            _newShares[i] := secret.shares[i];
+                        };
                     };
+                    assert (share_counter == shares.size()); // all shares have to be revealed
 
-                    let newShares: [Text] = Array.tabulate<Text>(secret.shares.size(), func(i: Nat) : Text {
-                        if ( i == atIndex ) { share } else { secret.shares[i] }
-                    });
+                    let newShares: [Text] = Array.freeze(_newShares);
 
                     let newRevealed: [Bool] = Array.tabulate<Bool>(secret.revealed.size(), func(i: Nat) : Bool {
-                        if ( i == atIndex ) { true } else { secret.revealed[i] }
+                        if ( secret.share_holder_ids[i] == staker_id ) { true } else { secret.revealed[i] }
                     });
 
                     let newSecret = {
@@ -161,12 +170,12 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
 
-                    return ?payout;
+                    return true;
                 };
             };
         };
 
-         public func listAll() : [Secret] {
+        public func listAll() : [Secret] {
             let allSecrets = Buffer.Buffer<Secret>(0);
             for ((id, s) in secrets.entries()) {
                 allSecrets.add(s);
@@ -174,5 +183,37 @@ module {
             return allSecrets.toArray();
         };
 
+
+
+        public func listRelevantSecrets(staker_id: Nat) : [RelevantSecret] {
+            let relevantSecrets = Buffer.Buffer<RelevantSecret>(0);
+            for ((id, s) in secrets.entries()) {
+
+                if (Array.find(s.share_holder_ids, func(id:Nat) : Bool { id == staker_id}) != null) {
+                    
+                    let shouldReveal = shouldRevealSecret(s);
+                    var hasRevealed = false;
+
+                    let relevantShares = Buffer.Buffer<Text>(s.shares.size());
+                    for (i in Iter.range(0, s.shares.size()-1)) {
+                        if (s.share_holder_ids[i] == staker_id) {
+                            relevantShares.add(s.shares[i]);
+                            hasRevealed := s.revealed[i]; // have all the same boolean for same staker_id
+                        };
+                    };
+
+                    let relevantSecret = {
+                        secret_id = s.secret_id;
+                        uploader_public_key = s.uploader_public_key;
+                        relevantShares = relevantShares.toArray();
+                        shouldReveal = shouldReveal;
+                        hasRevealed = hasRevealed;
+                    };
+
+                    relevantSecrets.add(relevantSecret);
+                }
+            };
+            return relevantSecrets.toArray();
+        };
     }
 }

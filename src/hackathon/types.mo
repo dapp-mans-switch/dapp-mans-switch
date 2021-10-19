@@ -31,5 +31,15 @@ module {
         revealed: [Bool];
 
         valid: Bool;
-    }
+    };
+
+
+    public type RelevantSecret = {
+        secret_id: Nat;
+        uploader_public_key: Text;
+        relevantShares: [Text];
+        shouldReveal: Bool;
+        hasRevealed: Bool;
+    };
+
 }

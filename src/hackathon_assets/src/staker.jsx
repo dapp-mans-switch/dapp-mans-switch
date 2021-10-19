@@ -25,22 +25,41 @@ export default function Staker() {
     let staker = await hackathon.lookupStaker(stakerIdInt)
     staker = staker[0]
 
-    let secrets = await hackathon.listAllSecrets()
-    let relevantSecrets = helpers.getSecretsForStaker(staker['staker_id'], secrets)
+
+    let relevantSecrets = await hackathon.listRelevantSecrets(staker['staker_id'])
+    //let secrets = await hackathon.listAllSecrets()
+    //let relevantSecrets = helpers.getSecretsForStaker(staker['staker_id'], secrets)
     console.log(relevantSecrets)
 
+    let secret
     for (let i = 0; i < relevantSecrets.length; i++) {
-      // TODO check if decryption of secret is allowed (time or heartbeat)
-      // TODO check if secret already decrypted (e.g. look for '.' in secret ?)
+      secret = relevantSecrets[i]; // only contains shares of staker
+      console.log(secret)
+      // check if decryption of secret is allowed (time or heartbeat)
+      // check if secret already decrypted
+      if (secret.hasRevealed || !secret.shouldReveal) {
+        console.log("Do not reveal")
+        //continue
+      }
+
       let done
+
       try {
-        done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
-        console.log(relevantSecrets[i]['secret_id'])
+        const uploaderPublicKey = secret['uploader_public_key']
+        const shares = secret['shares']
+
+        let decryptedShares = []
+        for (let j = 0; j < secret.relevantShares.length; j++) {
+          decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], stakerPrivateKey, uploaderPublicKey))
+        }
+        done = await hackathon.revealAllShares(secret['secret_id'], staker['staker_id'], shares);
+        //done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
+
         console.log(done)
         alert('published share')
 
       } catch (error) {
-        console.log(`failed decryption at index ${i}`)
+        console.log(`failed decryption`)
         console.log(error)
       }
       
@@ -100,7 +119,7 @@ export default function Staker() {
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });
 
-    console.log(stakes)
+    //console.log(stakes)
 
     const table = document.getElementById('stakerTable')
 
@@ -134,6 +153,11 @@ export default function Staker() {
   React.useEffect(() => {
     listAllStakers()
   })
+
+  function debug() {
+    setStakerId(1)
+    listAllStakers()
+  }
 
   return (
     <div>
@@ -171,6 +195,7 @@ export default function Staker() {
       </div>
 
       <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>
+      <button onClick={() => { debug() }}>DEBUG</button>
     </div>
   );
 

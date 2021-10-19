@@ -39,6 +39,7 @@ export function getIdsOfStakers(stakers) {
     return ids
 }
 
+/*
 export function getSecretsForStaker(stakerId, secrets) {
     let relevantSecrets = []
     for (let i = 0; i < secrets.length; i++) {
@@ -68,6 +69,7 @@ export async function decryptStakerSecretShare(stakerId, secret, stakerPrivateKe
 
     return ready
 }
+*/
 
 export function getPositiveNumber(string) {
     let num = parseInt(string)
