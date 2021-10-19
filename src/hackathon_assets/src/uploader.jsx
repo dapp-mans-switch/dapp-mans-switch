@@ -105,32 +105,95 @@ export default function Uploader() {
          console.log(reconstructedPrivateKey == uploaderPrivateKey)
     }
 
+    async function listAllSecrets() {
     
+        let secrets = await hackathon.listMySecrets()
+        secrets.sort(function(a, b) { 
+          return - (parseInt(b.secret_id) - parseInt(a.secret_id));
+        });
+    
+        console.log(secrets)
+    
+        const table = document.getElementById('secretsTable')
+    
+        const col_names = ['secret_id', 'n_shares', 'n_revealed', 'expiry_time', 'last_heartbeat']
+        table.innerHTML = ''
+    
+        const tr = table.insertRow(-1)
+        for (const cn of col_names) {
+          const tabCell = tr.insertCell(-1)
+          tabCell.innerHTML = cn
+        }
+    
+        secrets.map(function (s) {
+          const tr = table.insertRow(-1)
+    
+          const idCell = tr.insertCell(-1)
+          idCell.innerHTML = s.secret_id
+    
+          const sharesCell = tr.insertCell(-1)
+          sharesCell.innerHTML = s.shares.length
+    
+          const revealedCell = tr.insertCell(-1)
+          revealedCell.innerHTML = s.revealed.reduce((a,b) => a + b, 0)
+    
+        
+          const expiryCell = tr.insertCell(-1)
+          expiryCell.innerHTML = s.expiry_time
+
+          const heartbeatCell = tr.insertCell(-1)
+          heartbeatCell.innerHTML = s.last_heartbeat
+        });
+    }
+
+    async function sendHeartbeat() {
+        let done = await hackathon.sendHeartbeat()
+        console.log("Sent hearbeat?", done)
+        listAllSecrets()
+    }
+    
+    React.useEffect(() => {
+        listAllSecrets()
+      })
+
+
     return (
         <div>
             <h1>Uploader</h1>
-            <label htmlFor="secret">Your secret to be published:</label>
-            <br/>
 
-            <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)} rows="10" cols="50"/>
-            <br/>
+            <div class="panel">
+                <h2>My Secrets</h2>
+                <table id="secretsTable" cellPadding={5}/>
+            </div>
 
-            <label htmlFor="reward">Reward stakers opening your secret with</label>
-            <input id="reward" type="number" onChange={(ev) => setReward(ev.target.value)}/>
-            <label>$HRBT</label>
-            <br/>
+            <div class="panel">
+                <h2>Heartbeat</h2>
+                <button onClick={() => sendHeartbeat()}>Everybody stay calm! I'm still alive!</button>
+            </div>
 
-            <label htmlFor="heartbeatFreq">Prove your liveliness every</label>
-            <input id="heartbeatFreq" type="number" onChange={(ev) => setHeartbeatFreq(ev.target.value)}/>
-            <label>days</label>
-            <br/>
+            <div class="panel">
+                <label htmlFor="secret">Your secret to be published:</label>
+                <br/>
+                <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)} rows="10" cols="50"/>
+                <br/>
 
-            <label htmlFor="expiryTime">Your secret will be released at the latest on:</label>
-            <input id="expiryTime" type="datetime-local" onChange={(ev) => setExpiryTime(ev.target.value)}/>
-            <br/>
+                <label htmlFor="reward">Reward stakers opening your secret with</label>
+                <input id="reward" type="number" onChange={(ev) => setReward(ev.target.value)}/>
+                <label>$HRBT</label>
+                <br/>
 
-            <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 300}}/>
-            <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+                <label htmlFor="heartbeatFreq">Prove your liveliness every</label>
+                <input id="heartbeatFreq" type="number" onChange={(ev) => setHeartbeatFreq(ev.target.value)}/>
+                <label>days</label>
+                <br/>
+
+                <label htmlFor="expiryTime">Your secret will be released at the latest on:</label>
+                <input id="expiryTime" type="datetime-local" onChange={(ev) => setExpiryTime(ev.target.value)}/>
+                <br/>
+
+                <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 300}}/>
+                <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+            </div>
         </div>
         )
     }

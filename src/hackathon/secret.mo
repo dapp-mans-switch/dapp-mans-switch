@@ -29,11 +29,12 @@ module {
         public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal], share_holder_ids: [Nat]): Nat {
 
             assert (encrypted_shares.size() == share_holder_ids.size());
+            // TODO check that author_id != key_holder
 
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
             let revealed = Array.freeze(Array.init<Bool>(key_holders.size(), false));
-            let shares = encrypted_shares;//Array.tabulate<Text>(key_holders.size(), func(i:Nat) : Text {"nokey"});
+            let shares = encrypted_shares;
             let valid = true;
 
             let newSecret = {
@@ -65,42 +66,56 @@ module {
             secrets.get(id);
         };
 
-        public func sendHearbeat(author_id: Principal, secret_id: Nat) : Bool {
+        public func sendHearbeatForSecret(author_id: Principal, secret: Secret) : Bool {
+            // TODO: proper authentification
+            if (author_id != secret.author_id) {
+                return false;
+            };
+
+            let heartbeat = secondsSince1970();
+
+            // TODO: no better way?
+            let newSecret = {
+                secret_id = secret.secret_id;
+                author_id = secret.author_id;
+
+                payload = secret.payload;
+                uploader_public_key = secret.uploader_public_key;
+                reward = secret.reward;
+
+                expiry_time = secret.expiry_time;
+                last_heartbeat = heartbeat; // update heartbeat
+                heartbeat_freq = secret.heartbeat_freq;
+
+                key_holders = secret.key_holders;
+                share_holder_ids = secret.share_holder_ids;
+                shares = secret.shares;
+                revealed = secret.revealed;
+                valid = secret.valid
+            };
+
+            secrets.put(secret.secret_id, newSecret);
+
+            return true;
+        };
+
+        
+        public func sendHeartbeat(author_id: Principal) : Bool{
+            var ok: Bool = true;
+            let author_secrets = listSecretsOf(author_id);
+            for (s in author_secrets.vals()) {
+                ok := ok and sendHearbeatForSecret(author_id, s);
+            };
+            return ok
+        };
+
+        public func sendHeartbeatForId(author_id: Principal, secret_id: Nat) : Bool {
             let secret = secrets.get(secret_id);
 
             switch secret {
                 case null { return false };
                 case (? secret) {
-                    // TODO: proper authentification
-                    if (author_id != secret.author_id) {
-                        return false;
-                    };
-
-                    let heartbeat = secondsSince1970();
-
-                    // TODO: no better way?
-                    let newSecret = {
-                        secret_id = secret.secret_id;
-                        author_id = secret.author_id;
-
-                        payload = secret.payload;
-                        uploader_public_key = secret.uploader_public_key;
-                        reward = secret.reward;
-
-                        expiry_time = secret.expiry_time;
-                        last_heartbeat = heartbeat; // update heartbeat
-                        heartbeat_freq = secret.heartbeat_freq;
-
-                        key_holders = secret.key_holders;
-                        share_holder_ids = secret.share_holder_ids;
-                        shares = secret.shares;
-                        revealed = secret.revealed;
-                        valid = secret.valid
-                    };
-
-                    secrets.put(secret_id, newSecret);
-
-                    return true;
+                    sendHearbeatForSecret(author_id, secret);
                 };
             };
         };
@@ -113,7 +128,6 @@ module {
                     return shouldRevealSecret(secret);
                 };
             };
-
         };
 
         public func shouldRevealSecret(secret: Secret) : Bool {
@@ -215,5 +229,15 @@ module {
             };
             return relevantSecrets.toArray();
         };
-    }
+        
+        public func listSecretsOf(author_id: Principal) : [Secret] {
+            let allSecrets = Buffer.Buffer<Secret>(0);
+            for ((id, s) in secrets.entries()) {
+                if (s.author_id == author_id) {   
+                    allSecrets.add(s);
+                };
+            };
+            return allSecrets.toArray();
+        };
+    };
 }

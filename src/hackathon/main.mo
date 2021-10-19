@@ -75,8 +75,17 @@ actor {
         secretManager.listAll();
     };
 
-     public query func listRelevantSecrets(staker_id: Nat) : async [RelevantSecret] {
+    public query func listRelevantSecrets(staker_id: Nat) : async [RelevantSecret] {
         secretManager.listRelevantSecrets(staker_id);
+    };
+
+    public shared(msg) func listMySecrets() : async [Secret] {
+        let author_id = msg.caller;
+        secretManager.listSecretsOf(author_id);
+    };
+
+    public query func listSecrets(author_id: Principal) : async [Secret] {
+        secretManager.listSecretsOf(author_id);
     };
 
 
@@ -93,9 +102,14 @@ actor {
     };
 
     // dfx canister call hackathon sendHearbeat 0
-    public shared(msg) func sendHearbeat(secret_id: Nat) : async Bool {
+    public shared(msg) func sendHearbeatForId(secret_id: Nat) : async Bool {
         let author_id = msg.caller;
-        secretManager.sendHearbeat(author_id, secret_id)
+        secretManager.sendHeartbeatForId(author_id, secret_id)
+    };
+
+    public shared(msg) func sendHeartbeat() : async Bool {
+        let author_id = msg.caller;
+        secretManager.sendHeartbeat(author_id)
     };
 
     // dfx canister call hackathon shouldReveal 0

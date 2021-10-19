@@ -29,6 +29,15 @@ dfx canister call hackathon addSecret '("secret", "uploaderpubkey", 10, 15357247
 
 dfx canister call hackathon addSecret '("secret", "uploaderpubkey", 10, 1635724799, 86400, vec {"share1"; "share2"; "share3"}, vec {principal "'"${test_principal}"'"; principal "'"${test_principal}"'"; principal "'"${test_principal}"'"}, vec {2;2;2})'
 
+dfx identity use anonymous
+
+dfx canister call hackathon addSecret '("secret", "uploaderpubkey", 10, 1535724799, 86400, vec {"share1"; "share2"; "share3"}, vec {principal "'"${default_principal}"'"; principal "'"${default_principal}"'"; principal "'"${default_principal}"'"}, vec {1;1;1})'
+
+dfx canister call hackathon addSecret '("secret", "uploaderpubkey", 10, 1635724799, 86400, vec {"share1"; "share2"; "share3"}, vec {principal "'"${test_principal}"'"; principal "'"${test_principal}"'"; principal "'"${test_principal}"'"}, vec {2;2;2})'
+
+dfx identity use default
+
+
 echo "\n\n\n All secrets"
 dfx canister call hackathon listAllSecrets
 
