@@ -6,6 +6,9 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 let localCanisters, prodCanisters, canisters;
 
+const LOCAL_II_CANISTER =
+  "http://rkp4c-7iaaa-aaaaa-aaaca-cai.localhost:8000/#authorize";
+
 function initCanisterIds() {
   try {
     localCanisters = require(path.resolve(".dfx", "local", "canister_ids.json"));
@@ -94,7 +97,9 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      HACKATHON_CANISTER_ID: canisters["hackathon"]
+      HACKATHON_CANISTER_ID: canisters["hackathon"],
+      LOCAL_II_CANISTER,
+      DFX_NETWORK: process.env.DFX_NETWORK || "local"
     }),
     new webpack.ProvidePlugin({
       Buffer: [require.resolve("buffer/"), "Buffer"],

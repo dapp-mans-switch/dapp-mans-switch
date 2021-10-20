@@ -11,6 +11,10 @@ actor {
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
 
+    public shared (msg) func whoami() : async Principal {
+        msg.caller
+    };
+
     public func greet(content : Text) : async Text {
         return "New forum post: " # content # "!!!";
     };

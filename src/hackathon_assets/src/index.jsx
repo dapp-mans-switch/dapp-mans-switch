@@ -2,8 +2,17 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
 
+import Auth from './auth/auth'
+
 
 export default function Main() {
+
+  async function testAuth() {
+    let auth = new Auth()
+    await auth.auth()
+    //let actor = await auth.getCanister()
+  }
+  testAuth()
   
   return (
     <div>
