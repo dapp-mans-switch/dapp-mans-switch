@@ -17,6 +17,18 @@ img {
     display: block;
     margin: auto;
 }
+
+.key-flip-video {
+    margin-top: 3%;
+    width: 90%;
+}
+
+
+.start-page-button-div {
+    display: flex;
+    margin: 0 5% 2% 5%;
+}
+
 section {
     display: flex;
     flex-flow: row wrap;
@@ -86,12 +98,14 @@ section {
     padding: 10px;
     line-height: 2;
     width: 50%;
+    min-width: 700px;
     border-radius: 20px;
     background: rgb(239,238,238);
     background-color:#E0E5EC;
     box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
+
 
 form {
     padding: 0 50px 0 50px;
