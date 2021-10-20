@@ -43,7 +43,7 @@ npm install
 II_ENV=development dfx deploy --no-wallet --argument '(null)'
 ```
 
-If you have no error then start the local development server,
+If you have no error, then make sure that `LOCAL_II_CANISTER` matches the internet identity canister in `webpack.config.js` and start the local development server,
 ```bash
 cd ICP-hackathon
 npm start
