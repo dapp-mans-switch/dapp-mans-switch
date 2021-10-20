@@ -27,7 +27,7 @@ Clone [Internet Identity](https://github.com/dfinity/internet-identity).
 Make sure you have installed:
 - dfx `dfx --version`
 - Rust `cargo --version`
-- NodeJS `npm --version`
+- NodeJS `npm --version;  node --version`
 - CMake `cmake --version`
 
 ```bash
