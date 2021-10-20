@@ -25,10 +25,10 @@ See https://sdk.dfinity.org/docs/quickstart/local-quickstart.html for the full t
 Clone [Internet Identity](https://github.com/dfinity/internet-identity).
 
 Make sure you have installed:
-- dfx
-- Rust
-- NodeJS
-- CMake
+- dfx `dfx --version`
+- Rust `cargo --version`
+- NodeJS `npm --version`
+- CMake `cmake --version`
 
 ```bash
 cd ICP-hackathon
