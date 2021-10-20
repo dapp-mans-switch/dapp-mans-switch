@@ -17,3 +17,45 @@ There is a faucet for free cycles here: https://faucet.dfinity.org/auth.
 However, if we don't want to spend real money we should not use up our cycles for the heck of it; maybe only one person should deploy the project on chain.
 
 See https://sdk.dfinity.org/docs/quickstart/local-quickstart.html for the full tutorial.
+
+
+## Authentication
+
+### For local development
+Clone [Internet Identity](https://github.com/dfinity/internet-identity).
+
+Make sure you have installed:
+- dfx
+- Rust
+- NodeJS
+- CMake
+
+```bash
+cd ICP-hackathon
+npm install
+dfx start --clean
+dfx deploy
+```
+
+```bash
+cd internet-identity
+npm install
+II_ENV=development dfx deploy --no-wallet --argument '(null)'
+```
+
+If you have no error then start the local development server,
+```bash
+cd ICP-hackathon
+npm start
+```
+
+If you do have errors, delete the `.dfx` folder in both projects and repeat.
+```bash
+cd internet-identity
+rm -rf .dfx/
+cd ICP-hackathon
+rm -rf .dfx/
+```
+Also, make sure to `npm install` and to have all dependencies for internet identity installed and execute the calls in the given order.
+
+You can disable authentification in `index.jsx`.
