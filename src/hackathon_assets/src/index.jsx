@@ -28,7 +28,7 @@ export default function Main() {
   }
   
   authenticate()
-  // authenticate(false) // for no auth and anonymous identity
+  // authenticate(true) // for no auth and anonymous identity
 
 
   async function whoami() {
