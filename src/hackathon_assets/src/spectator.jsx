@@ -1,7 +1,9 @@
 import * as React from 'react'
 import routToPage from './router'
 
-export default function Spectator() {
+export default function Spectator(props) {
+  const hackathon = props.actor;
+
     return (
       <div>
         <h1>Spectator</h1>

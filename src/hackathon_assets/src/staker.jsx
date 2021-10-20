@@ -1,11 +1,13 @@
 import * as React from 'react'
-import { hackathon } from '../../declarations/hackathon'
+//import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
 
 
-export default function Staker() {
+export default function Staker(props) {
+
+  const hackathon = props.actor;
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')

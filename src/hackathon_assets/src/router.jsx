@@ -10,22 +10,23 @@ import LoginForm from './auth/loginform'
 
 // this is the router
 // import and call routToPage(<name of page(string)>) from any component
-export default function routToPage(pageName) {
+// pass hackathon actor in props
+export default function routToPage(pageName, props={}) {
   switch(pageName) {
-    case 'Staker':
-      render(<Staker />, document.getElementById('app'))
-      break
-    case 'Uploader':
-      render(<Uploader />, document.getElementById('app'))
-      break
     case 'Main':
       render(<Main />, document.getElementById('app'))
       break
-    case 'Spectator':
-      render(<Spectator />, document.getElementById('app'))
-      break
     case 'LoginForm':
       render(<LoginForm />, document.getElementById('app'))
+      break
+    case 'Staker':
+      render(React.createElement(Staker, props), document.getElementById('app'))
+      break
+    case 'Uploader':
+      render(React.createElement(Uploader, props), document.getElementById('app'))
+      break
+    case 'Spectator':
+      render(React.createElement(Spectator, props), document.getElementById('app'))
       break
     default:
   }

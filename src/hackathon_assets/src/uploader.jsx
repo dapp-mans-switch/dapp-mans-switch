@@ -1,12 +1,13 @@
 import * as React from 'react'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
-import { hackathon } from '../../declarations/hackathon'
+//import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 
 const TEST = true
 
-export default function Uploader() {
+export default function Uploader(props) {
+    const hackathon = props.actor;
 
     const [secret, setSecret] = React.useState('')
     const [reward, setReward] = React.useState('')

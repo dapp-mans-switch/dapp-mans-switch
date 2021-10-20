@@ -1,24 +1,23 @@
 import { AuthClient } from "@dfinity/auth-client";
 
-import { canisterId, createActor } from '../../../declarations/hackathon';
+import { canisterId, createActor, hackathon } from '../../../declarations/hackathon';
 
 import routToPage from '../router'
 
 
 export default class Auth {
-
     async auth() {
         this.authClient = await AuthClient.create();
         if (await this.authClient.isAuthenticated()) {
-            const identity = await this.authClient.getIdentity();
-            console.log("authenticated: identity", identity.getPrincipal().toString())
+            //const identity = await this.authClient.getIdentity();
+            console.log("authenticated")
+            return true;
         } else {
             console.log("not authenticated")
             routToPage('LoginForm')
             this.makeLoginButton()
+            return false;
         }
-
-        return this
     }
 
     makeLoginButton() {
@@ -56,6 +55,11 @@ export default class Auth {
                 identity,
             },
         })
+        return actor;
+    }
+
+    getAnomymousCanister() {
+        const actor = hackathon;
         return actor;
     }
     

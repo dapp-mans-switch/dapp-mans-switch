@@ -10,18 +10,37 @@ export default function Main() {
   let hackathon
   let auth
 
-  async function autenticate() {
-    auth = new Auth()
-    await auth.auth()
-    hackathon = await auth.getCanister()
-  }
+  async function authenticate(debug=false) {
+    document.body.style.backgroundColor = "red"; 
+    // if you see this then getCanister is too slow and
+    // we should deactivate buttons until the asynchronous function is done
 
-  autenticate()
+    auth = new Auth()
+    if (debug) {
+      hackathon = auth.getAnomymousCanister()
+    } else {
+      let ok = await auth.auth()
+      if (ok) {
+        hackathon = await auth.getCanister()
+      }
+    }
+    document.body.style.backgroundColor = "#E0E5EC";
+  }
+  
+  authenticate()
+  // authenticate(false) // for no auth and anonymous identity
+
 
   async function whoami() {
     let id = await hackathon.whoami()
+    let s = id.toString()
     console.log("principal", id)
-    alert("You are " + id.toString());
+
+    if (s == '2vxsx-fae') {
+      s += " (anonymous)"
+    }
+
+    alert("You are " + s);
   }
 
   return (
@@ -38,9 +57,9 @@ export default function Main() {
         </video>
 
         <div class="start-page-button-div">
-          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker')} class="rainbow-button" style={{width: 150}}></a>
-          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader')} class="rainbow-button" style={{width: 180}}></a>
-          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator')} class="rainbow-button" style={{width: 180}}></a>
+          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', {actor: hackathon})} class="rainbow-button" style={{width: 150}}></a>
+          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', {actor: hackathon})} class="rainbow-button" style={{width: 180}}></a>
+          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', {actor: hackathon})} class="rainbow-button" style={{width: 180}}></a>
         </div>
       </div>
 
