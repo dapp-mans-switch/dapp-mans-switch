@@ -7,13 +7,23 @@ import Auth from './auth/auth'
 
 export default function Main() {
 
-  async function testAuth() {
-    let auth = new Auth()
+  let hackathon
+  let auth
+
+  async function autenticate() {
+    auth = new Auth()
     await auth.auth()
-    //let actor = await auth.getCanister()
+    hackathon = await auth.getCanister()
   }
-  testAuth()
-  
+
+  autenticate()
+
+  async function whoami() {
+    let id = await hackathon.whoami()
+    console.log("principal", id)
+    alert("You are " + id.toString());
+  }
+
   return (
     <div>
     
@@ -33,6 +43,10 @@ export default function Main() {
           <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator')} class="rainbow-button" style={{width: 180}}></a>
         </div>
       </div>
+
+      
+      <button onClick={() =>  whoami()}>Who Am I?</button>
+      <button onClick={() => auth.logout()}>Logout</button>
 
     </div>
   );

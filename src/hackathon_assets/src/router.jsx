@@ -5,6 +5,7 @@ import Staker from './staker'
 import Uploader from './uploader'
 import Main from './index'
 import Spectator from './spectator'
+import LoginForm from './auth/loginform'
 
 
 // this is the router
@@ -22,6 +23,9 @@ export default function routToPage(pageName) {
       break
     case 'Spectator':
       render(<Spectator />, document.getElementById('app'))
+      break
+    case 'LoginForm':
+      render(<LoginForm />, document.getElementById('app'))
       break
     default:
   }
