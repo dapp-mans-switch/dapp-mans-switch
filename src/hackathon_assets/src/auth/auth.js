@@ -65,6 +65,12 @@ export default class Auth {
         const actor = hackathon;
         return actor;
     }
+
+    async getAnomymousIdentity() {
+        this.authClient = await AuthClient.create();
+        const identity = await this.authClient.getIdentity();
+        return identity;
+    }
     
     async logout() {      
         await this.authClient.logout();

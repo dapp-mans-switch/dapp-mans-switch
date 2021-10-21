@@ -20,6 +20,7 @@ export default function Main() {
 
     auth = new Auth()
     if (debug) {
+      identity = await auth.getAnomymousIdentity()
       hackathon = auth.getAnomymousCanister()
     } else {
       let ok = await auth.auth()
@@ -29,11 +30,13 @@ export default function Main() {
       }
     }
     props = {actor: hackathon, identity: identity, auth: auth}
+    console.log("Identity Principal:", identity.getPrincipal().toString())
+    
     document.body.style.backgroundColor = "#E0E5EC";
   }
   
-  authenticate()
-  // authenticate(true) // for no auth and anonymous identity
+  //authenticate()
+  authenticate(true) // for no auth and anonymous identity
 
 
   async function whoami() {
