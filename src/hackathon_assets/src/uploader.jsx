@@ -42,6 +42,9 @@ export default function Uploader(props) {
             }
         }
 
+        // clear form to prevent multi upload
+        document.getElementById('uploader_form').reset()
+
         // uploader generates a fresh key pair
         const uploaderKeyPair = crypto.generateKeyPair()
         const uploaderPrivateKey = uploaderKeyPair.privateKey
@@ -185,6 +188,7 @@ export default function Uploader(props) {
             </div>
 
             <div class="panel">
+              <form id="uploader_form">
                 <label htmlFor="secret">Your secret to be published:</label>
                 <br/>
                 <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)} rows="10" cols="50"/>
@@ -206,6 +210,7 @@ export default function Uploader(props) {
 
                 <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 300}}/>
                 <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+              </form>
             </div>
         </div>
         )
