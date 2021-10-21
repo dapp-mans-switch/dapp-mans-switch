@@ -31,6 +31,7 @@ export default function Uploader(props) {
         if (TEST) {
             testSecretEnDecryption()
             testSharingAndReconstruction()
+            return
             input = {'secret': 'my top secret secret', 'rewardInt': 420, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
@@ -110,8 +111,10 @@ export default function Uploader(props) {
          const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
  
          // lets say 1 of the 3 keyshares got lost
-         const share1 = crypto.decryptKeyShare(encryptedKeyShares[0], staker1PrivateKey, uploaderPublicKey)
-         const share2 = crypto.decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey)
+         const share1 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[0], staker1PrivateKey, uploaderPublicKey))
+         const share2 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey))
+         const share3 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[2], staker3PrivateKey, uploaderPublicKey))
+         
          const shares = {1: share1, 2: share2}
          const reconstructedPrivateKey = crypto.reconstructPrivateKey(shares)
          // can still reconstruct
