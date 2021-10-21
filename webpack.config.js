@@ -80,6 +80,15 @@ module.exports = {
     rules: [
       { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
   //    { test: /\.css$/, use: ['style-loader','css-loader'] }
+      {
+        test: /\.mkv$/,
+          use: {
+            loader: 'url-loader',
+            options: {
+                limit: 100000
+            }
+          }
+      }
     ]
    },
   plugins: [

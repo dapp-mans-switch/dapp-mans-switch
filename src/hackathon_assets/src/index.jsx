@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
-
 import Auth from './auth/auth'
+
+import keyFlipVideo from './../assets/key-flip.mkv'
 
 
 export default function Main() {
@@ -39,8 +40,8 @@ export default function Main() {
     console.log("Identity Principal:", identity.getPrincipal().toString())
   }
   
-  // authenticate()
-  no_authenticate() // for no auth and anonymous identity
+  authenticate()
+  // no_authenticate() // for no auth and anonymous identity
 
 
   async function whoami() {
@@ -54,6 +55,7 @@ export default function Main() {
 
     alert("You are " + s);
   }
+  
 
   return (
     <div>
@@ -64,8 +66,8 @@ export default function Main() {
       regularly verify that you are alive, otherwise your uploaded files will get published
 
       <div class="panel">
-        <video autoPlay loop class="key-flip-video">
-          <source src="/assets/key-flip.mkv"/>
+        <video autoPlay loop muted class="key-flip-video">
+          <source src={keyFlipVideo}/>
         </video>
 
         <div class="start-page-button-div">
