@@ -1,6 +1,7 @@
 import * as React from 'react'
 import routToPage from './router'
 import * as helpers from './helpers'
+import * as crypto from './crypto'
 
 export default function Spectator(props) {
   const hackathon = props.actor;
@@ -26,16 +27,41 @@ export default function Spectator(props) {
     }
 
     secrets.map(function (s) {
+      let n_shares = s.shares.length;
+      let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
       const tr = table.insertRow(-1)
+      tr.addEventListener("click", function() {
+        if (crypto.enoughSharesToDecrypt(n_shares, n_revealed)) {
+          try {
+            let keyshares = {}
+            for (let i=0; i<n_shares; i++) {
+              let share = s.shares[i]
+              let ok = s.revealed[i]
+              if (ok) {
+                keyshares[i+1] = crypto.base64ToKeyShare(share)
+              }
+            }
+            const reconstructedPrivateKey = crypto.reconstructPrivateKey(keyshares)
+            const payload = crypto.decryptSecret(s.payload, reconstructedPrivateKey)
+
+            alert("Decrypted secret " + payload)
+          } catch (error) {
+            console.log(error)
+          }
+        
+        } else {
+          alert("Cannot decrypt")
+        }
+      })
 
       const idCell = tr.insertCell(-1)
       idCell.innerHTML = s.secret_id
 
       const sharesCell = tr.insertCell(-1)
-      sharesCell.innerHTML = s.shares.length
+      sharesCell.innerHTML = n_shares
 
       const revealedCell = tr.insertCell(-1)
-      revealedCell.innerHTML = s.revealed.reduce((a,b) => a + b, 0)
+      revealedCell.innerHTML = n_revealed
 
     
       const expiryCell = tr.insertCell(-1)

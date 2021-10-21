@@ -6,6 +6,10 @@ import * as asymCrypto from 'asymmetric-crypto'
 export const NUMBER_OF_SHARES = 3
 const MIN_SHARES_TO_RECOVER = floor(NUMBER_OF_SHARES/2)+1
 
+export function enoughSharesToDecrypt(nShares, nSharesToRecover) {
+    return nSharesToRecover >= (floor(nShares/2) + 1)
+}
+
 export function generateKeyPair() {
     const keyPair = asymCrypto.keyPair()
     const privateKey = keyPair.secretKey

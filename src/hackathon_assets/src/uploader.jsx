@@ -115,7 +115,7 @@ export default function Uploader(props) {
          const share2 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey))
          const share3 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[2], staker3PrivateKey, uploaderPublicKey))
          
-         const shares = {1: share1, 2: share2}
+         const shares = {1: share1, 3: share3}
          const reconstructedPrivateKey = crypto.reconstructPrivateKey(shares)
          // can still reconstruct
          console.log("testSharingAndReconstruction", reconstructedPrivateKey == uploaderPrivateKey)
