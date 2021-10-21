@@ -49,13 +49,18 @@ cd ICP-hackathon
 npm start
 ```
 
-If you do have errors, delete the `.dfx` folder in both projects and repeat.
+If you do have errors, delete the `.dfx` folder and node modules in both projects and repeat.
 ```bash
 cd internet-identity
 rm -rf .dfx/
+rm -rf node_modules/
+rm package-lock.json
+
 cd ICP-hackathon
 rm -rf .dfx/
+rm -rf node_modules/
+rm package-lock.json
 ```
 Also, make sure to `npm install` and to have all dependencies for internet identity installed and execute the calls in the given order.
 
-You can disable authentification in `index.jsx`.
+You can disable authentication in `index.jsx`.
