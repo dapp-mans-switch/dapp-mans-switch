@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
-import Auth from './auth/auth'
+import Auth from './auth'
 
 import keyFlipVideo from './../assets/key-flip.mkv'
 
@@ -70,16 +70,19 @@ export default function Main() {
           <source src={keyFlipVideo}/>
         </video>
 
-        <div class="start-page-button-div">
+        <div id="start-if-auth" class="start-page-button-div">
           <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', props)} class="rainbow-button" style={{width: 150}}></a>
           <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', props)} class="rainbow-button" style={{width: 180}}></a>
           <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', props)} class="rainbow-button" style={{width: 180}}></a>
+        </div>
+        <div id="start-if-not-auth" class="start-page-button-div">
+          <a id="loginButton" data-text="Authenticate" class="rainbow-button" style={{width: 220}}></a>
         </div>
       </div>
 
       
       <button onClick={() =>  whoami()}>Who Am I?</button>
-      <button onClick={() => auth.logout()}>Logout</button>
+      <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>
   );
