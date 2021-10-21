@@ -17,20 +17,24 @@ export default function Staker(props) {
   const [revealSecretId, setRevealSecretId] = React.useState('')
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
+  async function isRegistered() {
+    const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
+    console.log(backendPublicKey, backendPublicKey.length > 0)
+    return backendPublicKey.length > 0
+  }
+
   async function registerStaker() {
-    
-    //const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-    const backendPublicKey = await hackathon.lookupMyPublicKey()
-    if (backendPublicKey.length > 0) {
+    if (await isRegistered()) {
+      const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
       console.log("PublicKey:", backendPublicKey[0])
       alert("Already registered!")
 
     } else {
+      console.log("Generate new key pair")
+      const keyPair = crypto.generateKeyPair()
 
       const ok = await hackathon.registerStaker(keyPair.publicKey)
       if (ok) {
-        console.log("Generate new key pair")
-        const keyPair = crypto.generateKeyPair()
         console.log("PrivateKey:", keyPair.privateKey)
   
         downloadPrivateKey(keyPair.privateKey)
@@ -106,6 +110,11 @@ export default function Staker(props) {
   }
 
   async function addStake() {
+    if (!(await isRegistered())) {
+      alert("Please register first!")
+      return
+    }
+
     console.log("addStake")
     let amountInt
     let durationInt
