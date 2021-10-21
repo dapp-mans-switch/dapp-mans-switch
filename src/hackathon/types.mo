@@ -23,7 +23,7 @@ module {
         heartbeat_freq: Int; // every heartbeat_freq a heartbeat has to be sent
 
         share_holder_ids: [Principal];
-        share_holder_stake_ids: [Nat];
+        share_holder_stake_ids: [Nat]; // as of now unused, maybe use for calculating payout
         shares: [Text];
         revealed: [Bool];
 
