@@ -5,7 +5,7 @@ import { min } from 'mathjs'
 export async function drawStakes() {
     const stakes = await hackathon.listAllStakes()
     if (stakes.length == 0) {
-        error('no stakes :(')
+        console.error('no stakes :(')
     }
 
     //let numShares = min(stakes.length, crypto.NUMBER_OF_SHARES)

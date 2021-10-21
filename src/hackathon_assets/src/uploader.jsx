@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as crypto from './crypto'
+import sha256 from 'js-sha256'
 import * as helpers from './helpers'
 //import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
@@ -72,14 +73,18 @@ export default function Uploader(props) {
 
         // create shares of the private key
         const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
-        const keysharesArr = Object.values(keyshares)
-        console.log("keyshares", keysharesArr.map(crypto.keyShareToBase64))
+        const keysharesBase64 = Object.values(keyshares).map(crypto.keyShareToBase64)
+        console.log("keysharesBase64", keysharesBase64)
+
+        const keysharesShas = keysharesBase64.map(sha256);
+        console.log("keysharesShas", keysharesShas)
+
         // encrypt them so only the desired staker can read it
         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakePublicKeys)
         console.log("encryptedKeyShares", encryptedKeyShares)
         // send to backend
         const newSecret = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
-            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals, stakeIds)
+            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, keysharesShas, principals, stakeIds)
         
         console.log("newSecret", newSecret)
         if (newSecret.length > 0) {

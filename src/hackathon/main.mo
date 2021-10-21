@@ -5,6 +5,8 @@ import Secret "./secret";
 import Staker "./staker";
 import Types "./types";
 
+import SHA "./sha/SHA256"
+
 actor {
     type Stake = Types.Stake;
     type Staker = Types.Staker;
@@ -23,6 +25,11 @@ actor {
         return "New forum post: " # content # "!!! from " # Principal.toText(msg.caller);
     };
 
+
+    public query func sha256(text: Text) : async Text {
+        SHA.sha256(text);
+    };
+    
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
@@ -96,9 +103,9 @@ actor {
     };
 
 
-    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): async ?Secret {
+    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): async ?Secret {
         let author_id = msg.caller;
-        secretManager.insert(author_id, payload, uploader_public_key, reward, expiry_time, heartbeat_freq, encrypted_shares, share_holder_ids, share_holder_stake_ids);
+        secretManager.insert(author_id, payload, uploader_public_key, reward, expiry_time, heartbeat_freq, encrypted_shares, decrypted_share_shas, share_holder_ids, share_holder_stake_ids);
     };
 
     // dfx canister call hackathon lookupSecret 0

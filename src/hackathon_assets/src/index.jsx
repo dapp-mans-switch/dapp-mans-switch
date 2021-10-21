@@ -40,8 +40,8 @@ export default function Main() {
     console.log("Identity Principal:", identity.getPrincipal().toString())
   }
   
-  authenticate()
-  // no_authenticate() // for no auth and anonymous identity
+  // authenticate()
+  no_authenticate() // for no auth and anonymous identity
 
 
   async function whoami() {

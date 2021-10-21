@@ -10,6 +10,7 @@ import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
 
 import Types "./types";
+import SHA "./sha/SHA256"
 
 module {
     type Secret = Types.Secret;
@@ -23,7 +24,7 @@ module {
             return Time.now() / 1_000_000_000;
         };
 
-        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): ?Secret {
+        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): ?Secret {
 
             assert (encrypted_shares.size() == share_holder_ids.size());
             // TODO check that author_id != key_holder
@@ -49,8 +50,11 @@ module {
 
                 share_holder_ids;
                 share_holder_stake_ids;
+
                 shares;
+                decrypted_share_shas;
                 revealed;
+
                 valid
             };
 
@@ -87,8 +91,11 @@ module {
 
                 share_holder_ids = secret.share_holder_ids;
                 share_holder_stake_ids = secret.share_holder_stake_ids;
+
                 shares = secret.shares;
+                decrypted_share_shas = secret.decrypted_share_shas;
                 revealed = secret.revealed;
+
                 valid = secret.valid
             };
 
@@ -135,6 +142,7 @@ module {
             return revealOk;
         };
 
+        // shares have to be in correct order, as obtained by getRelevantSecret
         public func revealAllShares(secret_id: Nat, staker_id: Principal, shares: [Text]) : ?Secret  {
             let secret = secrets.get(secret_id);
             switch secret {
@@ -149,7 +157,11 @@ module {
                         
                         // update all shares for which staker_id has share / stake 
                         if (secret.share_holder_ids[i] == staker_id) {
-                            _newShares[i] := shares[share_counter];
+                            let decryptedShare: Text = shares[share_counter];
+                            let decryptedShareSha: Text = SHA.sha256(decryptedShare);
+                            assert (decryptedShareSha == secret.decrypted_share_shas[i]); // make sure that staker uploads correct decrypted share
+                        
+                            _newShares[i] := decryptedShare;
                             _newRevealed[i] := true;
                             share_counter += 1;
                         } else {
@@ -176,8 +188,11 @@ module {
 
                         share_holder_ids = secret.share_holder_ids;
                         share_holder_stake_ids = secret.share_holder_stake_ids;
+
                         shares = newShares; // update
+                        decrypted_share_shas = secret.decrypted_share_shas;
                         revealed = newRevealed; // update
+
                         valid = secret.valid
                     };
                     secrets.put(secret_id, newSecret);
