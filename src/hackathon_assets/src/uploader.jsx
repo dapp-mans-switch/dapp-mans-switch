@@ -19,13 +19,21 @@ export default function Uploader(props) {
         if (secret == '') {
             throw 'secret must not be empty'
         }
-        // TODO validate expirytime input properly
         const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
+        if (isNaN(expiryTimeInUTCSecs)) {
+            throw 'expiryTime must not be empty'
+        }
+        // TODO validate expirytime input properly
+        // also make sure the date is more than 1 heartbeat in the future?
+        const nowInUTCSecs = (new Date().getTime()) / 1_000
+        if (expiryTimeInUTCSecs - nowInUTCSecs <= 0) {
+          throw 'expiryTime must be in the future'
+        }
         const rewardInt = helpers.getPositiveNumber(reward)
         const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
         return {secret, rewardInt, expiryTimeInUTCSecs, heartbeatFreqInt}
     }
-    
+
     async function uploadSecret() {
         let input
         if (TEST) {
@@ -41,6 +49,9 @@ export default function Uploader(props) {
                 return
             }
         }
+
+        // clear form to prevent multi upload
+        document.getElementById('uploader_form').reset()
 
         // uploader generates a fresh key pair
         const uploaderKeyPair = crypto.generateKeyPair()
@@ -187,6 +198,7 @@ export default function Uploader(props) {
             </div>
 
             <div class="panel">
+              <form id="uploader_form">
                 <label htmlFor="secret">Your secret to be published:</label>
                 <br/>
                 <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)} rows="10" cols="50"/>
@@ -208,6 +220,7 @@ export default function Uploader(props) {
 
                 <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 300}}/>
                 <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+              </form>
             </div>
         </div>
         )
