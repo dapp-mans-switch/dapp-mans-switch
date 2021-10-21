@@ -22,10 +22,8 @@ module {
         last_heartbeat: Int;
         heartbeat_freq: Int; // every heartbeat_freq a heartbeat has to be sent
 
-        // share at position i is encrypted with public key of staker at position i in key_holders,
-        // once the share is decrypted the correspoding entry in revealed is set to true,
-        key_holders: [Principal]; // staker ids
-        share_holder_ids: [Nat];
+        share_holder_ids: [Principal];
+        share_holder_stake_ids: [Nat];
         shares: [Text];
         revealed: [Bool];
 

@@ -8,6 +8,7 @@ const TEST = true
 
 export default function Uploader(props) {
     const hackathon = props.actor;
+    const identity = props.identity;
 
     const [secret, setSecret] = React.useState('')
     const [reward, setReward] = React.useState('')
@@ -28,8 +29,8 @@ export default function Uploader(props) {
     async function uploadSecret() {
         let input
         if (TEST) {
-            testSecretEnDecryption()
-            testSharingAndReconstruction()
+            //testSecretEnDecryption()
+            //testSharingAndReconstruction()
             input = {'secret': 'my top secret secret', 'rewardInt': 420, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
@@ -50,20 +51,28 @@ export default function Uploader(props) {
         const encryptedSecret = crypto.encryptSecret(input.secret, uploaderPrivateKey)
 
         // choose stakers
-        const stakers = await helpers.drawStakers()
-        const principals = helpers.getPrincipalsOfStakers(stakers)
-        const stakerPublicKeys = helpers.getPublicKeysOfStakers(stakers)
-        const stakerIds = helpers.getIdsOfStakers(stakers)
-        console.log(stakerIds)
+        const stakes = await helpers.drawStakes()
+        console.log("Stakes", stakes)
+        const principals = helpers.getPrincipalsOfStakes(stakes)
+        const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
+        const stakeIds = helpers.getIdsOfStakes(stakes)
+        console.log(principals)
+        console.log(stakeIds)
 
         // create shares of the private key
         const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
         // encrypt them so only the desired staker can read it
-        const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
+        const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakePublicKeys)
         // send to backend
         const newSecretId = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
-            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals, stakerIds)
-        alert(`Secret with ID ${newSecretId} uploaded!`)
+            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals, stakeIds)
+
+        if (newSecretId > 0) {
+            // TODO error handling
+            alert(`Secret with ID ${newSecretId} uploaded!`)
+        }
+
+        listAllSecrets()
     }
 
     ///////////////////////////// TESTS /////////////////////////////
@@ -108,7 +117,7 @@ export default function Uploader(props) {
 
     async function listAllSecrets() {
     
-        let secrets = await hackathon.listMySecrets()
+        let secrets = await hackathon.listSecrets(identity.getPrincipal())
         secrets.sort(function(a, b) { 
           return - (parseInt(b.secret_id) - parseInt(a.secret_id));
         });
@@ -140,10 +149,10 @@ export default function Uploader(props) {
     
         
           const expiryCell = tr.insertCell(-1)
-          expiryCell.innerHTML = s.expiry_time
+          expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
 
           const heartbeatCell = tr.insertCell(-1)
-          heartbeatCell.innerHTML = s.last_heartbeat
+          heartbeatCell.innerHTML = helpers.secondsSinceEpocheToDate(s.last_heartbeat).toLocaleString()
         });
     }
 

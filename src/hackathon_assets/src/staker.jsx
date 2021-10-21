@@ -19,7 +19,6 @@ export default function Staker(props) {
 
   async function isRegistered() {
     const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-    console.log(backendPublicKey, backendPublicKey.length > 0)
     return backendPublicKey.length > 0
   }
 
@@ -46,10 +45,8 @@ export default function Staker(props) {
   }
 
   async function revealSecretShare() {
-    let stakerIdInt
     let secretId
     try {
-      stakerIdInt = helpers.getNaturalNumber(stakerId)
       secretId = helpers.getNaturalNumber(revealSecretId)
     } catch (error) {
       console.log(error)
@@ -57,27 +54,16 @@ export default function Staker(props) {
       return
     }
 
-    let staker = await hackathon.lookupStaker(stakerIdInt)
-    staker = staker[0]
+    let relevantSecret = await hackathon.getRelevantSecret(identity.getPrincipal(), secretId)
+    console.log('relevantSecret', relevantSecret)
 
 
-    let relevantSecrets = await hackathon.listRelevantSecrets(staker['staker_id'])
-    //let secrets = await hackathon.listAllSecrets()
-    //let relevantSecrets = helpers.getSecretsForStaker(staker['staker_id'], secrets)
-    console.log(relevantSecrets)
 
-    let secret
-    for (let i = 0; i < relevantSecrets.length; i++) {
-      if (relevantSecrets[i].secret_id == secretId) {
-        secret = relevantSecrets[i];
-        break
-      }
-    }
-
-    if (secret === undefined) {
+    if (relevantSecret.len == 0) {
       console.log("no secret for secret_id")
       return
     }
+    let secret = relevantSecret[0]
 
     console.log(secret)
 
@@ -96,7 +82,7 @@ export default function Staker(props) {
       for (let j = 0; j < secret.relevantShares.length; j++) {
         decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], stakerPrivateKey, uploaderPublicKey))
       }
-      let done = await hackathon.revealAllShares(secret['secret_id'], staker['staker_id'], shares);
+      let done = await hackathon.revealAllShares(secret['secret_id'], shares);
       //done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
 
       console.log(done)
@@ -199,15 +185,8 @@ export default function Staker(props) {
   }
 
   async function listAllRelevantSecrets() {
-    let stakerIdInt
-    try {
-      stakerIdInt = helpers.getNaturalNumber(stakerId)
-    } catch (error) {
-      console.log(error)
-      return
-    }
 
-    let relevantSecrets = await hackathon.listRelevantSecrets(stakerIdInt)
+    let relevantSecrets = await hackathon.listRelevantSecrets(identity.getPrincipal())
     relevantSecrets.sort(function(a, b) { 
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
@@ -295,9 +274,6 @@ export default function Staker(props) {
       <div class="panel">
         <h2>Reveal a secret share</h2>
         <form>
-          <label htmlFor="stakerId">Enter your staker ID:</label>
-          <span><input id="stakerId" type="number" onChange={(ev) => setStakerId(ev.target.value)}/></span>
-
           <label htmlFor="stakerId">Enter secret ID:</label>
           <span><input id="revealSecretId" type="number" onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 

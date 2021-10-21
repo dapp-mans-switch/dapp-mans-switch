@@ -17,22 +17,21 @@ module {
 
     public class SecretManager() {
 
-        let eq: (Nat,Nat) -> Bool = func(x, y) { x == y };
-
-        let secrets = Map.HashMap<Nat, Secret>(0, eq, Hash.hash);
+        let secrets = Map.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
 
         func secondsSince1970() : Int {
             return Time.now() / 1_000_000_000;
         };
 
-        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], key_holders: [Principal], share_holder_ids: [Nat]): Nat {
+        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): Nat {
 
             assert (encrypted_shares.size() == share_holder_ids.size());
             // TODO check that author_id != key_holder
+            // TODO check that stakes are longer than expiry time
 
             let secret_id = secrets.size();
             let last_heartbeat = secondsSince1970();
-            let revealed = Array.freeze(Array.init<Bool>(key_holders.size(), false));
+            let revealed = Array.freeze(Array.init<Bool>(share_holder_ids.size(), false));
             let shares = encrypted_shares;
             let valid = true;
 
@@ -48,8 +47,8 @@ module {
                 last_heartbeat;
                 heartbeat_freq;
 
-                key_holders;
                 share_holder_ids;
+                share_holder_stake_ids;
                 shares;
                 revealed;
                 valid
@@ -86,8 +85,8 @@ module {
                 last_heartbeat = heartbeat; // update heartbeat
                 heartbeat_freq = secret.heartbeat_freq;
 
-                key_holders = secret.key_holders;
                 share_holder_ids = secret.share_holder_ids;
+                share_holder_stake_ids = secret.share_holder_stake_ids;
                 shares = secret.shares;
                 revealed = secret.revealed;
                 valid = secret.valid
@@ -136,32 +135,32 @@ module {
             return revealOk;
         };
 
-        public func revealAllShares(secret_id: Nat, key_holder: Principal, staker_id: Nat, shares: [Text]) : Bool  {
+        public func revealAllShares(secret_id: Nat, staker_id: Principal, shares: [Text]) : Bool  {
             let secret = secrets.get(secret_id);
             switch secret {
                 case null { return false };
                 case (? secret) {
-                    // check if key_holder is indeed holder for secret
-                    // assert(secret.key_holders[atIndex] == key_holder);
-
                     var share_counter: Nat = 0;
                     let _newShares = Array.init<Text>(secret.shares.size(), "");
+                    let _newRevealed = Array.init<Bool>(secret.shares.size(), false);
+
                     for (i in Iter.range(0, _newShares.size()-1)) {
                         //D.print(Nat.toText(i) # " " # Nat.toText(secret.share_holder_ids[i]) # " " # Nat.toText(share_counter));
+                        
+                        // update all shares for which staker_id has share / stake 
                         if (secret.share_holder_ids[i] == staker_id) {
                             _newShares[i] := shares[share_counter];
+                            _newRevealed[i] := true;
                             share_counter += 1;
                         } else {
                             _newShares[i] := secret.shares[i];
+                            _newRevealed[i] := secret.revealed[i]
                         };
                     };
                     assert (share_counter == shares.size()); // all shares have to be revealed
 
                     let newShares: [Text] = Array.freeze(_newShares);
-
-                    let newRevealed: [Bool] = Array.tabulate<Bool>(secret.revealed.size(), func(i: Nat) : Bool {
-                        if ( secret.share_holder_ids[i] == staker_id ) { true } else { secret.revealed[i] }
-                    });
+                    let newRevealed: [Bool] = Array.freeze(_newRevealed);
 
                     let newSecret = {
                         secret_id = secret.secret_id;
@@ -175,8 +174,8 @@ module {
                         last_heartbeat = secret.last_heartbeat;
                         heartbeat_freq = secret.heartbeat_freq;
 
-                        key_holders = secret.key_holders;
                         share_holder_ids = secret.share_holder_ids;
+                        share_holder_stake_ids = secret.share_holder_stake_ids;
                         shares = newShares; // update
                         revealed = newRevealed; // update
                         valid = secret.valid
@@ -197,36 +196,51 @@ module {
         };
 
 
+        private func toRelevantSecret(s: Secret, staker_id: Principal): RelevantSecret {
+            let shouldReveal = shouldRevealSecret(s);
+            var hasRevealed = false;
 
-        public func listRelevantSecrets(staker_id: Nat) : [RelevantSecret] {
+            let relevantShares = Buffer.Buffer<Text>(s.shares.size());
+            for (i in Iter.range(0, s.shares.size()-1)) {
+                if (s.share_holder_ids[i] == staker_id) {
+                    relevantShares.add(s.shares[i]);
+                    hasRevealed := s.revealed[i]; // have all the same boolean for same staker_id
+                };
+            };
+
+            let relevantSecret = {
+                secret_id = s.secret_id;
+                uploader_public_key = s.uploader_public_key;
+                relevantShares = relevantShares.toArray();
+                shouldReveal = shouldReveal;
+                hasRevealed = hasRevealed;
+            };
+
+            return relevantSecret;
+        };
+
+        public func listRelevantSecrets(staker_id: Principal) : [RelevantSecret] {
             let relevantSecrets = Buffer.Buffer<RelevantSecret>(0);
             for ((id, s) in secrets.entries()) {
 
-                if (Array.find(s.share_holder_ids, func(id:Nat) : Bool { id == staker_id}) != null) {
+                if (Array.find(s.share_holder_ids, func(id:Principal) : Bool { id == staker_id}) != null) {
                     
-                    let shouldReveal = shouldRevealSecret(s);
-                    var hasRevealed = false;
-
-                    let relevantShares = Buffer.Buffer<Text>(s.shares.size());
-                    for (i in Iter.range(0, s.shares.size()-1)) {
-                        if (s.share_holder_ids[i] == staker_id) {
-                            relevantShares.add(s.shares[i]);
-                            hasRevealed := s.revealed[i]; // have all the same boolean for same staker_id
-                        };
-                    };
-
-                    let relevantSecret = {
-                        secret_id = s.secret_id;
-                        uploader_public_key = s.uploader_public_key;
-                        relevantShares = relevantShares.toArray();
-                        shouldReveal = shouldReveal;
-                        hasRevealed = hasRevealed;
-                    };
-
+                    let relevantSecret = toRelevantSecret(s, staker_id);
                     relevantSecrets.add(relevantSecret);
                 }
             };
             return relevantSecrets.toArray();
+        };
+
+        public func getRelevantSecret(staker_id: Principal, secret_id: Nat): ?RelevantSecret {
+            let secret = lookup(secret_id);
+            switch (secret) {
+                case null { return null };
+                case (? s) {
+                    let relevantSecret = toRelevantSecret(s, staker_id);
+                    return ?relevantSecret;
+                };
+            };
         };
         
         public func listSecretsOf(author_id: Principal) : [Secret] {

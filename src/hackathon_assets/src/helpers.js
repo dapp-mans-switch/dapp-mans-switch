@@ -2,39 +2,39 @@ import { hackathon } from '../../declarations/hackathon'
 import * as crypto from './crypto'
 import { min } from 'mathjs'
 
-export async function drawStakers() {
-    const stakers = await hackathon.listAllStakers()
-    let numShares = min(stakers.length, crypto.NUMBER_OF_SHARES)
+export async function drawStakes() {
+    const stakes = await hackathon.listAllStakes()
+    let numShares = min(stakes.length, crypto.NUMBER_OF_SHARES)
    
     // TODO draw them with probability proportional to their stake
     // this should also happen in the backend on chain
-    let chosenStakers = []
+    let chosenStakes = []
     for (let i = 0; i < numShares; i++) {
-        chosenStakers.push(stakers[i])
+        chosenStakes.push(stakes[i % stakes.length])
     }
-    return chosenStakers
+    return chosenStakes
 }
 
-export function getPublicKeysOfStakers(stakers) {
+export function getPublicKeysOfStakes(stakes) {
     let pubKeys = []
-    for (let i = 0; i < stakers.length; i++) {
-        pubKeys.push(stakers[i]['public_key'])
+    for (let i = 0; i < stakes.length; i++) {
+        pubKeys.push(stakes[i]['public_key'])
     }
     return pubKeys
 }
 
-export function getPrincipalsOfStakers(stakers) {
+export function getPrincipalsOfStakes(stakes) {
     let principals = []
-    for (let i = 0; i < stakers.length; i++) {
-        principals.push(stakers[i]['id'])
+    for (let i = 0; i < stakes.length; i++) {
+        principals.push(stakes[i]['staker_id'])
     }
     return principals
 }
 
-export function getIdsOfStakers(stakers) {
+export function getIdsOfStakes(stakes) {
     let ids = []
-    for (let i = 0; i < stakers.length; i++) {
-        ids.push(stakers[i]['staker_id'])
+    for (let i = 0; i < stakes.length; i++) {
+        ids.push(stakes[i]['stake_id'])
     }
     return ids
 }
