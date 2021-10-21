@@ -4,7 +4,13 @@ import { min } from 'mathjs'
 
 export async function drawStakes() {
     const stakes = await hackathon.listAllStakes()
-    let numShares = min(stakes.length, crypto.NUMBER_OF_SHARES)
+    if (stakes.length == 0) {
+        error('no stakes :(')
+    }
+
+    //let numShares = min(stakes.length, crypto.NUMBER_OF_SHARES)
+    let numShares = crypto.NUMBER_OF_SHARES; // multiple shares for same stake
+    console.log("Draw", numShares, "stakes")
    
     // TODO draw them with probability proportional to their stake
     // this should also happen in the backend on chain

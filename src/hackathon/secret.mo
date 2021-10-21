@@ -23,13 +23,13 @@ module {
             return Time.now() / 1_000_000_000;
         };
 
-        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): Nat {
+        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): ?Secret {
 
             assert (encrypted_shares.size() == share_holder_ids.size());
             // TODO check that author_id != key_holder
             // TODO check that stakes are longer than expiry time
 
-            let secret_id = secrets.size();
+            let secret_id = secrets.size()+1;
             let last_heartbeat = secondsSince1970();
             let revealed = Array.freeze(Array.init<Bool>(share_holder_ids.size(), false));
             let shares = encrypted_shares;
@@ -56,7 +56,7 @@ module {
 
             secrets.put(secret_id, newSecret);
 
-            return secret_id;
+            return ?newSecret;
         };
 
 
@@ -135,10 +135,10 @@ module {
             return revealOk;
         };
 
-        public func revealAllShares(secret_id: Nat, staker_id: Principal, shares: [Text]) : Bool  {
+        public func revealAllShares(secret_id: Nat, staker_id: Principal, shares: [Text]) : ?Secret  {
             let secret = secrets.get(secret_id);
             switch secret {
-                case null { return false };
+                case null { return null };
                 case (? secret) {
                     var share_counter: Nat = 0;
                     let _newShares = Array.init<Text>(secret.shares.size(), "");
@@ -182,7 +182,7 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
 
-                    return true;
+                    return ?newSecret;
                 };
             };
         };

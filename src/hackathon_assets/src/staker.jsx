@@ -45,6 +45,14 @@ export default function Staker(props) {
   }
 
   async function revealSecretShare() {
+    if (!(await isRegistered())) {
+      alert("Please register first!")
+      return
+    }
+    
+    const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
+    console.log("PublicKey:", backendPublicKey[0])
+    
     let secretId
     try {
       secretId = helpers.getNaturalNumber(revealSecretId)
@@ -55,9 +63,7 @@ export default function Staker(props) {
     }
 
     let relevantSecret = await hackathon.getRelevantSecret(identity.getPrincipal(), secretId)
-    console.log('relevantSecret', relevantSecret)
-
-
+    //console.log('relevantSecret', relevantSecret)
 
     if (relevantSecret.len == 0) {
       console.log("no secret for secret_id")
@@ -65,7 +71,7 @@ export default function Staker(props) {
     }
     let secret = relevantSecret[0]
 
-    console.log(secret)
+    console.log("Secret to reveal", secret)
 
     // check if decryption of secret is allowed (time or heartbeat)
     // check if secret already decrypted
@@ -74,25 +80,31 @@ export default function Staker(props) {
       return
     }
 
+    let decryptedShares = []
     try {
       const uploaderPublicKey = secret['uploader_public_key']
-      const shares = secret['shares']
 
-      let decryptedShares = []
+      console.log(stakerPrivateKey)
+
       for (let j = 0; j < secret.relevantShares.length; j++) {
         decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], stakerPrivateKey, uploaderPublicKey))
       }
-      let done = await hackathon.revealAllShares(secret['secret_id'], shares);
-      //done = await helpers.decryptStakerSecretShare(stakerId, relevantSecrets[i], stakerPrivateKey)
+      console.log("decryptedShares", decryptedShares)
 
-      console.log(done)
-      alert('published share')
 
     } catch (error) {
       console.log(`failed decryption`)
       console.log(error)
+      return
     }
-  
+
+    
+    let updatedSecret = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
+    if (updatedSecret.length > 0) {
+      listAllRelevantSecrets()
+      console.log('updatedSecret', updatedSecret[0])
+      alert('published share')
+    }
   }
 
   async function addStake() {

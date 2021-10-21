@@ -1,13 +1,13 @@
 import D "mo:base/Debug";
 import Principal "mo:base/Principal";
 
-import Counter "./counter";
 import Secret "./secret";
 import Staker "./staker";
 import Types "./types";
 
 actor {
     type Stake = Types.Stake;
+    type Staker = Types.Staker;
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
 
@@ -19,15 +19,8 @@ actor {
         return "New forum post: " # content # "!!!";
     };
 
-    // use msg for authentification like in https://github.com/dfinity/linkedup/blob/master/src/linkedup/main.mo ?
-    // see https://sdk.dfinity.org/docs/language-guide/caller-id.html
     public shared(msg) func sharedGreet(content : Text) : async Text {
         return "New forum post: " # content # "!!! from " # Principal.toText(msg.caller);
-    };
-
-    public shared(msg) func getCounter(init: Nat) : async Counter.Counter {
-        let t = await Counter.Counter(msg.caller, init);
-        return t;
     };
 
     // Staker
@@ -65,8 +58,13 @@ actor {
 
 
     public query func listAllStakes() : async [Stake] {
-        stakerManager.listAll();
+        stakerManager.listAllStakes();
     };
+
+    public query func listAllStakers() : async [Staker] {
+        stakerManager.listAllStakers();
+    };
+
 
     public query func listStakesOf(staker_id: Principal) : async [Stake] {
         stakerManager.listStakesOf(staker_id);
@@ -98,7 +96,7 @@ actor {
     };
 
 
-    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): async Nat {
+    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): async ?Secret {
         let author_id = msg.caller;
         secretManager.insert(author_id, payload, uploader_public_key, reward, expiry_time, heartbeat_freq, encrypted_shares, share_holder_ids, share_holder_stake_ids);
     };
@@ -124,7 +122,7 @@ actor {
         return secretManager.shouldReveal(secret_id);
     };
 
-    public shared(msg) func revealAllShares(secret_id: Nat, shares: [Text]): async Bool {
+    public shared(msg) func revealAllShares(secret_id: Nat, shares: [Text]): async ?Secret {
         let staker_id = msg.caller;
 
         secretManager.revealAllShares(secret_id, staker_id, shares);

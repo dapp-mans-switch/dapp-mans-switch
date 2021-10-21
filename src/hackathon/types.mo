@@ -7,6 +7,11 @@ module {
         stake_id: Nat;
     };
 
+    public type Staker = {
+        id: Principal;
+        public_key: Text;
+    };
+
     // TODO: add checksum to make sure that correct shares were uploaded?
     public type Secret = {
         secret_id: Nat;

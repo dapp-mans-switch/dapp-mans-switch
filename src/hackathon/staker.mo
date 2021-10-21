@@ -12,6 +12,7 @@ import Types "./types";
 
 module {
     type Stake = Types.Stake;
+    type Staker = Types.Staker;
 
     public class StakerManager() {
 
@@ -79,7 +80,7 @@ module {
             };
         };
 
-        public func listAll() : [Stake] {
+        public func listAllStakes() : [Stake] {
             let allStakes = Buffer.Buffer<Stake>(0);
             for ((id, s) in stakes.entries()) {
                 allStakes.add(s);
@@ -95,6 +96,14 @@ module {
                 };
             };
             return allStakes.toArray();
+        };
+        
+        public func listAllStakers() : [Staker] {
+            let allStakers = Buffer.Buffer<Staker>(0);
+            for ((id, public_key) in stakers.entries()) {
+                allStakers.add({id; public_key});
+            };
+            return allStakers.toArray();
         };
     };
 };

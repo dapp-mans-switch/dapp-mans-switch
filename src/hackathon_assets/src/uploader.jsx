@@ -29,8 +29,8 @@ export default function Uploader(props) {
     async function uploadSecret() {
         let input
         if (TEST) {
-            //testSecretEnDecryption()
-            //testSharingAndReconstruction()
+            testSecretEnDecryption()
+            testSharingAndReconstruction()
             input = {'secret': 'my top secret secret', 'rewardInt': 420, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
@@ -56,20 +56,23 @@ export default function Uploader(props) {
         const principals = helpers.getPrincipalsOfStakes(stakes)
         const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
         const stakeIds = helpers.getIdsOfStakes(stakes)
-        console.log(principals)
-        console.log(stakeIds)
+        console.log("Principals", principals)
+        console.log("StakeIds", stakeIds)
 
         // create shares of the private key
         const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
+        const keysharesArr = Object.values(keyshares)
+        console.log("keyshares", keysharesArr.map(crypto.keyShareToBase64))
         // encrypt them so only the desired staker can read it
         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakePublicKeys)
+        console.log("encryptedKeyShares", encryptedKeyShares)
         // send to backend
-        const newSecretId = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
+        const newSecret = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
             input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, principals, stakeIds)
-
-        if (newSecretId > 0) {
-            // TODO error handling
-            alert(`Secret with ID ${newSecretId} uploaded!`)
+        
+        console.log("newSecret", newSecret)
+        if (newSecret.length > 0) {
+            alert(`Secret with ID ${newSecret[0].secret_id} uploaded!`)
         }
 
         listAllSecrets()
@@ -85,7 +88,7 @@ export default function Uploader(props) {
         const secret = 'very secret'
         const encryptedSecret = crypto.encryptSecret(secret, uploaderPrivateKey)
         const plaintext = crypto.decryptSecret(encryptedSecret, uploaderPrivateKey)
-        console.log(secret == plaintext)
+        console.log('testSecretEnDecryption', secret == plaintext)
     }
 
     function testSharingAndReconstruction() {
@@ -112,7 +115,7 @@ export default function Uploader(props) {
          const shares = {1: share1, 2: share2}
          const reconstructedPrivateKey = crypto.reconstructPrivateKey(shares)
          // can still reconstruct
-         console.log(reconstructedPrivateKey == uploaderPrivateKey)
+         console.log("testSharingAndReconstruction", reconstructedPrivateKey == uploaderPrivateKey)
     }
 
     async function listAllSecrets() {
@@ -122,7 +125,7 @@ export default function Uploader(props) {
           return - (parseInt(b.secret_id) - parseInt(a.secret_id));
         });
     
-        console.log(secrets)
+        console.log("Secrets", secrets)
     
         const table = document.getElementById('secretsTable')
     

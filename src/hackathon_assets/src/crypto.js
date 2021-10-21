@@ -63,10 +63,10 @@ export function encryptMultipleKeyShares(shares, uploaderPrivateKey, stakerPubli
     return encryptedShares
 }
 
-function keyShareToBase64(keyShare) {
+export function keyShareToBase64(keyShare) {
     return Buffer.from(keyShare).toString('base64')
 }
 
-function base64ToKeyShare(data) {
+export function base64ToKeyShare(data) {
     return new Uint8Array(Buffer.from(data, 'base64'))
 }
