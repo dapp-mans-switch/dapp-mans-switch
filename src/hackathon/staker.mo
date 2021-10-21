@@ -6,92 +6,95 @@ import Array "mo:base/Array";
 import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
+import Time "mo:base/Time";
 
 import Types "./types";
 
 module {
-    type Staker = Types.Staker;
+    type Stake = Types.Stake;
 
     public class StakerManager() {
 
-        let eq: (Nat,Nat) -> Bool = func(x, y) { x == y };
-        // make next stable in production
-        var next : Nat = 1;
+        // allow staker multiple stakes!
+        let stakes = Map.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
 
-        // TODO: allow 1 staker multiple stakes?
-        let stakers = Map.HashMap<Nat, Staker>(0, eq, Hash.hash);
+        // map staker to public key
+        let stakers = Map.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
 
-        public func insert(id: Principal, name: Text, public_key: Text, amount: Nat, days: Nat) : Nat {
-            //let secrets = Array.tabulate<Nat>(0, func(i:Nat) : Nat {0});
-            let staker_id = next;
-            next += 1;
-            let newStaker = {id; name; public_key; amount; days; staker_id};
-            stakers.put(staker_id, newStaker);
-            staker_id;
+        public func registerStaker(staker_id: Principal, public_key: Text) : Bool {
+            let existing_public_key = stakers.get(staker_id);
+            switch (existing_public_key) {
+                case null {
+                    stakers.put(staker_id, public_key);
+                    return true;
+                };
+                case (? v) {
+                    return false; // error already registered
+                };
+            };
         };
 
-        // public func addSecret(staker_id: Nat, secret_id: Nat) : Bool {
-        //     let staker = stakers.get(staker_id);
-        //     switch staker {
-        //         case null { return false };
-        //         case (? staker) {
-        //             // TODO: authentification
-        //             // TODO: disallow adding a secret twice
+        
+        func secondsSince1970() : Int {
+            return Time.now() / 1_000_000_000;
+        };
 
-        //             let s = Array.tabulate<Nat>(1, func(i:Nat) : Nat {secret_id});
-        //             let newSecrets = Array.append<Nat>(staker.secrets, s);
-        //             // TODO: no better way?
-        //             let newStaker = {
-        //                 id = staker.id;
-        //                 name = staker.name;
-        //                 public_key = staker.public_key;
-        //                 amount = staker.amount;
-        //                 days = staker.days;
-        //                 secrets = newSecrets;
-        //                 staker_id = staker.staker_id;
-        //             };
-        //             stakers.put(staker_id, newStaker);
-        //             return true;
-        //         };
-        //     };
-        // };
+        public func addStake(staker_id: Principal, amount: Nat, days: Nat) : Nat {
+            let public_key = stakers.get(staker_id);
+            switch (public_key) {
+                case null {
+                    return 0; // error staker_id unknown
+                };
+                case (? public_key) {
+                    let stake_id = stakes.size()+1;
+                    let now = secondsSince1970();
+                    let expiry_time = now + days * 86400;
+                    
+                    let newStake = {staker_id; public_key; amount; expiry_time; stake_id};
+                    stakes.put(stake_id, newStake);
+                    return stake_id;
+                };
+            };
+        };
 
-        public func lookup(id: Nat) : ?Staker {
-            stakers.get(id);
+        public func lookup(id: Nat) : ?Stake {
+            stakes.get(id);
+        };
+
+        public func publicKeyFor(staker_id: Principal) : ?Text {
+            stakers.get(staker_id);
         };
 
         public func remove(id: Nat): Bool {
-            let removedStaker = stakers.remove(id);
+            let removedStake = stakes.remove(id);
 
             // check if staker was removed
-            switch (removedStaker) {
+            switch (removedStake) {
                 case null {
                     false;
                 };
                 case (? v) {
                     true;
                 };
-            }
-        };
-
-        /*
-        public func edit(id: Principal, name: Text, amount: Nat, days:Nat) : Bool {
-            let stakerRemoved = remove(id);
-            if (stakerRemoved == true) {
-                stakers.put(id, {id; name; amount; days});
-                true;
-            } else {
-                false;
             };
         };
-        */
 
-        public func listAll() : [Staker] {
-            let allStakers = Buffer.Buffer<Staker>(0);
-            for ((id, s) in stakers.entries()) {
-                allStakers.add(s);
+        public func listAll() : [Stake] {
+            let allStakes = Buffer.Buffer<Stake>(0);
+            for ((id, s) in stakes.entries()) {
+                allStakes.add(s);
             };
-            return allStakers.toArray();
+            return allStakes.toArray();
         };
-    }
+
+        public func listStakesOf(staker_id: Principal) : [Stake] {
+            let allStakes = Buffer.Buffer<Stake>(0);
+            for ((id, s) in stakes.entries()) {
+                if (s.staker_id == staker_id) {
+                    allStakes.add(s);
+                };
+            };
+            return allStakes.toArray();
+        };
+    };
 };

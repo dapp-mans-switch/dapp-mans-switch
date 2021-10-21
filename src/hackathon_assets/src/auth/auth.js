@@ -46,9 +46,12 @@ export default class Auth {
         };
     }
 
-
-    async getCanister() {
+    async getIdentity() {
         const identity = await this.authClient.getIdentity();
+        return identity;
+    }
+
+    async getCanister(identity) {
         console.log("Get canister for identity", identity.getPrincipal().toString())
         const actor = createActor(canisterId, {
             agentOptions: {

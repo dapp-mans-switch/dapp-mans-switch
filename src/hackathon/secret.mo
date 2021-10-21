@@ -14,7 +14,6 @@ import Types "./types";
 module {
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
-    type Staker = Types.Staker;
 
     public class SecretManager() {
 

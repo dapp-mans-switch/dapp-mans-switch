@@ -3,17 +3,43 @@ import * as React from 'react'
 import routToPage from './router'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
+import { copyFileSync } from 'fs';
 
 
 export default function Staker(props) {
 
   const hackathon = props.actor;
+  const identity = props.identity;
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
   const [stakerId, setStakerId] = React.useState('')
   const [revealSecretId, setRevealSecretId] = React.useState('')
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
+
+  async function registerStaker() {
+    
+    //const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
+    const backendPublicKey = await hackathon.lookupMyPublicKey()
+    if (backendPublicKey.length > 0) {
+      console.log("PublicKey:", backendPublicKey[0])
+      alert("Already registered!")
+
+    } else {
+
+      const ok = await hackathon.registerStaker(keyPair.publicKey)
+      if (ok) {
+        console.log("Generate new key pair")
+        const keyPair = crypto.generateKeyPair()
+        console.log("PrivateKey:", keyPair.privateKey)
+  
+        downloadPrivateKey(keyPair.privateKey)
+        alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+      }
+    }
+
+    listAllStakes()
+  }
 
   async function revealSecretShare() {
     let stakerIdInt
@@ -79,7 +105,8 @@ export default function Staker(props) {
   
   }
 
-  async function addStaker() {
+  async function addStake() {
+    console.log("addStake")
     let amountInt
     let durationInt
     try {
@@ -90,15 +117,12 @@ export default function Staker(props) {
       alert('Amount and duration must be positive numbers!')
       return
     }
-    const keyPair = crypto.generateKeyPair()
-    console.log(keyPair.privateKey)
 
     document.getElementById('staker_form').reset()
-    // TODO: replace 'Staker1' by identification Auth
-    const newStakerId = await hackathon.registerStaker('Staker', keyPair.publicKey, amountInt, durationInt)
-    downloadPrivateKey(keyPair.privateKey, newStakerId)
-    alert(`New staker created with id: ${newStakerId}.\nThe private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
-    listAllStakers()
+    
+    const newStakeId = await hackathon.addStake(amountInt, durationInt)
+    console.log("Stake id:", newStakeId)
+    listAllStakes()
   }
 
   async function removeStaker(id) {
@@ -107,26 +131,26 @@ export default function Staker(props) {
     if (deleted == false) {
       alert("cannot delete staker with id: " + id)
     }
-    listAllStakers()
+    listAllStakes()
   }
 
   // write private key to file and safe to downloads
   // staker_id is prepended to the file name
-  function downloadPrivateKey(privateKey, staker_id) {
+  function downloadPrivateKey(privateKey) {
     if (privateKey == null) {
       alert("Please create your private key first")
     }
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(privateKey));
-    element.setAttribute('download', staker_id + '_private_key');
+    element.setAttribute('download', 'private_key');
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
   }
 
-  async function listAllStakers() {
-    let stakes = await hackathon.listAllStakers()
+  async function listAllStakes() {
+    let stakes = await hackathon.listStakesOf(identity.getPrincipal())
     stakes.sort(function(a, b) { 
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });
@@ -135,7 +159,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['staker_id', 'name', 'amount', 'days']
+    const col_names = ['amount', 'expiry_time']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -149,10 +173,13 @@ export default function Staker(props) {
 
     stakes.map(function (s) {
       const tr = table.insertRow(-1)
-      for (const cn of col_names) {
-        const tabCell = tr.insertCell(-1)
-        tabCell.innerHTML = s[cn]
-      }
+
+      const amountCell =  tr.insertCell(-1)
+      amountCell.innerHTML = s['amount']
+
+      const dateCell = tr.insertCell(-1)
+      dateCell.innerHTML = helpers.secondsSinceEpocheToDate(s['expiry_time']).toLocaleString()
+
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
       deleteButton.innerHTML = "delete"
@@ -215,13 +242,13 @@ export default function Staker(props) {
   }
 
   React.useEffect(() => {
-    listAllStakers()
+    listAllStakes()
     listAllRelevantSecrets()
   })
 
   function debug() {
     setStakerId(1)
-    listAllStakers()
+    listAllStakes()
     listAllRelevantSecrets()
   }
 
@@ -230,6 +257,11 @@ export default function Staker(props) {
       <h1>Staker</h1>
       This is the Staker's page.
 
+      
+      <div class="panel">
+        <button onClick={() => registerStaker()}>Register Staker</button>
+      </div>
+
       <div class="panel">
         <h2>Create new Stake</h2>
         <form id="staker_form">
@@ -237,11 +269,8 @@ export default function Staker(props) {
           <span><input id="stakeAmount" type="number" onChange={(ev) => setAmount(ev.target.value)}/></span>
           <label htmlFor="stakeDuration">Duration (Days):</label>
           <span><input id="stakeDuration" type="number" onChange={(ev) => setDuration(ev.target.value)}/></span>
-          {/* TODO: this option needs to be toggleable for each stake, so it has to be moved to the stake list */}
-          <label htmlFor="no_new_stakes">Don't receive new shares</label>
-          <span><input type="checkbox" id="no_new_stakes" name="no_new_stakes" value="Stakes"/></span>
         </form>
-        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStaker} class="rainbow-button" style={{width: 200}}></a>
+        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} class="rainbow-button" style={{width: 200}}></a>
       </div>
 
       <div class="panel">

@@ -86,3 +86,8 @@ export function getNaturalNumber(string) {
     } 
     return num
 }
+
+export function secondsSinceEpocheToDate(string) {
+    let d = new Date(parseInt(string) * 1000) // seconds to milliseconds
+    return d
+}

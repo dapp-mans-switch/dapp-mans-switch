@@ -8,7 +8,10 @@ import Auth from './auth/auth'
 export default function Main() {
 
   let hackathon
+  let identity
   let auth
+
+  let props
 
   async function authenticate(debug=false) {
     document.body.style.backgroundColor = "red"; 
@@ -21,9 +24,11 @@ export default function Main() {
     } else {
       let ok = await auth.auth()
       if (ok) {
-        hackathon = await auth.getCanister()
+        identity = await auth.getIdentity()
+        hackathon = await auth.getCanister(identity)
       }
     }
+    props = {actor: hackathon, identity: identity, auth: auth}
     document.body.style.backgroundColor = "#E0E5EC";
   }
   
@@ -57,9 +62,9 @@ export default function Main() {
         </video>
 
         <div class="start-page-button-div">
-          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', {actor: hackathon})} class="rainbow-button" style={{width: 150}}></a>
-          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', {actor: hackathon})} class="rainbow-button" style={{width: 180}}></a>
-          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', {actor: hackathon})} class="rainbow-button" style={{width: 180}}></a>
+          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', props)} class="rainbow-button" style={{width: 150}}></a>
+          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', props)} class="rainbow-button" style={{width: 180}}></a>
+          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', props)} class="rainbow-button" style={{width: 180}}></a>
         </div>
       </div>
 

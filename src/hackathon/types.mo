@@ -1,14 +1,13 @@
 module {
-    public type Staker = {
-        id: Principal;
-        name: Text;
+    public type Stake = {
+        staker_id: Principal;
         public_key: Text;
         amount: Nat;
-        days: Nat;
-        //secrets: [Nat];
-        staker_id: Nat;
+        expiry_time: Int; // seconds since 1970-01-01
+        stake_id: Nat;
     };
 
+    // TODO: add checksum to make sure that correct shares were uploaded?
     public type Secret = {
         secret_id: Nat;
         author_id: Principal;
@@ -32,7 +31,6 @@ module {
 
         valid: Bool;
     };
-
 
     public type RelevantSecret = {
         secret_id: Nat;

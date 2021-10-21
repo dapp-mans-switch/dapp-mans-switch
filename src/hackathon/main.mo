@@ -7,7 +7,7 @@ import Staker "./staker";
 import Types "./types";
 
 actor {
-    type Staker = Types.Staker;
+    type Stake = Types.Stake;
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
 
@@ -33,30 +33,43 @@ actor {
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
+    public shared(msg) func registerStaker(public_key: Text): async Bool {
+        let staker_id = msg.caller;
+        stakerManager.registerStaker(staker_id, public_key);
+    };
+
     // dfx canister call hackathon registerStaker '("Markus", "pubkey", 10, 10)'
-    public shared(msg) func registerStaker(name: Text, public_key: Text, amount: Nat, days: Nat): async Nat {
-        let id = msg.caller;
-        D.print("staker id " # Principal.toText(id));
-        stakerManager.insert(id, name, public_key, amount, days);
+    public shared(msg) func addStake(amount: Nat, days: Nat): async Nat {
+        let staker_id = msg.caller;
+        D.print("staker id " # Principal.toText(staker_id));
+        stakerManager.addStake(staker_id, amount, days);
     };
 
     // dfx canister call hackathon lookupStaker 0
-    public query func lookupStaker(id: Nat) : async ?Staker {
+    public query func lookupStake(id: Nat) : async ?Stake {
         stakerManager.lookup(id);
     };
 
-    public func removeStaker(id: Nat): async Bool {
+    public func removeStake(id: Nat): async Bool {
         stakerManager.remove(id);
     };
 
-    /*
-    public func editStaker(id: Principal, name: Text, amount: Nat, days:Nat) : async Bool {
-        stakerManager.edit(id, name, amount, days);
+    public shared(msg) func lookupMyPublicKey(): async ?Text {
+        let staker_id = msg.caller;
+        stakerManager.publicKeyFor(staker_id);
     };
-    */
 
-    public query func listAllStakers() : async [Staker] {
+    public query func lookupPublicKey(staker_id: Principal): async ?Text {
+        stakerManager.publicKeyFor(staker_id);
+    };
+
+
+    public query func listAllStakes() : async [Stake] {
         stakerManager.listAll();
+    };
+
+    public query func listStakesOf(staker_id: Principal) : async [Stake] {
+        stakerManager.listStakesOf(staker_id);
     };
 
 
