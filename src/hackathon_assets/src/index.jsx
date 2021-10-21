@@ -13,30 +13,34 @@ export default function Main() {
 
   let props
 
-  async function authenticate(debug=false) {
+  async function authenticate() {
     document.body.style.backgroundColor = "red"; 
     // if you see this then getCanister is too slow and
     // we should deactivate buttons until the asynchronous function is done
 
     auth = new Auth()
-    if (debug) {
-      identity = await auth.getAnomymousIdentity()
-      hackathon = auth.getAnomymousCanister()
-    } else {
-      let ok = await auth.auth()
-      if (ok) {
-        identity = await auth.getIdentity()
-        hackathon = await auth.getCanister(identity)
-      }
+    let ok = await auth.auth()
+    if (ok) {
+      identity = await auth.getIdentity()
+      hackathon = await auth.getCanister(identity)
+      
+      props = {actor: hackathon, identity: identity, auth: auth}
+      console.log("Identity Principal:", identity.getPrincipal().toString())
     }
-    props = {actor: hackathon, identity: identity, auth: auth}
-    console.log("Identity Principal:", identity.getPrincipal().toString())
-    
+
     document.body.style.backgroundColor = "#E0E5EC";
   }
+
+  async function no_authenticate() {
+    auth = new Auth()
+    identity = await auth.getAnomymousIdentity()
+    hackathon = auth.getAnomymousCanister()
+    props = {actor: hackathon, identity: identity, auth: auth}
+    console.log("Identity Principal:", identity.getPrincipal().toString())
+  }
   
-  //authenticate()
-  authenticate(true) // for no auth and anonymous identity
+  // authenticate()
+  no_authenticate() // for no auth and anonymous identity
 
 
   async function whoami() {
