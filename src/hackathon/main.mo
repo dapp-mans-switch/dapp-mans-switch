@@ -5,7 +5,8 @@ import Secret "./secret";
 import Staker "./staker";
 import Types "./types";
 
-import SHA "./sha/SHA256"
+import SHA "./utils/SHA256";
+import RNG "./utils/rng";
 
 actor {
     type Stake = Types.Stake;
@@ -29,11 +30,12 @@ actor {
     public query func sha256(text: Text) : async Text {
         SHA.sha256(text);
     };
-    
+
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
     public shared(msg) func registerStaker(public_key: Text): async Bool {
+        // TODO: make sure public_key is a valid public key (encoding)
         let staker_id = msg.caller;
         stakerManager.registerStaker(staker_id, public_key);
     };
@@ -77,6 +79,10 @@ actor {
         stakerManager.listStakesOf(staker_id);
     };
 
+    public shared(msg) func drawStakes(expiry_time: Int, n: Nat) : async [Stake] {
+        let author_id = msg.caller;
+        stakerManager.drawStakes(author_id, expiry_time, n);
+    };
 
     // Secret
     var secretManager: Secret.SecretManager = Secret.SecretManager();
@@ -105,6 +111,13 @@ actor {
 
     public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): async ?Secret {
         let author_id = msg.caller;
+        let ok = stakerManager.verifySelectedStakes(author_id, share_holder_stake_ids);
+        let removed = stakerManager.removeCachedStakes(author_id);
+
+        if (not ok) {
+            // error invalid stakes uploaded (not those which were last drawn from author_id)
+            return null;
+        };
         secretManager.insert(author_id, payload, uploader_public_key, reward, expiry_time, heartbeat_freq, encrypted_shares, decrypted_share_shas, share_holder_ids, share_holder_stake_ids);
     };
 

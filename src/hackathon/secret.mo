@@ -10,7 +10,7 @@ import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
 
 import Types "./types";
-import SHA "./sha/SHA256"
+import SHA "./utils/SHA256"
 
 module {
     type Secret = Types.Secret;

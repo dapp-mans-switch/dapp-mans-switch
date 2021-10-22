@@ -65,7 +65,8 @@ export default function Uploader(props) {
         const encryptedSecret = crypto.encryptSecret(input.secret, uploaderPrivateKey)
 
         // choose stakers
-        const stakes = await helpers.drawStakes()
+        // const stakes = await helpers.drawStakes() // <- fails now with this
+        const stakes = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
         console.log("Stakes", stakes)
         const principals = helpers.getPrincipalsOfStakes(stakes)
         const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
@@ -91,6 +92,8 @@ export default function Uploader(props) {
         console.log("newSecret", newSecret)
         if (newSecret.length > 0) {
             alert(`Secret with ID ${newSecret[0].secret_id} uploaded!`)
+        } else {
+            alert("Something went wrong!")
         }
 
         listAllSecrets()
