@@ -7,6 +7,7 @@ import Types "./types";
 
 import SHA "./utils/SHA256";
 import RNG "./utils/rng";
+import base64 "./utils/base64";
 
 actor {
     type Stake = Types.Stake;
@@ -35,7 +36,9 @@ actor {
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
     public shared(msg) func registerStaker(public_key: Text): async Bool {
-        // TODO: make sure public_key is a valid public key (encoding)
+        if (not base64.validateBase64(public_key)) {
+            return false;
+        };
         let staker_id = msg.caller;
         stakerManager.registerStaker(staker_id, public_key);
     };
