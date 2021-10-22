@@ -29,7 +29,9 @@ module {
 
         share_holder_ids: [Principal];
         share_holder_stake_ids: [Nat]; // as of now unused, maybe use for calculating payout
+
         shares: [Text];
+        decrypted_share_shas: [Text];
         revealed: [Bool];
 
         valid: Bool;

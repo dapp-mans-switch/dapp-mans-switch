@@ -78,6 +78,7 @@ export default class Auth {
     }
 
     getAnomymousCanister() {
+        //this.showMenuIfAuth();
         const actor = hackathon;
         return actor;
     }

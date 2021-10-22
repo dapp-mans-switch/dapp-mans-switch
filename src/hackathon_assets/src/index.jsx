@@ -42,8 +42,8 @@ export default function Main() {
     auth.showMenuIfAuth()
   }
   
-  authenticate()
-  // no_authenticate() // for no auth and anonymous identity
+  // authenticate()
+  no_authenticate() // for no auth and anonymous identity
 
 
   async function whoami() {
