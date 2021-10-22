@@ -5,6 +5,8 @@ import * as helpers from './helpers'
 //import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 
+import stillAliveVideo from './../assets/im_alive.mkv'
+
 const TEST = true
 
 export default function Uploader(props) {
@@ -139,6 +141,7 @@ export default function Uploader(props) {
          console.log("testSharingAndReconstruction", reconstructedPrivateKey == uploaderPrivateKey)
     }
 
+
     async function listAllSecrets() {
     
         let secrets = await hackathon.listSecrets(identity.getPrincipal())
@@ -181,9 +184,21 @@ export default function Uploader(props) {
     }
 
     async function sendHeartbeat() {
+        let aliveVideo = document.getElementById("still-alive-video")
+        aliveVideo.style.display = "flex"
+        aliveVideo.play()
+        aliveVideo.addEventListener("ended", (event) => {
+            aliveVideo.style.display = "none"
+        })
         let done = await hackathon.sendHeartbeat()
         console.log("Sent hearbeat?", done)
         listAllSecrets()
+    }
+
+    // hide video when finished playing
+    function hideVideo() {
+        let aliveVideo = document.getElementById("still-alive-video")
+        aliveVideo.style.display = "none"
     }
     
     React.useEffect(() => {
@@ -202,34 +217,33 @@ export default function Uploader(props) {
 
             <div class="panel">
                 <h2>Heartbeat</h2>
-                <button onClick={() => sendHeartbeat()}>Everybody stay calm! I'm still alive!</button>
+                <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} class="rainbow-button" style={{width: 550}}/>
+                <video id="still-alive-video" className="still-alive-video">
+                    <source src={stillAliveVideo}/>
+                </video>
             </div>
 
             <div class="panel">
               <form id="uploader_form">
-                <label htmlFor="secret">Your secret to be published:</label>
-                <br/>
-                <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)} rows="10" cols="50"/>
-                <br/>
-
-                <label htmlFor="reward">Reward stakers opening your secret with</label>
-                <input id="reward" type="number" onChange={(ev) => setReward(ev.target.value)}/>
-                <label>$HRBT</label>
+                <h2>Create a Sectret to be published</h2>
+                <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)}/>
                 <br/>
 
-                <label htmlFor="heartbeatFreq">Prove your liveliness every</label>
-                <input id="heartbeatFreq" type="number" onChange={(ev) => setHeartbeatFreq(ev.target.value)}/>
-                <label>days</label>
-                <br/>
+                <label htmlFor="reward">Reward ($HRBT)</label>
+                <span><input id="reward" type="number" onChange={(ev) => setReward(ev.target.value)}/></span>
 
-                <label htmlFor="expiryTime">Your secret will be released at the latest on:</label>
-                <input id="expiryTime" type="datetime-local" onChange={(ev) => setExpiryTime(ev.target.value)}/>
-                <br/>
+                <label htmlFor="heartbeatFreq">Heartbeat Frequency (Days)</label>
+                <span><input id="heartbeatFreq" type="number" onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
 
-                <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 300}}/>
-                <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+                <label htmlFor="expiryTime">Latest Reveal Date:</label>
+                <span><input id="expiryTime" type="datetime-local" onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
+
+                <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 260}}/>
               </form>
             </div>
+
+            <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+
         </div>
         )
     }
