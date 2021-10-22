@@ -50,6 +50,11 @@ export default function Staker(props) {
       return
     }
     
+    let addButton = document.getElementById("reveal_secret_share_button")
+    addButton.classList.add("trigger-animation")
+
+    document.getElementById("reveal-secret-from").reset()
+
     const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
     console.log("PublicKey:", backendPublicKey[0])
     
@@ -105,6 +110,8 @@ export default function Staker(props) {
       console.log('updatedSecret', updatedSecret[0])
       alert('published share')
     }
+
+    addButton.classList.remove("trigger-animation")
   }
 
   async function addStake() {
@@ -114,6 +121,9 @@ export default function Staker(props) {
     }
 
     console.log("addStake")
+    let addButton = document.getElementById("add_new_stake_button")
+    addButton.classList.add("trigger-animation")
+
     let amountInt
     let durationInt
     try {
@@ -130,11 +140,12 @@ export default function Staker(props) {
     const newStakeId = await hackathon.addStake(amountInt, durationInt)
     console.log("Stake id:", newStakeId)
     listAllStakes()
+
+    addButton.classList.remove("trigger-animation")
   }
 
   async function removeStaker(id) {
-    console.log("geemmmma: " + id)
-    const deleted = await hackathon.removeStaker(id)
+    const deleted = await hackathon.removeStake(id)
     if (deleted == false) {
       alert("cannot delete staker with id: " + id)
     }
@@ -180,7 +191,6 @@ export default function Staker(props) {
 
     stakes.map(function (s) {
       const tr = table.insertRow(-1)
-
       const amountCell =  tr.insertCell(-1)
       amountCell.innerHTML = s['amount']
 
@@ -191,7 +201,7 @@ export default function Staker(props) {
       const deleteButton = document.createElement('button')
       deleteButton.innerHTML = "delete"
       deleteButton.className = "deleteButton"
-      deleteButton.addEventListener("click", () => { removeStaker(s['staker_id'])})
+      deleteButton.addEventListener("click", () => { removeStaker(s['stake_id'])})
       deleteButtonCell.appendChild(deleteButton)
     });
   }
@@ -258,7 +268,7 @@ export default function Staker(props) {
       This is the Staker's page.
 
       
-      <div class="panel">
+      <div id="register" class="panel">
         <button onClick={() => registerStaker()}>Register Staker</button>
       </div>
 
@@ -285,7 +295,7 @@ export default function Staker(props) {
 
       <div class="panel">
         <h2>Reveal a secret share</h2>
-        <form>
+        <form id="reveal-secret-from">
           <label htmlFor="stakerId">Enter secret ID:</label>
           <span><input id="revealSecretId" type="number" onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
