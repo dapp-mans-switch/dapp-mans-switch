@@ -1,11 +1,13 @@
 import D "mo:base/Debug";
 import Principal "mo:base/Principal";
+import Array "mo:base/Array";
 
 import Secret "./secret";
 import Staker "./staker";
 import Types "./types";
 
-import SHA "./sha/SHA256"
+import SHA "./utils/SHA256";
+import RNG "./utils/rng";
 
 actor {
     type Stake = Types.Stake;
@@ -29,7 +31,40 @@ actor {
     public query func sha256(text: Text) : async Text {
         SHA.sha256(text);
     };
+
+    public query func randomNumbers(seed: Text, n: Nat) : async [Nat64] {
+        let seeds = RNG.getShaSeeds(seed);
+        let rng = RNG.PRNG(seeds.seed0, seeds.seed1);
+        Array.tabulate<Nat64>(n, func (i: Nat) : Nat64 { rng.randomNumber() });
+    };
+
+    public query func randomNumbersBelow(seed: Text, below: Nat, n: Nat) : async [Nat] {
+        let seeds = RNG.getShaSeeds(seed);
+        let rng = RNG.PRNG(seeds.seed0, seeds.seed1);
+        Array.tabulate<Nat>(n, func (i: Nat) : Nat { rng.randomNumberBelow(below) });
+    };
+
+    public query func testRNG(seed: Text, below: Nat, n: Nat): async [Nat] {
+        let seeds = RNG.getShaSeeds(seed);
+        let rng = RNG.PRNG(seeds.seed0, seeds.seed1);
+        let numbers = Array.tabulate<Nat>(n, func (i: Nat) : Nat { rng.randomNumberBelow(below) });
+        let counts = Array.init<Nat>(10, 0);
+        for (x in numbers.vals()) {
+            counts[x] += 1;
+        };
+        return Array.freeze(counts);
+    };
+
+    public query func randomNumber(seed0: Nat64, seed1: Nat64) : async Nat64 {
+        let rng = RNG.PRNG(seed0, seed1);
+        rng.randomNumber();
+    };
+
+    public query func getShaSeeds(seed: Text) : async RNG.Seeds {
+        RNG.getShaSeeds(seed);
+    };
     
+
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
