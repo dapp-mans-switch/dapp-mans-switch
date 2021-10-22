@@ -26,7 +26,7 @@ export default function Staker(props) {
     if (await isRegistered()) {
       const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
       console.log("PublicKey:", backendPublicKey[0])
-      alert("Already registered!")
+      alert("Something went wrong!") // TODO: error handling
 
     } else {
       console.log("Generate new key pair")

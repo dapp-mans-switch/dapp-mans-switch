@@ -139,17 +139,19 @@ module {
             // first we count the total amount of tokens held by (not expired) stakes
             var totalAmount: Nat = 0;
             for ((id, s) in stakes.entries()) {
-                if (expiry_time < s.expiry_time) {
+                if ((expiry_time < s.expiry_time) and (s.staker_id != author_id)) {
                     totalAmount += s.amount;
                 };
             };
-
+            if (totalAmount == 0) {
+                return [];
+            };
 
             // now we draw random numbers from 0 to totalAmount
             let now: Int = Time.now(); // seed for rng
             let seed: Text = Int.toText(now);
             let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seed, totalAmount, n), Nat.compare);  
-            D.print("randomAmounts:");
+            D.print("randomAmounts:"); // TODO: remove
             for (a in randomAmounts.vals()) { D.print(Nat.toText(a)); };        
 
             // now we iterate over all stakes
@@ -161,7 +163,7 @@ module {
             // we sort the randomAmounts such that we have to loop over the stakes only once
             // and can draw a single stake multiple times in the inner loop
             label outer for ((id, s) in stakes.entries()) {
-                if (s.expiry_time <= expiry_time) {
+                if ((s.expiry_time <= expiry_time) or (s.staker_id == author_id)) {
                     continue outer;
                 };
                 
