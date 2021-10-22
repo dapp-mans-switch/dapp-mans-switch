@@ -68,6 +68,10 @@ export default function Uploader(props) {
         // const stakes = await helpers.drawStakes() // <- fails now with this
         const stakes = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
         console.log("Stakes", stakes)
+        if (stakes.length == 0) {
+            alert("Not enough stakes in system (have to be different from author)")
+            return
+        }
         const principals = helpers.getPrincipalsOfStakes(stakes)
         const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
         const stakeIds = helpers.getIdsOfStakes(stakes)
