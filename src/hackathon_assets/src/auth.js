@@ -11,7 +11,7 @@ export default class Auth {
     showMenuIfAuth() {
         document.getElementById("start-if-not-auth").style.display = "none";
         document.getElementById("start-if-auth").style.display = "flex";
-        document.getElementById("logoutButton").style.display = "none";
+        document.getElementById("logoutButton").style.display = "initial";
     }
 
     // show authenticate button but hide logout button

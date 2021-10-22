@@ -38,6 +38,8 @@ export default function Main() {
     hackathon = auth.getAnomymousCanister()
     props = {actor: hackathon, identity: identity, auth: auth}
     console.log("Identity Principal:", identity.getPrincipal().toString())
+    // instead of calling auth.auth(), here we call showMenuIfAuth() directly
+    auth.showMenuIfAuth()
   }
   
   authenticate()
