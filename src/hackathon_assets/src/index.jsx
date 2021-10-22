@@ -4,6 +4,7 @@ import routToPage from './router'
 import Auth from './auth'
 
 import keyFlipVideo from './../assets/key-flip.mkv'
+import cityImage from './../assets/city.jpg'
 
 
 export default function Main() {
@@ -54,17 +55,18 @@ export default function Main() {
     if (s == '2vxsx-fae') {
       s += " (anonymous)"
     }
-
     alert("You are " + s);
   }
+
+  React.useEffect(() => {
+    document.body.style.backgroundColor = "#E0E5EC";
+  })
   
 
   return (
     <div>
-    
       <h1>Dead Man’s Switch</h1>
       <h3>using Proof of Stake</h3>
-
       regularly verify that you are alive, otherwise your uploaded files will get published
 
       <div class="panel">
