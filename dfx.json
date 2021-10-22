@@ -4,6 +4,7 @@
       "main": "src/hackathon/main.mo",
       "type": "motoko"
     },
+
     "hackathon_assets": {
       "dependencies": [
         "hackathon"
@@ -16,6 +17,11 @@
         "dist/hackathon_assets/"
       ],
       "type": "assets"
+    },
+
+    "token": {
+      "main": "src/token/erc20.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

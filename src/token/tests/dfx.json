@@ -1,0 +1,10 @@
+{
+  "canisters": {
+    "token": {
+      "main": "../erc20.mo",
+      "type": "motoko"
+    }
+  },
+  "dfx": "0.8.3",
+  "version": 1
+}
