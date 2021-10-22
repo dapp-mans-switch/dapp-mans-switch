@@ -9,6 +9,7 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
 
+import D "mo:base/Debug";
 
 import Types "./types";
 import RNG "./utils/rng";
@@ -110,7 +111,29 @@ module {
         };
 
 
-        //let drawnStakes = Map.HashMap<Principal, Stake>(0, Principal.equal, Principal.hash);
+        let drawnStakesCache = Map.HashMap<Principal, [Stake]>(0, Principal.equal, Principal.hash);
+
+        public func verifySelectedStakes(author_id: Principal, stake_ids: [Nat]) : Bool {
+            switch (drawnStakesCache.get(author_id)) {
+                case null { return false; };
+                case (? cachedStakes) {
+                    let cachedStakesId: [Nat] = Array.map(cachedStakes, func (s: Stake) : Nat { s.stake_id });
+                    return (cachedStakesId == stake_ids);
+                };
+            };
+        };
+
+        public func removeCachedStakes(author_id: Principal) : Bool {
+            let removedEntry = drawnStakesCache.remove(author_id);
+            switch (removedEntry) {
+                case null {
+                    false;
+                };
+                case (? v) {
+                    true;
+                };
+            };
+        };
 
         public func drawStakes(author_id: Principal, expiry_time: Int, n: Nat): [Stake] {
             // first we count the total amount of tokens held by (not expired) stakes
@@ -125,7 +148,9 @@ module {
             // now we draw random numbers from 0 to totalAmount
             let now: Int = Time.now(); // seed for rng
             let seed: Text = Int.toText(now);
-            let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seed, totalAmount, n), Nat.compare);          
+            let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seed, totalAmount, n), Nat.compare);  
+            D.print("randomAmounts:");
+            for (a in randomAmounts.vals()) { D.print(Nat.toText(a)); };        
 
             // now we iterate over all stakes
             let drawnStakes = Buffer.Buffer<Stake>(0);
@@ -153,7 +178,10 @@ module {
                 };
             };
 
-            return drawnStakes.toArray();
+            let drawnStakesArr = drawnStakes.toArray();
+            drawnStakesCache.put(author_id, drawnStakesArr);
+            return drawnStakesArr;
         };
     };
+
 };
