@@ -6,6 +6,7 @@ import Nat "mo:base/Nat";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import Blob "mo:base/Blob";
+import Array "mo:base/Array";
 
 import SHA "./SHA256";
 
@@ -66,9 +67,30 @@ module {
             let x: Nat = Nat64.toNat(xorshift128plus());
             return (x * n / 18_446_744_073_709_551_615); // probably should round instead of truncate
         };
-
+        
     };
 
+    public func randomNumbers(seed: Text, n: Nat) : [Nat64] {
+        let seeds = getShaSeeds(seed);
+        let rng = PRNG(seeds.seed0, seeds.seed1);
+        Array.tabulate<Nat64>(n, func (i: Nat) : Nat64 { rng.randomNumber() });
+    };
 
+    public func randomNumbersBelow(seed: Text, below: Nat, n: Nat) : [Nat] {
+        let seeds = getShaSeeds(seed);
+        let rng = PRNG(seeds.seed0, seeds.seed1);
+        Array.tabulate<Nat>(n, func (i: Nat) : Nat { rng.randomNumberBelow(below) });
+    };
+
+    public func testRNG(seed: Text, below: Nat, n: Nat): [Nat] {
+        let seeds = getShaSeeds(seed);
+        let rng = PRNG(seeds.seed0, seeds.seed1);
+        let numbers = Array.tabulate<Nat>(n, func (i: Nat) : Nat { rng.randomNumberBelow(below) });
+        let counts = Array.init<Nat>(10, 0);
+        for (x in numbers.vals()) {
+            counts[x] += 1;
+        };
+        return Array.freeze(counts);
+    };
     
 };

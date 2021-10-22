@@ -7,8 +7,11 @@ import Nat "mo:base/Nat";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
+import Int "mo:base/Int";
+
 
 import Types "./types";
+import RNG "./utils/rng";
 
 module {
     type Stake = Types.Stake;
@@ -104,6 +107,53 @@ module {
                 allStakers.add({id; public_key});
             };
             return allStakers.toArray();
+        };
+
+
+        //let drawnStakes = Map.HashMap<Principal, Stake>(0, Principal.equal, Principal.hash);
+
+        public func drawStakes(author_id: Principal, expiry_time: Int, n: Nat): [Stake] {
+            // first we count the total amount of tokens held by (not expired) stakes
+            var totalAmount: Nat = 0;
+            for ((id, s) in stakes.entries()) {
+                if (expiry_time < s.expiry_time) {
+                    totalAmount += s.amount;
+                };
+            };
+
+
+            // now we draw random numbers from 0 to totalAmount
+            let now: Int = Time.now(); // seed for rng
+            let seed: Text = Int.toText(now);
+            let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seed, totalAmount, n), Nat.compare);          
+
+            // now we iterate over all stakes
+            let drawnStakes = Buffer.Buffer<Stake>(0);
+            var i: Nat = 0;
+            var current_amount: Nat = 0;
+            // we assign each stake the range (current_amount, current_amount + stake.amount]
+            // if a random number falls into this range than the stake is drawn
+            // we sort the randomAmounts such that we have to loop over the stakes only once
+            // and can draw a single stake multiple times in the inner loop
+            label outer for ((id, s) in stakes.entries()) {
+                if (s.expiry_time <= expiry_time) {
+                    continue outer;
+                };
+                
+                current_amount += s.amount; // stakes receive shares proportional to their amount
+                label inner while (true) {
+                    if (randomAmounts[i] <= current_amount) {
+                        drawnStakes.add(s);
+                        i += 1;
+                        if (i >= n) { break inner; };
+
+                    } else {
+                        break inner;
+                    };
+                };
+            };
+
+            return drawnStakes.toArray();
         };
     };
 };
