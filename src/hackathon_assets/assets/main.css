@@ -1,9 +1,13 @@
 body {
-    font-family: sans-serif;
+    font-family: "Tahoma";
     font-size: 1.5rem;
     background-color:#E0E5EC;
+    /* background-image is set in index.html */
+    background-attachment: fixed;
+    background-size: cover;
     color: black;
     text-align: center;
+    margin-bottom: 80px;
 }
 
 h2 {
@@ -18,9 +22,42 @@ img {
     margin: auto;
 }
 
+input {
+    border: none;
+    outline:none;
+    background: rgb(224,229,236,0);
+    height: 30px;
+    width: 100%;
+    border-radius: 10px;
+    padding-left: 10px;
+    margin-left: -10px;
+    box-shadow: inset 7px 7px 7px rgb(163,177,198,0.6), 
+                inset -7px -7px 7px  rgba(255,255,255, 0.5);
+}
+
+textarea {
+    border: none;
+    outline:none;
+    background-color: rgb(224,229,236,0);    ;
+    height: 80px;
+    width: 95%;
+    max-width: 95%;
+    border-radius: 10px;
+    padding: 15px;
+    margin-left: -10px;
+    box-shadow: inset 7px 7px 7px rgb(163,177,198,0.6), 
+                inset -7px -7px 7px  rgba(255,255,255, 0.5);
+}
+
 .key-flip-video {
     margin-top: 3%;
+    width: 100%;
+}
+
+.still-alive-video {
+    margin: 0 auto 0 auto;
     width: 90%;
+    display: none;
 }
 
 
@@ -66,8 +103,9 @@ section {
     justify-content:center;
     font-weight:bold;
     font-size: 1em;
-    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
-}
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
+        -9px -9px 16px  rgba(255,255,255, 0.5);
+    }
 
 .rainbow-button:after {
     content: attr(data-text);
@@ -83,12 +121,16 @@ section {
 }
 
 .rainbow-button:hover {
-    animation:slidebg 2s linear infinite;
+    animation:slidebg 10s linear infinite;
+}
+
+.trigger-animation {
+    animation:slidebg 10s linear infinite;
 }
 
 @keyframes slidebg {
     to {
-        background-position:20vw;
+        background-position:120vw;
     }
 }
 
@@ -100,26 +142,26 @@ section {
     width: 50%;
     min-width: 700px;
     border-radius: 20px;
-    background: rgb(239,238,238);
-    background-color:#E0E5EC;
+    background: rgb(224,229,236,0.8);
+    backdrop-filter: blur(8px);
     box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
         -9px -9px 16px  rgba(255,255,255, 0.5);
+}
+
+.panel::before{
+
 }
 
 
 form {
     padding: 0 50px 0 50px;
-}
-
-input {
-    width: 100%;
+    line-height: 2.2;
 }
 
 span {
     display: block;
     overflow: hidden;
-    padding-right: 10px;
-    padding-left: 20px;
+    padding: 0 10px 5px 25px;
 }
 
 label {

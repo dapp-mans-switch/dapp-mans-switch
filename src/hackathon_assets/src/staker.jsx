@@ -18,26 +18,29 @@ export default function Staker(props) {
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
   async function isRegistered() {
-    const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-    return backendPublicKey.length > 0
+    return await hackathon.isRegistered()
   }
 
   async function registerStaker() {
-    if (await isRegistered()) {
-      const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-      console.log("PublicKey:", backendPublicKey[0])
-      alert("Already registered!")
+    const keyPair = crypto.generateKeyPair()
 
-    } else {
-      console.log("Generate new key pair")
-      const keyPair = crypto.generateKeyPair()
+    const result = await hackathon.registerStaker(keyPair.publicKey)
 
-      const ok = await hackathon.registerStaker(keyPair.publicKey)
-      if (ok) {
-        console.log("PrivateKey:", keyPair.privateKey)
-  
-        downloadPrivateKey(keyPair.privateKey)
-        alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+    if (result['ok']) {
+      let publicKey = result['ok']
+      console.log("Staker registerd with public key", publicKey)
+      console.log("PrivateKey:", keyPair.privateKey)
+
+      downloadPrivateKey(keyPair.privateKey)
+      alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+    }
+    if (result['err']) {
+      if (result['err']['alreadyRegistered']) {
+        let principal = result['err']['alreadyRegistered']
+        console.error("Staker already registered!", principal)
+      } else {
+        // base64 is guaranteed
+        console.error(result['err'])
       }
     }
 
@@ -50,6 +53,11 @@ export default function Staker(props) {
       return
     }
     
+    let addButton = document.getElementById("reveal_secret_share_button")
+    addButton.classList.add("trigger-animation")
+
+    document.getElementById("reveal-secret-from").reset()
+
     const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
     console.log("PublicKey:", backendPublicKey[0])
     
@@ -62,7 +70,7 @@ export default function Staker(props) {
       return
     }
 
-    let relevantSecret = await hackathon.getRelevantSecret(identity.getPrincipal(), secretId)
+    let relevantSecret = await hackathon.getRelevantSecret(secretId)
     //console.log('relevantSecret', relevantSecret)
 
     if (relevantSecret.len == 0) {
@@ -99,12 +107,18 @@ export default function Staker(props) {
     }
 
     
-    let updatedSecret = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
-    if (updatedSecret.length > 0) {
-      listAllRelevantSecrets()
-      console.log('updatedSecret', updatedSecret[0])
+    let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
+    if (result['ok']) {
+      let updatedSecret = result['ok'] 
+      console.log('updatedSecret', updatedSecret)
       alert('published share')
     }
+    if (result['err']) {
+      console.error(result['err'])
+    }
+
+    listAllRelevantSecrets()
+    addButton.classList.remove("trigger-animation")
   }
 
   async function addStake() {
@@ -114,6 +128,9 @@ export default function Staker(props) {
     }
 
     console.log("addStake")
+    let addButton = document.getElementById("add_new_stake_button")
+    addButton.classList.add("trigger-animation")
+
     let amountInt
     let durationInt
     try {
@@ -127,14 +144,21 @@ export default function Staker(props) {
 
     document.getElementById('staker_form').reset()
     
-    const newStakeId = await hackathon.addStake(amountInt, durationInt)
-    console.log("Stake id:", newStakeId)
+    const result = await hackathon.addStake(amountInt, durationInt)
+    if (result['ok']) {
+      let newStakeId = result['ok']
+      console.log("Stake id:", newStakeId)
+    }
+    if (result['err']) {
+      console.error(result['err'])
+    }
     listAllStakes()
+
+    addButton.classList.remove("trigger-animation")
   }
 
   async function removeStaker(id) {
-    console.log("geemmmma: " + id)
-    const deleted = await hackathon.removeStaker(id)
+    const deleted = await hackathon.removeStake(id)
     if (deleted == false) {
       alert("cannot delete staker with id: " + id)
     }
@@ -157,7 +181,7 @@ export default function Staker(props) {
   }
 
   async function listAllStakes() {
-    let stakes = await hackathon.listStakesOf(identity.getPrincipal())
+    let stakes = await hackathon.listMyStakes()
     stakes.sort(function(a, b) { 
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });
@@ -180,7 +204,6 @@ export default function Staker(props) {
 
     stakes.map(function (s) {
       const tr = table.insertRow(-1)
-
       const amountCell =  tr.insertCell(-1)
       amountCell.innerHTML = s['amount']
 
@@ -191,14 +214,14 @@ export default function Staker(props) {
       const deleteButton = document.createElement('button')
       deleteButton.innerHTML = "delete"
       deleteButton.className = "deleteButton"
-      deleteButton.addEventListener("click", () => { removeStaker(s['staker_id'])})
+      deleteButton.addEventListener("click", () => { removeStaker(s['stake_id'])})
       deleteButtonCell.appendChild(deleteButton)
     });
   }
 
   async function listAllRelevantSecrets() {
 
-    let relevantSecrets = await hackathon.listRelevantSecrets(identity.getPrincipal())
+    let relevantSecrets = await hackathon.listRelevantSecrets()
     relevantSecrets.sort(function(a, b) { 
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
@@ -258,7 +281,7 @@ export default function Staker(props) {
       This is the Staker's page.
 
       
-      <div class="panel">
+      <div id="register" class="panel">
         <button onClick={() => registerStaker()}>Register Staker</button>
       </div>
 
@@ -285,7 +308,7 @@ export default function Staker(props) {
 
       <div class="panel">
         <h2>Reveal a secret share</h2>
-        <form>
+        <form id="reveal-secret-from">
           <label htmlFor="stakerId">Enter secret ID:</label>
           <span><input id="revealSecretId" type="number" onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
