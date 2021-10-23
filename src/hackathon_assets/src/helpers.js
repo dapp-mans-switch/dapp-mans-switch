@@ -29,13 +29,14 @@ export function getPublicKeysOfStakes(stakes) {
     return pubKeys
 }
 
+/*
 export function getPrincipalsOfStakes(stakes) {
     let principals = []
     for (let i = 0; i < stakes.length; i++) {
         principals.push(stakes[i]['staker_id'])
     }
     return principals
-}
+}*/
 
 export function getIdsOfStakes(stakes) {
     let ids = []

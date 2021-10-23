@@ -1,5 +1,6 @@
 import D "mo:base/Debug";
 import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 
 import Secret "./secret";
 import Staker "./staker";
@@ -153,38 +154,107 @@ actor {
 
     var secretManager: Secret.SecretManager = Secret.SecretManager();
 
+    /*
+    * Returns all secrets.
+    */
     public query func listAllSecrets() : async [Secret] {
         secretManager.listAll();
     };
 
-    public query func listRelevantSecrets(staker_id: Principal) : async [RelevantSecret] {
-        secretManager.listRelevantSecrets(staker_id);
-    };
-
-    public query func getRelevantSecret(staker_id: Principal, secret_id: Nat) : async ?RelevantSecret {
-        secretManager.getRelevantSecret(staker_id, secret_id);
-    };
-
-    public shared(msg) func listMySecrets() : async [Secret] {
+    /*
+    * Returns all secret for which were authored by caller.
+    */
+    public shared query (msg) func listMySecrets() : async [Secret] {
         let author_id = msg.caller;
         secretManager.listSecretsOf(author_id);
     };
 
+    /*
+    * Returns the all secrets for which were authored by author_id.
+    */
     public query func listSecrets(author_id: Principal) : async [Secret] {
         secretManager.listSecretsOf(author_id);
     };
 
+    /*
+    * Returns all secret for which caller is a share holder in form of the RelevenatSecret type.
+    * This means it returns only the shares which the share holder has to decrypt.
+    */
+    public shared query (msg) func listRelevantSecrets() : async [RelevantSecret] {
+        let staker_id = msg.caller;
+        secretManager.listRelevantSecrets(staker_id);
+    };
 
-    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): async ?Secret {
+    /*
+    * Returns the secret with secret_id for which the caller is a share holder
+    * in form of the RelevenatSecret type.
+    * This means it returns only the shares which the share holder has to decrypt.
+    */
+    public shared query (msg) func getRelevantSecret(secret_id: Nat) : async ?RelevantSecret {
+        let staker_id = msg.caller;
+        secretManager.getRelevantSecret(staker_id, secret_id);
+    };
+
+    public type AddSecretError = {
+        #invalidStakes: [Nat];
+        #invalidReward: Nat;
+        #invalidHeartbeatFreq: Int;
+        #invalidListLengths;
+        #invalidPublicKey: Text;
+        #insufficientFunds};
+    public type AddSecretResult = Result.Result<Secret, AddSecretError>;
+
+    /*
+    * Adds a secret.
+    * Params:
+    *   - payload : Enrypted secret.
+    *   - uploader_public_key: Public key of secret encryption.
+    *   - reward: TODO maybe remove
+    *   - expiry_time: timestamp when secret WILL be revealed (seconds since 1970)
+    *   - heartbeat_freq: the frequency with which the author has to send a heartbeat in order
+    *       to keep the secret alive (seconds)
+    *   - encrypted_shares: encrypted secret shares which will be decrypted by stakers
+    *   - decrypted_share_shas: sha256 hashes of the decrypted secret shares to ensure that stakers
+    *       upload correct decrypted share
+    *   - share_holder_stake_ids: The stake_ids which receive a secret share. This HAVE to be drawn
+    *       with drawStakes before calling this method, to ensure that the secret shares are
+    *       distributed by the backend.
+    * Returns:
+    *   On success: the added secret
+    *   Various error messages conforming to AddSecretError type.
+    */
+    public shared(msg) func addSecret(payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int,
+        encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_stake_ids: [Nat]): async AddSecretResult {
+        
         let author_id = msg.caller;
         let ok = stakerManager.verifySelectedStakes(author_id, share_holder_stake_ids);
+        if (not ok) {
+            return #err(#invalidStakes(share_holder_stake_ids));
+        };
         let removed = stakerManager.removeCachedStakes(author_id);
 
-        if (not ok) {
-            // error invalid stakes uploaded (not those which were last drawn from author_id)
-            return null;
+        if (reward == 0) {
+            return #err(#invalidReward(reward));
         };
-        secretManager.insert(author_id, payload, uploader_public_key, reward, expiry_time, heartbeat_freq, encrypted_shares, decrypted_share_shas, share_holder_ids, share_holder_stake_ids);
+        if (heartbeat_freq < 0) {
+            return #err(#invalidHeartbeatFreq(heartbeat_freq));
+        };
+        if ((encrypted_shares.size() != decrypted_share_shas.size()) or (decrypted_share_shas.size() != share_holder_stake_ids.size())) {
+            return #err(#invalidListLengths);
+        };
+
+        switch (stakerManager.getPrincipals(share_holder_stake_ids)) {
+            case (#ok(share_holder_ids)) {
+                let secret = secretManager.insert(
+                    author_id, payload, uploader_public_key,
+                    reward, expiry_time, heartbeat_freq,
+                    encrypted_shares, decrypted_share_shas, share_holder_ids, share_holder_stake_ids);
+                return #ok(secret);
+            };
+            case (#err(#stakeIdNotFound(stake_id))) {
+                return #err(#invalidStakes(share_holder_stake_ids));
+            };
+        };
     };
 
     // dfx canister call hackathon lookupSecret 0

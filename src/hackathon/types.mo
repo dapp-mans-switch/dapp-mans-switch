@@ -33,8 +33,6 @@ module {
         shares: [Text];
         decrypted_share_shas: [Text];
         revealed: [Bool];
-
-        valid: Bool;
     };
 
     public type RelevantSecret = {

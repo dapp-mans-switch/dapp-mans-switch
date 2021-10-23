@@ -70,7 +70,7 @@ export default function Staker(props) {
       return
     }
 
-    let relevantSecret = await hackathon.getRelevantSecret(identity.getPrincipal(), secretId)
+    let relevantSecret = await hackathon.getRelevantSecret(secretId)
     //console.log('relevantSecret', relevantSecret)
 
     if (relevantSecret.len == 0) {
@@ -217,7 +217,7 @@ export default function Staker(props) {
 
   async function listAllRelevantSecrets() {
 
-    let relevantSecrets = await hackathon.listRelevantSecrets(identity.getPrincipal())
+    let relevantSecrets = await hackathon.listRelevantSecrets()
     relevantSecrets.sort(function(a, b) { 
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });

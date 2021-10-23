@@ -10,7 +10,8 @@ import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
 
 import Types "./types";
-import SHA "./utils/SHA256"
+import SHA "./utils/SHA256";
+import Date "./utils/date";
 
 module {
     type Secret = Types.Secret;
@@ -20,21 +21,16 @@ module {
 
         let secrets = Map.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
 
-        func secondsSince1970() : Int {
-            return Time.now() / 1_000_000_000;
-        };
-
-        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): ?Secret {
-
-            assert (encrypted_shares.size() == share_holder_ids.size());
-            // TODO check that author_id != key_holder
-            // TODO check that stakes are longer than expiry time
+        /*
+        * Inserts a secret. 
+        * For more information see main.io addSecret
+        */
+        public func insert(author_id: Principal, payload: Text, uploader_public_key: Text, reward: Nat, expiry_time: Int, heartbeat_freq: Int, encrypted_shares: [Text], decrypted_share_shas: [Text], share_holder_ids: [Principal], share_holder_stake_ids: [Nat]): Secret {
 
             let secret_id = secrets.size()+1;
-            let last_heartbeat = secondsSince1970();
+            let last_heartbeat = Date.secondsSince1970();
             let revealed = Array.freeze(Array.init<Bool>(share_holder_ids.size(), false));
             let shares = encrypted_shares;
-            let valid = true;
 
             let newSecret = {
                 secret_id;
@@ -54,13 +50,11 @@ module {
                 shares;
                 decrypted_share_shas;
                 revealed;
-
-                valid
             };
 
             secrets.put(secret_id, newSecret);
 
-            return ?newSecret;
+            return newSecret;
         };
 
 
@@ -74,7 +68,7 @@ module {
                 return false;
             };
 
-            let heartbeat = secondsSince1970();
+            let heartbeat = Date.secondsSince1970();
 
             // TODO: no better way?
             let newSecret = {
@@ -95,8 +89,6 @@ module {
                 shares = secret.shares;
                 decrypted_share_shas = secret.decrypted_share_shas;
                 revealed = secret.revealed;
-
-                valid = secret.valid
             };
 
             secrets.put(secret.secret_id, newSecret);
@@ -136,7 +128,7 @@ module {
         };
 
         public func shouldRevealSecret(secret: Secret) : Bool {
-            let now = secondsSince1970();
+            let now = Date.secondsSince1970();
             // either secret has expired or last heartbeat is too long ago
             let revealOk: Bool = (now > secret.expiry_time) or (now - secret.last_heartbeat > secret.heartbeat_freq);
             return revealOk;
@@ -192,8 +184,6 @@ module {
                         shares = newShares; // update
                         decrypted_share_shas = secret.decrypted_share_shas;
                         revealed = newRevealed; // update
-
-                        valid = secret.valid
                     };
                     secrets.put(secret_id, newSecret);
 

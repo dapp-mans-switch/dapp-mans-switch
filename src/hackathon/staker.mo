@@ -16,11 +16,15 @@ import D "mo:base/Debug";
 import Types "./types";
 import RNG "./utils/rng";
 import base64 "./utils/base64";
+import Date "./utils/date";
 
 module {
     type Stake = Types.Stake;
     type Staker = Types.Staker;
 
+
+    public type GetPrincipalsError = {#stakeIdNotFound: Nat};
+    public type GetPrincipalsResult = Result.Result<[Principal], GetPrincipalsError>;
 
     public type RegisterStakerError = {#alreadyRegistered: Principal; #invalidKey: Text};
     public type RegisterStakerResult = Result.Result<Text, RegisterStakerError>;
@@ -37,6 +41,26 @@ module {
 
         // map staker to public key
         let stakers = Map.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
+
+
+        /*
+        * Looks up stakes and returns their principals.
+        * Returns an GetPrincipalsError if stake_id is not found,
+        */
+        public func getPrincipals(stake_ids: [Nat]) : GetPrincipalsResult {
+            var principals: [Principal] = [];
+            for (stake_id in stake_ids.vals()) {
+                switch (stakes.get(stake_id)) {
+                    case null {
+                        return #err(#stakeIdNotFound(stake_id));
+                    };
+                    case (? s) {
+                        principals := Array.append(principals, [s.staker_id]);
+                    }
+                }
+            };
+            return #ok(principals);
+        };
 
         /*
         * Register a staker with his principal caller id.
@@ -78,10 +102,6 @@ module {
                 };
             };
         };
-        
-        func secondsSince1970() : Int {
-            return Time.now() / 1_000_000_000;
-        };
 
         /*
         * Add a stake for staker.
@@ -104,7 +124,7 @@ module {
                 };
                 case (? public_key) {
                     let stake_id = stakes.size()+1;
-                    let now = secondsSince1970();
+                    let now = Date.secondsSince1970();
                     let expiry_time = now + days * 86400;
                     
                     let newStake = {staker_id; public_key; amount; expiry_time; stake_id};
@@ -249,7 +269,7 @@ module {
                     if (randomAmounts[i] <= current_amount) {
                         drawnStakes.add(s);
                         i += 1;
-                        if (i >= n) { break inner; };
+                        if (i >= n) { break outer; };
 
                     } else {
                         break inner;
