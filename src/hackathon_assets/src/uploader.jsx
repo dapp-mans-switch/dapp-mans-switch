@@ -68,17 +68,24 @@ export default function Uploader(props) {
 
         // choose stakers
         // const stakes = await helpers.drawStakes() // <- fails now with this
-        const stakes = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
+        const result = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
+        let stakes
+        if (result['ok']) {
+            stakes = result['ok']
+        }
+        if (result['err']) {
+            console.error(result['err'])
+            return
+        }
+
         console.log("Stakes", stakes)
         if (stakes.length == 0) {
             alert("Not enough stakes in system (have to be different from author)")
             removeLoadingAnimation()
             return
         }
-        const principals = helpers.getPrincipalsOfStakes(stakes)
         const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
         const stakeIds = helpers.getIdsOfStakes(stakes)
-        console.log("Principals", principals)
         console.log("StakeIds", stakeIds)
 
         // create shares of the private key
@@ -93,14 +100,16 @@ export default function Uploader(props) {
         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakePublicKeys)
         console.log("encryptedKeyShares", encryptedKeyShares)
         // send to backend
-        const newSecret = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
-            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, keysharesShas, principals, stakeIds)
-        
-        console.log("newSecret", newSecret)
-        if (newSecret.length > 0) {
-            alert(`Secret with ID ${newSecret[0].secret_id} uploaded!`)
-        } else {
-            alert("Something went wrong!")
+        const addSecretResult = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
+            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, keysharesShas, stakeIds)
+
+        if (addSecretResult['ok']) {
+            let newSecret = addSecretResult['ok']
+            console.log("newSecret", newSecret)
+            alert(`Secret with ID ${newSecret.secret_id} uploaded!`)
+        }
+        if (addSecretResult['err']) {
+            console.error(addSecretResult['err'])
         }
         
         removeLoadingAnimation()
@@ -152,7 +161,7 @@ export default function Uploader(props) {
 
     async function listAllSecrets() {
     
-        let secrets = await hackathon.listSecrets(identity.getPrincipal())
+        let secrets = await hackathon.listMySecrets()
         secrets.sort(function(a, b) { 
           return - (parseInt(b.secret_id) - parseInt(a.secret_id));
         });

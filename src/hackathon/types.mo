@@ -12,7 +12,6 @@ module {
         public_key: Text;
     };
 
-    // TODO: add checksum to make sure that correct shares were uploaded?
     public type Secret = {
         secret_id: Nat;
         author_id: Principal;
@@ -28,15 +27,17 @@ module {
         heartbeat_freq: Int; // every heartbeat_freq a heartbeat has to be sent
 
         share_holder_ids: [Principal];
-        share_holder_stake_ids: [Nat]; // as of now unused, maybe use for calculating payout
+        share_holder_stake_ids: [Nat]; // TODO: as of now unused, maybe use for calculating payout
 
         shares: [Text];
         decrypted_share_shas: [Text];
         revealed: [Bool];
-
-        valid: Bool;
     };
 
+    /*
+    * A RelevantSecret only contains information relevant to the staker.
+    * E.g. His/Her shares, if they should reveal or not; if they have revealed.
+    */
     public type RelevantSecret = {
         secret_id: Nat;
         uploader_public_key: Text;

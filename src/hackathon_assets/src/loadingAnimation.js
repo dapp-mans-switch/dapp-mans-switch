@@ -1,5 +1,10 @@
 import loadingVideo from './../assets/loading.mkv'
 
+// elementId: looking for first parent who is a div and append video element
+// position: true = top and false = bottom (string)
+// function appendLoadingAnimation(elementId, position) {
+//   let loadAnim = document.createElement('video')
+//   loadAnim.id = "loadAnimation"
 export function appendLoadingAnimation(elementId, position) {
         let loadAnim = document.createElement('video')
         loadAnim.id = "loadAnimation"

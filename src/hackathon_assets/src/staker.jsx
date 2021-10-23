@@ -19,26 +19,29 @@ export default function Staker(props) {
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
   async function isRegistered() {
-    const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-    return backendPublicKey.length > 0
+    return await hackathon.isRegistered()
   }
 
   async function registerStaker() {
-    if (await isRegistered()) {
-      const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-      console.log("PublicKey:", backendPublicKey[0])
-      alert("Something went wrong!") // TODO: error handling
+    const keyPair = crypto.generateKeyPair()
 
-    } else {
-      console.log("Generate new key pair")
-      const keyPair = crypto.generateKeyPair()
+    const result = await hackathon.registerStaker(keyPair.publicKey)
 
-      const ok = await hackathon.registerStaker(keyPair.publicKey)
-      if (ok) {
-        console.log("PrivateKey:", keyPair.privateKey)
-  
-        downloadPrivateKey(keyPair.privateKey)
-        alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+    if (result['ok']) {
+      let publicKey = result['ok']
+      console.log("Staker registerd with public key", publicKey)
+      console.log("PrivateKey:", keyPair.privateKey)
+
+      downloadPrivateKey(keyPair.privateKey)
+      alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+    }
+    if (result['err']) {
+      if (result['err']['alreadyRegistered']) {
+        let principal = result['err']['alreadyRegistered']
+        console.error("Staker already registered!", principal)
+      } else {
+        // base64 is guaranteed
+        console.error(result['err'])
       }
     }
 
@@ -71,7 +74,7 @@ export default function Staker(props) {
       return
     }
 
-    let relevantSecret = await hackathon.getRelevantSecret(identity.getPrincipal(), secretId)
+    let relevantSecret = await hackathon.getRelevantSecret(secretId)
     //console.log('relevantSecret', relevantSecret)
 
     if (relevantSecret.len == 0) {
@@ -111,13 +114,17 @@ export default function Staker(props) {
     }
 
     
-    let updatedSecret = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
-    if (updatedSecret.length > 0) {
-      listAllRelevantSecrets()
-      console.log('updatedSecret', updatedSecret[0])
+    let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
+    if (result['ok']) {
+      let updatedSecret = result['ok'] 
+      console.log('updatedSecret', updatedSecret)
       alert('published share')
     }
+    if (result['err']) {
+      console.error(result['err'])
+    }
 
+    listAllRelevantSecrets()
     addButton.classList.remove("trigger-animation")
     removeLoadingAnimation()
   }
@@ -145,9 +152,14 @@ export default function Staker(props) {
 
     document.getElementById('staker_form').reset()
     
-    const newStakeId = await hackathon.addStake(amountInt, durationInt)
-    console.log("Stake id:", newStakeId)
-    removeLoadingAnimation()
+    const result = await hackathon.addStake(amountInt, durationInt)
+    if (result['ok']) {
+      let newStakeId = result['ok']
+      console.log("Stake id:", newStakeId)
+    }
+    if (result['err']) {
+      console.error(result['err'])
+    }
     listAllStakes()
 
   }
@@ -178,7 +190,7 @@ export default function Staker(props) {
   }
 
   async function listAllStakes() {
-    let stakes = await hackathon.listStakesOf(identity.getPrincipal())
+    let stakes = await hackathon.listMyStakes()
     stakes.sort(function(a, b) { 
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });
@@ -218,7 +230,7 @@ export default function Staker(props) {
 
   async function listAllRelevantSecrets() {
 
-    let relevantSecrets = await hackathon.listRelevantSecrets(identity.getPrincipal())
+    let relevantSecrets = await hackathon.listRelevantSecrets()
     relevantSecrets.sort(function(a, b) { 
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
@@ -260,34 +272,6 @@ export default function Staker(props) {
       hasCell.innerHTML = s.hasRevealed
     });
   }
-
-  // elementId: looking for first parent who is a div and append video element
-  // position: true = top and false = bottom (string)
-  // function appendLoadingAnimation(elementId, position) {
-  //   let loadAnim = document.createElement('video')
-  //   loadAnim.id = "loadAnimation"
-
-  //   loadAnim.classList.add('loading-video')
-  //   if (position) {
-  //     loadAnim.classList.add('loading-video-top')
-  //   } else {
-  //     loadAnim.classList.add('loading-video-bottom')
-  //   }
-
-  //   let animSource = document.createElement('source')
-  //   animSource.setAttribute('src', loadingVideo)
-
-  //   loadAnim.appendChild(animSource)
-
-  //   document.getElementById(elementId).closest("div").appendChild(loadAnim)
-  //   loadAnim.autoplay = true
-  //   loadAnim.muted = true
-  //   loadAnim.loop = true
-  // }
-
-  // function removeLoadingAnimation() {
-  //   document.getElementById("loadAnimation").remove()
-  // }
 
   React.useEffect(() => {
     listAllStakes()
