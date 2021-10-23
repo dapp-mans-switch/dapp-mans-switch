@@ -1,5 +1,6 @@
 // Licensed under the Apache License 2.0
 // Copyright 2021 Quint Daenen
+// unmodified original code @ 5ff7450
 
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
@@ -8,12 +9,13 @@ import Principal "mo:base/Principal";
 import Errors "errors";
 import Events "events";
 
-shared({caller}) actor class ERC20 (
-    tkName : Text,       // Name of the token.
-    tkSymbol : Text,     // Symbol of the token.
-    tkDecimals : Nat8,   // Number of decimals the token uses.
-    tkTotalSupply : Nat, // Total token supply.
-) = {
+shared({caller}) actor class ERC20 () = {
+
+    private stable let tkName : Text = "Heartbeat";
+    private stable let tkSymbol : Text = "HRBT";
+    private stable let tkDecimals : Nat8 = 0;
+    private stable let tkTotalSupply : Nat = 1_000_000_000;
+
     private stable let _name : Text = tkName;
     // Returns the name of the token.
     public query func name() : async Text {
