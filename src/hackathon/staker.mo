@@ -8,6 +8,7 @@ import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
+import Random  "mo:base/Random";
 
 import D "mo:base/Debug";
 
@@ -135,7 +136,7 @@ module {
             };
         };
 
-        public func drawStakes(author_id: Principal, expiry_time: Int, n: Nat): [Stake] {
+        public func drawStakes(author_id: Principal, expiry_time: Int, n: Nat): async [Stake] {
             // first we count the total amount of tokens held by (not expired) stakes
             var totalAmount: Nat = 0;
             for ((id, s) in stakes.entries()) {
@@ -147,10 +148,9 @@ module {
                 return [];
             };
 
-            // now we draw random numbers from 0 to totalAmount
-            let now: Int = Time.now(); // seed for rng
-            let seed: Text = Int.toText(now);
-            let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seed, totalAmount, n), Nat.compare);  
+            let entropy: Blob = await Random.blob(); // Obtains a full blob (32 bytes) worth of fresh cryptographic entropy
+            let seeds: RNG.Seeds = RNG.getSeedsFromEntropy(entropy);
+            let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seeds, totalAmount, n), Nat.compare);  
             D.print("randomAmounts:"); // TODO: remove
             for (a in randomAmounts.vals()) { D.print(Nat.toText(a)); };        
 

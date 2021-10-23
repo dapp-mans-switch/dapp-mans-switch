@@ -84,7 +84,8 @@ actor {
 
     public shared(msg) func drawStakes(expiry_time: Int, n: Nat) : async [Stake] {
         let author_id = msg.caller;
-        stakerManager.drawStakes(author_id, expiry_time, n);
+        let stakes = await stakerManager.drawStakes(author_id, expiry_time, n);
+        return stakes;
     };
 
     // Secret
