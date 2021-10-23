@@ -16,7 +16,7 @@ import base64 "./utils/base64";
 
 import Token "canister:token";
 
-actor {
+actor Hackathon {
     type Stake = Types.Stake;
     type Staker = Types.Staker;
     type Secret = Types.Secret;
@@ -27,6 +27,10 @@ actor {
 	public func idk() : async Text {
 		let sym = await Token.symbol();
 		return sym;
+	};
+
+    public query func whothis() : async Principal {
+		Principal.fromActor(Hackathon);
 	};
 
     public shared (msg) func whoami() : async Principal {
