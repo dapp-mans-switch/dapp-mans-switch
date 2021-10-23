@@ -9,12 +9,23 @@ import Principal "mo:base/Principal";
 import Errors "errors";
 import Events "events";
 
-shared({caller}) actor class ERC20 () = {
+actor {
 
     private stable let tkName : Text = "Heartbeat";
     private stable let tkSymbol : Text = "HRBT";
     private stable let tkDecimals : Nat8 = 0;
-    private stable let tkTotalSupply : Nat = 1_000_000_000;
+    // private stable let tkTotalSupply : Nat = 1_000_000_000;
+
+
+	public shared({caller}) func buy_in(amount : Nat) {
+		// TODO
+		//  _____ ___  ____   ___
+		// |_   _/ _ \|  _ \ / _ \
+		//   | || | | | | | | | | |
+		//   | || |_| | |_| | |_| |
+		//   |_| \___/|____/ \___/
+		balances.put(caller, amount);
+	};
 
     private stable let _name : Text = tkName;
     // Returns the name of the token.
@@ -34,18 +45,18 @@ shared({caller}) actor class ERC20 () = {
         _decimals;
     };
 
-    private stable let _totalSupply : Nat = tkTotalSupply;
-    // Returns the total token supply.
-    public query func totalSupply() : async Nat {
-        _totalSupply;
-    };
+    // private stable let _totalSupply : Nat = tkTotalSupply;
+    // // Returns the total token supply.
+    // public query func totalSupply() : async Nat {
+    //     _totalSupply;
+    // };
 
     private stable var _balances : [(Principal, Nat)] = [];
     private var balances = HashMap.HashMap<
         Principal, // Address owner.
         Nat,       // Amount of tokens.
     >(0, Principal.equal, Principal.hash);
-    balances.put(caller, tkTotalSupply);
+    // balances.put(caller, tkTotalSupply);
     public query func balanceOf(owner : Principal) : async Nat {
         _balanceOf(owner);
     };

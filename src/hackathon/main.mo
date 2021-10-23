@@ -5,13 +5,22 @@ import Secret "./secret";
 import Staker "./staker";
 import Types "./types";
 
-import SHA "./sha/SHA256"
+import SHA "./sha/SHA256";
+
+import Token "canister:token";
 
 actor {
     type Stake = Types.Stake;
     type Staker = Types.Staker;
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
+
+	// example call to Token canister
+	// TODO remove
+	public func idk() : async Text {
+		let sym = await Token.symbol();
+		return sym;
+	};
 
     public shared (msg) func whoami() : async Principal {
         msg.caller
@@ -29,7 +38,7 @@ actor {
     public query func sha256(text: Text) : async Text {
         SHA.sha256(text);
     };
-    
+
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
