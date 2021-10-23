@@ -48,10 +48,17 @@ actor {
         stakerManager.registerStaker(staker_id, public_key);
     };
 
-    // dfx canister call hackathon registerStaker '("Markus", "pubkey", 10, 10)'
-    public shared(msg) func addStake(amount: Nat, days: Nat): async Nat {
+    /*
+    * Add a stake for staker.
+    * Params:
+    *   - amount: the number of tokens to stake
+    *   - days: the duration of the stake in days
+    * Returns:
+    *   AddStakeResult {#ok: Nat, #err: {#unknownStaker: Principal, #invalidDuration: Int}}
+    *       stake_id on success
+    */
+    public shared(msg) func addStake(amount: Nat, days: Nat): async Staker.AddStakeResult {
         let staker_id = msg.caller;
-        D.print("staker id " # Principal.toText(staker_id));
         stakerManager.addStake(staker_id, amount, days);
     };
 

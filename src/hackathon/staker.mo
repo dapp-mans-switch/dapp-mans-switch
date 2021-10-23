@@ -25,6 +25,9 @@ module {
     public type RegisterStakerError = {#alreadyRegistered: Principal; #invalidKey: Text};
     public type RegisterStakerResult = Result.Result<Text, RegisterStakerError>;
 
+    public type AddStakeError = {#unknownStaker: Principal; #invalidDuration: Int};
+    public type AddStakeResult = Result.Result<Nat, AddStakeError>;
+
     public class StakerManager() {
 
         let stakes = Map.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
@@ -63,11 +66,24 @@ module {
             return Time.now() / 1_000_000_000;
         };
 
-        public func addStake(staker_id: Principal, amount: Nat, days: Nat) : Nat {
+        /*
+        * Add a stake for staker.
+        * Params:
+        *   - staker_id: principal of staker
+        *   - amount: the number of tokens to stake
+        *   - days: the duration of the stake in days
+        * Returns:
+        *   AddStakeResult {#ok: Nat, #err: {#unknownStaker: Principal, #invalidDuration: Int}}
+        *       stake_id on success
+        */
+        public func addStake(staker_id: Principal, amount: Nat, days: Nat) : AddStakeResult {
+            if (days == 0) {
+                return #err(#invalidDuration(days));
+            };
             let public_key = stakers.get(staker_id);
             switch (public_key) {
                 case null {
-                    return 0; // error staker_id unknown
+                    return #err(#unknownStaker(staker_id));
                 };
                 case (? public_key) {
                     let stake_id = stakes.size()+1;
@@ -76,7 +92,7 @@ module {
                     
                     let newStake = {staker_id; public_key; amount; expiry_time; stake_id};
                     stakes.put(stake_id, newStake);
-                    return stake_id;
+                    return #ok(stake_id);
                 };
             };
         };

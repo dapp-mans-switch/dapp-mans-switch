@@ -26,7 +26,7 @@ export default function Staker(props) {
     const keyPair = crypto.generateKeyPair()
 
     const result = await hackathon.registerStaker(keyPair.publicKey)
-    
+
     if (result['ok']) {
       let publicKey = result['ok']
       console.log("Staker registerd with public key", publicKey)
@@ -141,8 +141,14 @@ export default function Staker(props) {
 
     document.getElementById('staker_form').reset()
     
-    const newStakeId = await hackathon.addStake(amountInt, durationInt)
-    console.log("Stake id:", newStakeId)
+    const result = await hackathon.addStake(amountInt, durationInt)
+    if (result['ok']) {
+      let newStakeId = result['ok']
+      console.log("Stake id:", newStakeId)
+    }
+    if (result['err']) {
+      console.error(result['err'])
+    }
     listAllStakes()
 
     addButton.classList.remove("trigger-animation")
