@@ -2,10 +2,10 @@ import * as React from 'react'
 import * as crypto from './crypto'
 import sha256 from 'js-sha256'
 import * as helpers from './helpers'
-//import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 
 import stillAliveVideo from './../assets/im_alive.mkv'
+import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
 const TEST = true
 
@@ -38,6 +38,7 @@ export default function Uploader(props) {
     }
 
     async function uploadSecret() {
+        appendLoadingAnimation("uploader_form", false)
         let input
         if (TEST) {
             testSecretEnDecryption()
@@ -49,6 +50,7 @@ export default function Uploader(props) {
             } catch (error) {
                 console.log(error)
                 alert('Please check your input!')
+                removeLoadingAnimation()
                 return
             }
         }
@@ -79,6 +81,7 @@ export default function Uploader(props) {
         console.log("Stakes", stakes)
         if (stakes.length == 0) {
             alert("Not enough stakes in system (have to be different from author)")
+            removeLoadingAnimation()
             return
         }
         const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
@@ -108,7 +111,8 @@ export default function Uploader(props) {
         if (addSecretResult['err']) {
             console.error(addSecretResult['err'])
         }
-
+        
+        removeLoadingAnimation()
         listAllSecrets()
     }
 
@@ -224,12 +228,12 @@ export default function Uploader(props) {
             <h1>Uploader</h1>
 
             <div class="panel">
-                <h2>My Secrets</h2>
+                <h3>My Secrets</h3>
                 <table id="secretsTable" cellPadding={5}/>
             </div>
 
             <div class="panel">
-                <h2>Heartbeat</h2>
+                <h3>Heartbeat</h3>
                 <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} class="rainbow-button" style={{width: 550}}/>
                 <video id="still-alive-video" className="still-alive-video">
                     <source src={stillAliveVideo}/>
@@ -238,20 +242,20 @@ export default function Uploader(props) {
 
             <div class="panel">
               <form id="uploader_form">
-                <h2>Create a Sectret to be published</h2>
-                <textarea id="secret" type="text" onChange={(ev) => setSecret(ev.target.value)}/>
+                <h3>Create a Sectret to be published</h3>
+                <textarea id="secret" type="text" autocomplete='off' onChange={(ev) => setSecret(ev.target.value)}/>
                 <br/>
 
                 <label htmlFor="reward">Reward ($HRBT)</label>
-                <span><input id="reward" type="number" onChange={(ev) => setReward(ev.target.value)}/></span>
+                <span><input id="reward" type="number" autocomplete='off' onChange={(ev) => setReward(ev.target.value)}/></span>
 
                 <label htmlFor="heartbeatFreq">Heartbeat Frequency (Days)</label>
-                <span><input id="heartbeatFreq" type="number" onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
+                <span><input id="heartbeatFreq" type="number" autocomplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
 
                 <label htmlFor="expiryTime">Latest Reveal Date:</label>
-                <span><input id="expiryTime" type="datetime-local" onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
+                <span><input id="expiryTime" type="datetime-local" autocomplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
 
-                <a id="secret_btn" data-text="Upload secret" onClick={uploadSecret} class="rainbow-button" style={{width: 260}}/>
+                <a id="secret_btn" data-text="Upload secret" autocomplete='off' onClick={uploadSecret} class="rainbow-button" style={{width: 260}}/>
               </form>
             </div>
 

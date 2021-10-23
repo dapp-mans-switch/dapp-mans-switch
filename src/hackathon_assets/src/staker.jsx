@@ -1,9 +1,10 @@
 import * as React from 'react'
-//import { hackathon } from '../../declarations/hackathon'
 import routToPage from './router'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
-import { copyFileSync } from 'fs';
+
+import loadingVideo from './../assets/loading.mkv'
+import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
 
 export default function Staker(props) {
@@ -52,7 +53,9 @@ export default function Staker(props) {
       alert("Please register first!")
       return
     }
-    
+
+    appendLoadingAnimation("reveal_secret_share_button", false)
+
     let addButton = document.getElementById("reveal_secret_share_button")
     addButton.classList.add("trigger-animation")
 
@@ -67,6 +70,7 @@ export default function Staker(props) {
     } catch (error) {
       console.log(error)
       alert('Invalid numbers entered')
+      removeLoadingAnimation()
       return
     }
 
@@ -75,6 +79,7 @@ export default function Staker(props) {
 
     if (relevantSecret.len == 0) {
       console.log("no secret for secret_id")
+      removeLoadingAnimation()
       return
     }
     let secret = relevantSecret[0]
@@ -85,6 +90,7 @@ export default function Staker(props) {
     // check if secret already decrypted
     if (secret.hasRevealed || !secret.shouldReveal) {
       console.log("Do not reveal")
+      removeLoadingAnimation()
       return
     }
 
@@ -103,6 +109,7 @@ export default function Staker(props) {
     } catch (error) {
       console.log(`failed decryption`)
       console.log(error)
+      removeLoadingAnimation()
       return
     }
 
@@ -119,6 +126,7 @@ export default function Staker(props) {
 
     listAllRelevantSecrets()
     addButton.classList.remove("trigger-animation")
+    removeLoadingAnimation()
   }
 
   async function addStake() {
@@ -127,9 +135,8 @@ export default function Staker(props) {
       return
     }
 
+    appendLoadingAnimation("add_new_stake_button", false)
     console.log("addStake")
-    let addButton = document.getElementById("add_new_stake_button")
-    addButton.classList.add("trigger-animation")
 
     let amountInt
     let durationInt
@@ -138,6 +145,7 @@ export default function Staker(props) {
       durationInt = helpers.getPositiveNumber(duration)
     } catch (error) {
       console.log(error)
+      removeLoadingAnimation()
       alert('Amount and duration must be positive numbers!')
       return
     }
@@ -152,16 +160,18 @@ export default function Staker(props) {
     if (result['err']) {
       console.error(result['err'])
     }
+    removeLoadingAnimation()
     listAllStakes()
-
-    addButton.classList.remove("trigger-animation")
   }
 
-  async function removeStaker(id) {
-    const deleted = await hackathon.removeStake(id)
+  async function endStake(id) {
+    appendLoadingAnimation("stakerTable", true)
+    const deleted = await hackathon.endStake(id)
+    console.log(deleted)
     if (deleted == false) {
       alert("cannot delete staker with id: " + id)
     }
+    removeLoadingAnimation()
     listAllStakes()
   }
 
@@ -186,8 +196,6 @@ export default function Staker(props) {
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });
 
-    //console.log(stakes)
-
     const table = document.getElementById('stakerTable')
 
     const col_names = ['amount', 'expiry_time']
@@ -208,13 +216,22 @@ export default function Staker(props) {
       amountCell.innerHTML = s['amount']
 
       const dateCell = tr.insertCell(-1)
-      dateCell.innerHTML = helpers.secondsSinceEpocheToDate(s['expiry_time']).toLocaleString()
+
+      let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
+      let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      dateCell.innerHTML = expiryDate.toLocaleString('en-GB', options)
 
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
-      deleteButton.innerHTML = "delete"
-      deleteButton.className = "deleteButton"
-      deleteButton.addEventListener("click", () => { removeStaker(s['stake_id'])})
+      deleteButton.innerHTML = "End Stake"
+      deleteButton.className = "endStakeButton"
+      let newDate = new Date()
+      if (newDate < expiryDate) {
+        deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
+      } else {
+        deleteButton.disabled = true;
+      }
+
       deleteButtonCell.appendChild(deleteButton)
     });
   }
@@ -280,40 +297,39 @@ export default function Staker(props) {
       <h1>Staker</h1>
       This is the Staker's page.
 
-      
       <div id="register" class="panel">
         <button onClick={() => registerStaker()}>Register Staker</button>
       </div>
 
       <div class="panel">
-        <h2>Create new Stake</h2>
+        <h3>Create new Stake</h3>
         <form id="staker_form">
           <label htmlFor="stakeAmount">Amount:</label>
-          <span><input id="stakeAmount" type="number" onChange={(ev) => setAmount(ev.target.value)}/></span>
+          <span><input id="stakeAmount" type="number" autocomplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
           <label htmlFor="stakeDuration">Duration (Days):</label>
-          <span><input id="stakeDuration" type="number" onChange={(ev) => setDuration(ev.target.value)}/></span>
+          <span><input id="stakeDuration" type="number" autocomplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
         </form>
         <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} class="rainbow-button" style={{width: 200}}></a>
       </div>
 
       <div class="panel">
-        <h2>My Stakes</h2>
+        <h3>My Stakes</h3>
         <table id="stakerTable" cellPadding={5}/>
       </div>
 
       <div class="panel">
-        <h2>My Secret Shares</h2>
+        <h3>My Secret Shares</h3>
         <table id="secretsTable" cellPadding={5}/>
       </div>
 
       <div class="panel">
-        <h2>Reveal a secret share</h2>
+        <h3>Reveal a secret share</h3>
         <form id="reveal-secret-from">
           <label htmlFor="stakerId">Enter secret ID:</label>
-          <span><input id="revealSecretId" type="number" onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
+          <span><input id="revealSecretId" type="number" autocomplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
           <label htmlFor="stakerPrivateKey">Enter your private key:</label>
-          <span><input id="stakerPrivateKey" type="text" onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
+          <span><input id="stakerPrivateKey" type="text" autocomplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
         </form>
         <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} class="rainbow-button" style={{width: 330}}></a>
       </div>

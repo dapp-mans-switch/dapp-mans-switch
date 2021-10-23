@@ -2,10 +2,7 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
 import Auth from './auth'
-
 import keyFlipVideo from './../assets/key-flip.mkv'
-import cityImage from './../assets/city.jpg'
-
 
 export default function Main() {
 
@@ -59,7 +56,7 @@ export default function Main() {
   }
 
   React.useEffect(() => {
-    document.body.style.backgroundColor = "#E0E5EC";
+    window.scrollTo(0,0); 
   })
   
 
@@ -85,7 +82,7 @@ export default function Main() {
       </div>
 
       
-      <button onClick={() =>  whoami()}>Who Am I?</button>
+      {/* <button onClick={() =>  whoami()}>Who Am I?</button> */}
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>

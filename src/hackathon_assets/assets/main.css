@@ -7,12 +7,13 @@ body {
     background-size: cover;
     color: black;
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 200px;
+    overscroll-behavior: none;
 }
 
-h2 {
-    margin-top: 10px;
-    margin-bottom: 10px;
+h3 {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 img {
@@ -60,6 +61,20 @@ textarea {
     display: none;
 }
 
+.loading-video{
+    width: 80px;
+    position: fixed;
+    right: 60px;
+}
+
+.loading-video-top{
+    top: 20px;
+}
+
+.loading-video-bottom{
+    bottom: 15px;
+}
+
 
 .start-page-button-div {
     display: flex;
@@ -93,7 +108,7 @@ section {
 
 
 .rainbow-button {
-    margin: 30px auto 30px auto;
+    margin: 20px auto 20px auto;
     padding: 10px 5px;
     height: 40px;
     background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 20%, #FC4F4F 40%, #f200ff 60%, #9000ff 80%, #00C0FF 100%);
@@ -124,9 +139,9 @@ section {
     animation:slidebg 10s linear infinite;
 }
 
-.trigger-animation {
-    animation:slidebg 10s linear infinite;
-}
+/* .trigger-animation {
+    animation:slidebg 3s linear infinite;
+} */
 
 @keyframes slidebg {
     to {
@@ -139,8 +154,9 @@ section {
     margin: 30px auto 40px auto;
     padding: 10px;
     line-height: 2;
-    width: 50%;
-    min-width: 700px;
+    width: 80%;
+    min-width: 550px;
+    max-width: 750px;
     border-radius: 20px;
     background: rgb(224,229,236,0.8);
     backdrop-filter: blur(8px);
@@ -148,14 +164,11 @@ section {
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
-.panel::before{
-
-}
 
 
 form {
     padding: 0 50px 0 50px;
-    line-height: 2.2;
+    line-height: 1.8;
 }
 
 span {
@@ -170,14 +183,16 @@ label {
 
 table {
     margin: 0px auto 0px auto;
-    padding-right: 20px;
     width: 100%;
 }
 
-.deleteButton {
-    border-color: red;
-    border-radius: 5px;
-    background-color: #E0E5EC;
-    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
-    -9px -9px 16px  rgba(255,255,255, 0.5);
+.endStakeButton {
+    font-family: inherit;
+    font-size: 1.2rem;
+    width: 120px;
+    height: 40px;
+    border-width: 5px;
+    border-radius: 10px;
+    border-color: rgb(255, 0, 0);
+    background-color: rgba(255,255,255, 0);
 }
