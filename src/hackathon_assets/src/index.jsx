@@ -70,17 +70,17 @@ export default function Main() {
   async function buyTokens() {
     try {
       let n_tokens = helpers.getPositiveNumber(amount)
-      await cansiters.token.buyIn(n_tokens)
-    } catch {
-      alert("Input positive number!")
+      await canisters.token.buyIn(n_tokens)
+    } catch (error) {
+      alert("Input positive number! " + error)
     }
     getBalance()
   }
 
   React.useEffect(() => {
     window.scrollTo(0,0);
-    // getBalance()
-  })
+    //getBalance()
+  }, [])
   
 
   return (

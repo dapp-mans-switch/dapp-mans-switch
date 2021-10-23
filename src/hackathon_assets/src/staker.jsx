@@ -10,6 +10,7 @@ import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation
 export default function Staker(props) {
 
   const hackathon = props.canisters.hackathon;
+  const token = props.canisters.token;
   const identity = props.identity;
 
   const [amount, setAmount] = React.useState('')
@@ -147,6 +148,15 @@ export default function Staker(props) {
       console.log(error)
       removeLoadingAnimation()
       alert('Amount and duration must be positive numbers!')
+      return
+    }
+
+    try {
+      let hackathonID = await hackathon.identity();
+      let ok = await token.approve(hackathonID, amountInt, []);
+    } catch (error) {
+      removeLoadingAnimation()
+      alert(error)
       return
     }
 

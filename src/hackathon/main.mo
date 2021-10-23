@@ -5,6 +5,7 @@ import Hash "mo:base/Hash";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
 import HashMap "mo:base/HashMap";
+import Error "mo:base/Error";
 
 import Secret "./secret";
 import Staker "./staker";
@@ -29,22 +30,17 @@ actor Hackathon {
 		return sym;
 	};
 
-    public query func whothis() : async Principal {
-		Principal.fromActor(Hackathon);
+    public query func identity() : async Principal {
+		_this();
 	};
+
+    private func _this() : Principal {
+        Principal.fromActor(Hackathon);
+    };
 
     public shared (msg) func whoami() : async Principal {
         msg.caller
     };
-
-    public func greet(content : Text) : async Text {
-        return "New forum post: " # content # "!!!";
-    };
-
-    public shared(msg) func sharedGreet(content : Text) : async Text {
-        return "New forum post: " # content # "!!! from " # Principal.toText(msg.caller);
-    };
-
 
     public query func sha256(text: Text) : async Text {
         SHA.sha256(text);
@@ -92,6 +88,12 @@ actor Hackathon {
     */
     public shared(msg) func addStake(amount: Nat, days: Nat): async Staker.AddStakeResult {
         let staker_id = msg.caller;
+        try {
+            // amount has to be approved and sufficient balance is required
+            let ok = await Token.transferFrom(staker_id, _this(), amount, null);
+        } catch(e) {
+            return #err(#transferError(Error.message(e)));
+        };
         stakerManager.addStake(staker_id, amount, days);
     };
 
