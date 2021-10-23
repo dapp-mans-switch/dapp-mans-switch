@@ -66,7 +66,16 @@ export default function Uploader(props) {
 
         // choose stakers
         // const stakes = await helpers.drawStakes() // <- fails now with this
-        const stakes = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
+        const result = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
+        let stakes
+        if (result['ok']) {
+            stakes = result['ok']
+        }
+        if (result['err']) {
+            console.error(result['err'])
+            return
+        }
+
         console.log("Stakes", stakes)
         if (stakes.length == 0) {
             alert("Not enough stakes in system (have to be different from author)")

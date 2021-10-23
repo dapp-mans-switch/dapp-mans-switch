@@ -28,6 +28,9 @@ module {
     public type AddStakeError = {#unknownStaker: Principal; #invalidDuration: Int};
     public type AddStakeResult = Result.Result<Nat, AddStakeError>;
 
+    public type DrawStakesError = {#noStakes: Int};
+    public type DrawStakesResult = Result.Result<[Stake], DrawStakesError>;
+
     public class StakerManager() {
 
         let stakes = Map.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
@@ -161,8 +164,16 @@ module {
         };
 
 
+        /*
+        * In order to let a user add a secret we have to assert that the uploader uses
+        * the shares from drawStakes.
+        * Therefore, we cache them to verify later in the addSecret call.
+        */
         let drawnStakesCache = Map.HashMap<Principal, [Stake]>(0, Principal.equal, Principal.hash);
 
+        /*
+        * Checks if the cached stakes for author_id (stored in drawnStakesCache) have ids equal to stake_ids.
+        */
         public func verifySelectedStakes(author_id: Principal, stake_ids: [Nat]) : Bool {
             switch (drawnStakesCache.get(author_id)) {
                 case null { return false; };
@@ -173,6 +184,10 @@ module {
             };
         };
 
+        /*
+        * Removes the cachec stakes for author_id.
+        * Returns true if there was an entry to remove, false otherwise.
+        */
         public func removeCachedStakes(author_id: Principal) : Bool {
             let removedEntry = drawnStakesCache.remove(author_id);
             switch (removedEntry) {
@@ -185,7 +200,19 @@ module {
             };
         };
 
-        public func drawStakes(author_id: Principal, expiry_time: Int, n: Nat): async [Stake] {
+        /*
+        * Randomly draws stakes proporitional to their amount, which have to be used
+        * for a new secret. Does not draw stakes which belong to the author.
+        * Params:
+        *   - author_id: The caller principal id of the author of the secret.
+        *   - expiry_time: The desired expiry time of the secret. Only stakes
+        *     which are expiry after this time are drawn.
+        *   - n: The number of stakes to be drawn.
+        * Returns:
+        *   On success the drawn stakes.
+        *   Retruns an error with the expiry_time if there are no stakes for expiry_time.
+        */
+        public func drawStakes(author_id: Principal, expiry_time: Int, n: Nat): async DrawStakesResult {
             // first we count the total amount of tokens held by (not expired) stakes
             var totalAmount: Nat = 0;
             for ((id, s) in stakes.entries()) {
@@ -194,10 +221,11 @@ module {
                 };
             };
             if (totalAmount == 0) {
-                return [];
+                return #err(#noStakes(expiry_time));
             };
 
-            let entropy: Blob = await Random.blob(); // Obtains a full blob (32 bytes) worth of fresh cryptographic entropy
+            // Obtains a full blob (32 bytes) worth of fresh cryptographic entropy
+            let entropy: Blob = await Random.blob(); 
             let seeds: RNG.Seeds = RNG.getSeedsFromEntropy(entropy);
             let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seeds, totalAmount, n), Nat.compare);  
             D.print("randomAmounts:"); // TODO: remove
@@ -231,7 +259,7 @@ module {
 
             let drawnStakesArr = drawnStakes.toArray();
             drawnStakesCache.put(author_id, drawnStakesArr);
-            return drawnStakesArr;
+            return #ok(drawnStakesArr);
         };
     };
 

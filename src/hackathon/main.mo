@@ -31,7 +31,13 @@ actor {
         SHA.sha256(text);
     };
 
+
+    // ---------------------------------------------------------------------------------------------
+
+
     // Staker
+
+
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
     /*
@@ -121,13 +127,30 @@ actor {
         stakerManager.listAllStakers();
     };
 
-    public shared(msg) func drawStakes(expiry_time: Int, n: Nat) : async [Stake] {
+    /*
+    * Randomly draws stakes proporitional to their amount, which have to be used
+    * for a new secret. Does not draw stakes which belong to the author.
+    * Params:
+    *   - expiry_time: The desired expiry time of the secret. Only stakes
+    *     which are expiry after this time are drawn.
+    *   - n: The number of stakes to be drawn.
+    * Returns:
+    *   On success the drawn stakes.
+    *   Retruns an error with the expiry_time if there are no stakes for expiry_time.
+    */
+    public shared(msg) func drawStakes(expiry_time: Int, n: Nat) : async Staker.DrawStakesResult {
         let author_id = msg.caller;
         let stakes = await stakerManager.drawStakes(author_id, expiry_time, n);
         return stakes;
     };
 
+
+    // ---------------------------------------------------------------------------------------------
+
+
     // Secret
+
+
     var secretManager: Secret.SecretManager = Secret.SecretManager();
 
     public query func listAllSecrets() : async [Secret] {
