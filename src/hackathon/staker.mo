@@ -41,10 +41,10 @@ module {
 
     public class StakerManager() {
 
-        let stakes = Map.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
+        public var stakes = Map.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
 
         // map staker to public key
-        let stakers = Map.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
+        public var stakers = Map.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
 
 
         /*

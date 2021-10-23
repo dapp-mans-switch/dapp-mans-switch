@@ -1,6 +1,10 @@
 import D "mo:base/Debug";
 import Principal "mo:base/Principal";
+import Nat "mo:base/Nat";
+import Hash "mo:base/Hash";
 import Result "mo:base/Result";
+import Iter "mo:base/Iter";
+import HashMap "mo:base/HashMap";
 
 import Secret "./secret";
 import Staker "./staker";
@@ -304,4 +308,43 @@ actor {
         secretManager.revealAllShares(secret_id, staker_id, shares);
     };
 
+
+    // ---------------------------------------------------------------------------------------------
+
+
+    // System stability
+
+    private stable var _secrets: [(Nat, Secret)] = [];
+    private stable var _stakers: [(Principal, Text)] = [];
+    private stable var _stakes: [(Nat, Stake)] = [];
+
+    system func preupgrade() {
+        _secrets := Iter.toArray(secretManager.secrets.entries());
+
+        _stakers := Iter.toArray(stakerManager.stakers.entries());
+
+        _stakes := Iter.toArray(stakerManager.stakes.entries());
+    };
+
+    system func postupgrade() {
+        secretManager.secrets := HashMap.fromIter<Nat, Secret>(
+            _secrets.vals(),
+            0, Nat.equal, Hash.hash
+        );
+        _secrets := [];
+
+
+        stakerManager.stakers := HashMap.fromIter<Principal, Text>(
+            _stakers.vals(),
+            0, Principal.equal, Principal.hash
+        );
+        _stakers := [];
+
+
+        stakerManager.stakes := HashMap.fromIter<Nat, Stake>(
+            _stakes.vals(),
+            0, Nat.equal, Hash.hash
+        );
+        _stakes := [];
+    };
 };

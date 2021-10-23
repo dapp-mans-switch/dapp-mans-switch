@@ -23,7 +23,7 @@ module {
 
     public class SecretManager() {
 
-        let secrets = Map.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
+        public var secrets = Map.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
 
         /*
         * Inserts a secret. 
