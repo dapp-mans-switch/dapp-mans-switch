@@ -2,9 +2,7 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
 import Auth from './auth'
-
 import keyFlipVideo from './../assets/key-flip.mkv'
-
 
 export default function Main() {
 

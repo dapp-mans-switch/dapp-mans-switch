@@ -160,13 +160,14 @@ export default function Staker(props) {
     if (result['err']) {
       console.error(result['err'])
     }
+    removeLoadingAnimation()
     listAllStakes()
-
   }
 
   async function endStake(id) {
     appendLoadingAnimation("stakerTable", true)
-    const deleted = await hackathon.removeStake(id)
+    const deleted = await hackathon.endStake(id)
+    console.log(deleted)
     if (deleted == false) {
       alert("cannot delete staker with id: " + id)
     }
@@ -216,14 +217,21 @@ export default function Staker(props) {
 
       const dateCell = tr.insertCell(-1)
 
+      let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
       let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-      dateCell.innerHTML = helpers.secondsSinceEpocheToDate(s['expiry_time']).toLocaleString('en-GB', options)
+      dateCell.innerHTML = expiryDate.toLocaleString('en-GB', options)
 
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
       deleteButton.innerHTML = "End Stake"
       deleteButton.className = "endStakeButton"
-      deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
+      let newDate = new Date()
+      if (newDate < expiryDate) {
+        deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
+      } else {
+        deleteButton.disabled = true;
+      }
+
       deleteButtonCell.appendChild(deleteButton)
     });
   }
