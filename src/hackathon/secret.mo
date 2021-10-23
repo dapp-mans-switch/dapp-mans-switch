@@ -8,6 +8,7 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Buffer "mo:base/Buffer";
 import Iter "mo:base/Iter";
+import Result "mo:base/Result";
 
 import Types "./types";
 import SHA "./utils/SHA256";
@@ -16,6 +17,9 @@ import Date "./utils/date";
 module {
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
+
+    public type RevealAllSharesError = {#secretNotFound: Nat; #invalidDecryptedSHA: Text; #wrongNumberOfShares: Nat};
+    public type RevealAllSharesResult = Result.Result<Secret, RevealAllSharesError>;
 
     public class SecretManager() {
 
@@ -58,19 +62,25 @@ module {
         };
 
 
+        /*
+        * Returns secret for secret_id if it exists.
+        */
         public func lookup(id: Nat) : ?Secret {
             secrets.get(id);
         };
 
+        /*
+        * Updates the last_heartbeat field of the secret to the current time.
+        * If the secret is expired the last_heartbeat field is updated to the expiry_time
+        */
         public func sendHearbeatForSecret(author_id: Principal, secret: Secret) : Bool {
-            // TODO: proper authentification
-            if (author_id != secret.author_id) {
-                return false;
+            assert(author_id == secret.author_id);
+
+            var heartbeat = Date.secondsSince1970();
+            if (heartbeat > secret.expiry_time) {
+                heartbeat := secret.expiry_time;
             };
 
-            let heartbeat = Date.secondsSince1970();
-
-            // TODO: no better way?
             let newSecret = {
                 secret_id = secret.secret_id;
                 author_id = secret.author_id;
@@ -96,7 +106,9 @@ module {
             return true;
         };
 
-        
+        /*
+        * Updates the last_heartbeat field to the current time for all secrets of author_id.
+        */
         public func sendHeartbeat(author_id: Principal) : Bool{
             var ok: Bool = true;
             let author_secrets = listSecretsOf(author_id);
@@ -106,17 +118,22 @@ module {
             return ok
         };
 
-        public func sendHeartbeatForId(author_id: Principal, secret_id: Nat) : Bool {
-            let secret = secrets.get(secret_id);
 
-            switch secret {
-                case null { return false };
-                case (? secret) {
-                    sendHearbeatForSecret(author_id, secret);
-                };
-            };
+        /*
+        * Checks if a secret should be revealed.
+        * This is the case if the last heartbeat was too long ago or if the expiry_time is in the past.
+        */
+        public func shouldRevealSecret(secret: Secret) : Bool {
+            let now = Date.secondsSince1970();
+            // either secret has expired or last heartbeat is too long ago
+            let revealOk: Bool = (now > secret.expiry_time) or (now - secret.last_heartbeat > secret.heartbeat_freq);
+            return revealOk;
         };
 
+
+        /*
+        * Checks if a secret should be revealed. See above.
+        */
         public func shouldReveal(secret_id: Nat) : Bool {
             let secret = secrets.get(secret_id);
             switch secret {
@@ -127,41 +144,55 @@ module {
             };
         };
 
-        public func shouldRevealSecret(secret: Secret) : Bool {
-            let now = Date.secondsSince1970();
-            // either secret has expired or last heartbeat is too long ago
-            let revealOk: Bool = (now > secret.expiry_time) or (now - secret.last_heartbeat > secret.heartbeat_freq);
-            return revealOk;
-        };
-
-        // shares have to be in correct order, as obtained by getRelevantSecret
-        public func revealAllShares(secret_id: Nat, staker_id: Principal, shares: [Text]) : ?Secret  {
+        /*
+        * Reveals all shares for a secret.
+        * The shares have to be in correct order. This is guaranteed if the shares are obtained by getRelevantSecret.
+        * Too make sure that the stake holder uploads the correct shares, the decrypted shares are compared against
+        * the decrypted_share_shas of the secret (created by the secret author).
+        * Params:
+        *   secret_id: id of secret
+        *   staker_id: id of share revealer
+        *   shares: decrypted shares
+        */
+        public func revealAllShares(secret_id: Nat, staker_id: Principal, shares: [Text]) : RevealAllSharesResult  {
             let secret = secrets.get(secret_id);
             switch secret {
-                case null { return null };
+                case null { return #err(#secretNotFound(secret_id)) };
                 case (? secret) {
                     var share_counter: Nat = 0;
                     let _newShares = Array.init<Text>(secret.shares.size(), "");
                     let _newRevealed = Array.init<Bool>(secret.shares.size(), false);
 
+                    // Loop overall shares and update those that belong to staker_id.
+                    // Only update if the decrypted share SHAs match.
                     for (i in Iter.range(0, _newShares.size()-1)) {
                         //D.print(Nat.toText(i) # " " # Nat.toText(secret.share_holder_ids[i]) # " " # Nat.toText(share_counter));
                         
-                        // update all shares for which staker_id has share / stake 
                         if (secret.share_holder_ids[i] == staker_id) {
                             let decryptedShare: Text = shares[share_counter];
                             let decryptedShareSha: Text = SHA.sha256(decryptedShare);
-                            assert (decryptedShareSha == secret.decrypted_share_shas[i]); // make sure that staker uploads correct decrypted share
+
+                            if (decryptedShareSha != secret.decrypted_share_shas[i]) {
+                                // make sure that staker uploads correct decrypted share
+                                return #err(#invalidDecryptedSHA(decryptedShareSha));
+                            };
                         
                             _newShares[i] := decryptedShare;
                             _newRevealed[i] := true;
                             share_counter += 1;
+
                         } else {
+
                             _newShares[i] := secret.shares[i];
                             _newRevealed[i] := secret.revealed[i]
+
                         };
                     };
-                    assert (share_counter == shares.size()); // all shares have to be revealed
+
+                    if (share_counter != shares.size()) {
+                        // all shares have to be revealed at once
+                        return #err(#wrongNumberOfShares(share_counter));
+                    };
 
                     let newShares: [Text] = Array.freeze(_newShares);
                     let newRevealed: [Bool] = Array.freeze(_newRevealed);
@@ -187,11 +218,14 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
 
-                    return ?newSecret;
+                    return #ok(newSecret);
                 };
             };
         };
 
+        /*
+        * Returns all secrets.
+        */
         public func listAll() : [Secret] {
             let allSecrets = Buffer.Buffer<Secret>(0);
             for ((id, s) in secrets.entries()) {
@@ -200,7 +234,11 @@ module {
             return allSecrets.toArray();
         };
 
-
+        /*
+        * Converts a secret to a relevant secret for staker_id.
+        * A RelevantSecret only contains information relevant to the staker.
+        * E.g. His/Her shares, if they should reveal or not; if they have revealed.
+        */
         private func toRelevantSecret(s: Secret, staker_id: Principal): RelevantSecret {
             let shouldReveal = shouldRevealSecret(s);
             var hasRevealed = false;
@@ -224,6 +262,9 @@ module {
             return relevantSecret;
         };
 
+        /*
+        * Returns all secrets for which staker_id is share holder in the form of RelevantSecret.
+        */
         public func listRelevantSecrets(staker_id: Principal) : [RelevantSecret] {
             let relevantSecrets = Buffer.Buffer<RelevantSecret>(0);
             for ((id, s) in secrets.entries()) {
@@ -237,6 +278,9 @@ module {
             return relevantSecrets.toArray();
         };
 
+        /*
+        * Returns the secret with secret_id for which the caller is a share holder in form of the RelevenatSecret type.
+        */
         public func getRelevantSecret(staker_id: Principal, secret_id: Nat): ?RelevantSecret {
             let secret = lookup(secret_id);
             switch (secret) {
@@ -248,6 +292,9 @@ module {
             };
         };
         
+        /*
+        * Returns all secrets which are authored by author_id.
+        */
         public func listSecretsOf(author_id: Principal) : [Secret] {
             let allSecrets = Buffer.Buffer<Secret>(0);
             for ((id, s) in secrets.entries()) {

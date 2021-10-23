@@ -8,6 +8,7 @@ import Types "./types";
 
 import SHA "./utils/SHA256";
 import RNG "./utils/rng";
+import base64 "./utils/base64";
 
 actor {
     type Stake = Types.Stake;
@@ -178,7 +179,6 @@ actor {
 
     /*
     * Returns all secret for which caller is a share holder in form of the RelevenatSecret type.
-    * This means it returns only the shares which the share holder has to decrypt.
     */
     public shared query (msg) func listRelevantSecrets() : async [RelevantSecret] {
         let staker_id = msg.caller;
@@ -186,9 +186,7 @@ actor {
     };
 
     /*
-    * Returns the secret with secret_id for which the caller is a share holder
-    * in form of the RelevenatSecret type.
-    * This means it returns only the shares which the share holder has to decrypt.
+    * Returns the secret with secret_id for which the caller is a share holder in form of the RelevenatSecret type.
     */
     public shared query (msg) func getRelevantSecret(secret_id: Nat) : async ?RelevantSecret {
         let staker_id = msg.caller;
@@ -242,6 +240,9 @@ actor {
         if ((encrypted_shares.size() != decrypted_share_shas.size()) or (decrypted_share_shas.size() != share_holder_stake_ids.size())) {
             return #err(#invalidListLengths);
         };
+        if (not base64.validateBase64(uploader_public_key)) {
+            return #err(#invalidPublicKey(uploader_public_key));
+        };
 
         switch (stakerManager.getPrincipals(share_holder_stake_ids)) {
             case (#ok(share_holder_ids)) {
@@ -257,35 +258,42 @@ actor {
         };
     };
 
-    // dfx canister call hackathon lookupSecret 0
+    /*
+    * Returns secret for secret_id if it exists.
+    */
     public query func lookupSecret(id: Nat) : async ?Secret {
         secretManager.lookup(id);
     };
 
-    // dfx canister call hackathon sendHearbeat 0
-    public shared(msg) func sendHearbeatForId(secret_id: Nat) : async Bool {
-        let author_id = msg.caller;
-        secretManager.sendHeartbeatForId(author_id, secret_id)
-    };
-
+    /*
+    * Updates the last_heartbeat field to the current time for all secrets of author_id.
+    */
     public shared(msg) func sendHeartbeat() : async Bool {
         let author_id = msg.caller;
         secretManager.sendHeartbeat(author_id)
     };
 
-    // dfx canister call hackathon shouldReveal 0
+    /*
+    * Checks if a secret should be revealed.
+    * This is the case if the last heartbeat was too long ago or if the expiry_time is in the past.
+    */
     public query func shouldReveal(secret_id: Nat) : async Bool {
         return secretManager.shouldReveal(secret_id);
     };
 
-    public shared(msg) func revealAllShares(secret_id: Nat, shares: [Text]): async ?Secret {
-        let staker_id = msg.caller;
 
+    /*
+    * Reveals all shares for a secret of caller.
+    * The shares have to be in correct order. This is guaranteed if the shares are obtained by getRelevantSecret.
+    * Too make sure that the stake holder uploads the correct shares, the decrypted shares are compared against
+    * the decrypted_share_shas of the secret (created by the secret author).
+    * Params:
+    *   secret_id: id of secret
+    *   shares: decrypted shares
+    */
+    public shared(msg) func revealAllShares(secret_id: Nat, shares: [Text]): async Secret.RevealAllSharesResult {
+        let staker_id = msg.caller;
         secretManager.revealAllShares(secret_id, staker_id, shares);
     };
 
-    private func payout(staker_id: Principal, payout: Int) : Bool {
-        // TODO
-        return true;
-    };
 };
