@@ -49,6 +49,14 @@ actor {
     };
 
     /*
+    * Checks if a caller is a registered staker.
+    */
+    public shared query (msg) func isRegistered(): async Bool {
+        let staker_id = msg.caller;
+        stakerManager.isRegistered(staker_id);
+    };
+
+    /*
     * Add a stake for staker.
     * Params:
     *   - amount: the number of tokens to stake
@@ -62,36 +70,55 @@ actor {
         stakerManager.addStake(staker_id, amount, days);
     };
 
-    // dfx canister call hackathon lookupStaker 0
+    /*
+    * Returns stake for stake id if there is a matching stake.
+    */
     public query func lookupStake(id: Nat) : async ?Stake {
         stakerManager.lookup(id);
     };
 
-    public func removeStake(id: Nat): async Bool {
-        stakerManager.remove(id);
-    };
-
-    public shared(msg) func lookupMyPublicKey(): async ?Text {
+    /*  
+    * Returns the public key for the caller, if the staker is in the system
+    */
+    public shared query (msg) func lookupMyPublicKey(): async ?Text {
         let staker_id = msg.caller;
         stakerManager.publicKeyFor(staker_id);
     };
 
+    /*  
+    * Returns the public key for a staker id, if the staker is in the system
+    */
     public query func lookupPublicKey(staker_id: Principal): async ?Text {
         stakerManager.publicKeyFor(staker_id);
     };
 
-
+    /*
+    * Returns all stakes.
+    */
     public query func listAllStakes() : async [Stake] {
         stakerManager.listAllStakes();
     };
 
-    public query func listAllStakers() : async [Staker] {
-        stakerManager.listAllStakers();
-    };
-
-
+    /*
+    * Returns stakes of staker with staker_id.
+    */
     public query func listStakesOf(staker_id: Principal) : async [Stake] {
         stakerManager.listStakesOf(staker_id);
+    };
+
+    /*
+    * Returns stakes of caller.
+    */
+    public shared query (msg) func listMyStakes() : async [Stake] {
+        let staker_id = msg.caller;
+        stakerManager.listStakesOf(staker_id);
+    };
+
+    /*
+    * Returns all stakers.
+    */
+    public query func listAllStakers() : async [Staker] {
+        stakerManager.listAllStakers();
     };
 
     public shared(msg) func drawStakes(expiry_time: Int, n: Nat) : async [Stake] {

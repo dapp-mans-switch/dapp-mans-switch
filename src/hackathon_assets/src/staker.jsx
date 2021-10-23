@@ -18,8 +18,7 @@ export default function Staker(props) {
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
   async function isRegistered() {
-    const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-    return backendPublicKey.length > 0
+    return await hackathon.isRegistered()
   }
 
   async function registerStaker() {
@@ -178,7 +177,7 @@ export default function Staker(props) {
   }
 
   async function listAllStakes() {
-    let stakes = await hackathon.listStakesOf(identity.getPrincipal())
+    let stakes = await hackathon.listMyStakes()
     stakes.sort(function(a, b) { 
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });

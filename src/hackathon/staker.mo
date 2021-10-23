@@ -61,6 +61,20 @@ module {
             };
         };
 
+        /*
+        * Checks if a caller with staker_id is a registered staker.
+        */
+        public func isRegistered(staker_id: Principal) : Bool {
+            let existing_public_key = stakers.get(staker_id);
+            switch (existing_public_key) {
+                case null {
+                    return false;
+                };
+                case (? v) {
+                    return true;
+                };
+            };
+        };
         
         func secondsSince1970() : Int {
             return Time.now() / 1_000_000_000;
@@ -97,28 +111,23 @@ module {
             };
         };
 
+        /*
+        * Returns stake for stake id if there is a matching stake.
+        */
         public func lookup(id: Nat) : ?Stake {
             stakes.get(id);
         };
 
+        /*
+        * Returns the public key for a staker id, if the staker is in the system
+        */
         public func publicKeyFor(staker_id: Principal) : ?Text {
             stakers.get(staker_id);
         };
 
-        public func remove(id: Nat): Bool {
-            let removedStake = stakes.remove(id);
-
-            // check if staker was removed
-            switch (removedStake) {
-                case null {
-                    false;
-                };
-                case (? v) {
-                    true;
-                };
-            };
-        };
-
+        /*
+        * Returns all stakes.
+        */
         public func listAllStakes() : [Stake] {
             let allStakes = Buffer.Buffer<Stake>(0);
             for ((id, s) in stakes.entries()) {
@@ -127,6 +136,9 @@ module {
             return allStakes.toArray();
         };
 
+        /*
+        * Returns all stakes for staker with staker_id.
+        */
         public func listStakesOf(staker_id: Principal) : [Stake] {
             let allStakes = Buffer.Buffer<Stake>(0);
             for ((id, s) in stakes.entries()) {
@@ -137,6 +149,9 @@ module {
             return allStakes.toArray();
         };
         
+        /*
+        * Returns all stakers.
+        */
         public func listAllStakers() : [Staker] {
             let allStakers = Buffer.Buffer<Staker>(0);
             for ((id, public_key) in stakers.entries()) {
