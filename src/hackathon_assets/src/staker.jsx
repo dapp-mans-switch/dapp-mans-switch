@@ -23,21 +23,25 @@ export default function Staker(props) {
   }
 
   async function registerStaker() {
-    if (await isRegistered()) {
-      const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
-      console.log("PublicKey:", backendPublicKey[0])
-      alert("Something went wrong!") // TODO: error handling
+    const keyPair = crypto.generateKeyPair()
 
-    } else {
-      console.log("Generate new key pair")
-      const keyPair = crypto.generateKeyPair()
+    const result = await hackathon.registerStaker(keyPair.publicKey)
+    
+    if (result['ok']) {
+      let publicKey = result['ok']
+      console.log("Staker registerd with public key", publicKey)
+      console.log("PrivateKey:", keyPair.privateKey)
 
-      const ok = await hackathon.registerStaker(keyPair.publicKey)
-      if (ok) {
-        console.log("PrivateKey:", keyPair.privateKey)
-  
-        downloadPrivateKey(keyPair.privateKey)
-        alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+      downloadPrivateKey(keyPair.privateKey)
+      alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+    }
+    if (result['err']) {
+      if (result['err']['alreadyRegistered']) {
+        let principal = result['err']['alreadyRegistered']
+        console.error("Staker already registered!", principal)
+      } else {
+        // base64 is guaranteed
+        console.error(result['err'])
       }
     }
 

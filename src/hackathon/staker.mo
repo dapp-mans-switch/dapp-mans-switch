@@ -8,34 +8,52 @@ import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
-import Random  "mo:base/Random";
+import Random "mo:base/Random";
+import Result "mo:base/Result";
 
 import D "mo:base/Debug";
 
 import Types "./types";
 import RNG "./utils/rng";
+import base64 "./utils/base64";
 
 module {
     type Stake = Types.Stake;
     type Staker = Types.Staker;
 
+
+    public type RegisterStakerError = {#alreadyRegistered: Principal; #invalidKey: Text};
+    public type RegisterStakerResult = Result.Result<Text, RegisterStakerError>;
+
     public class StakerManager() {
 
-        // allow staker multiple stakes!
         let stakes = Map.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
 
         // map staker to public key
         let stakers = Map.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
 
-        public func registerStaker(staker_id: Principal, public_key: Text) : Bool {
+        /*
+        * Register a staker with his principal caller id.
+        * Params:
+        *   - staker_id: principal of staker
+        *   - public_key: public key of staker. Should be a base 64 string
+                Secret shares are encrypted with this key and the staker should be able to
+                decrypt them with his private key.
+        * Returns:
+        *   RegisterStakerResult {#ok: Principal, #err: {#alreadyRegistered; #invalidKey}}
+        */
+        public func registerStaker(staker_id: Principal, public_key: Text) : RegisterStakerResult {
             let existing_public_key = stakers.get(staker_id);
             switch (existing_public_key) {
                 case null {
+                    if (not base64.validateBase64(public_key)) {
+                        return #err(#invalidKey(public_key));
+                    };
                     stakers.put(staker_id, public_key);
-                    return true;
+                    return #ok(public_key);
                 };
                 case (? v) {
-                    return false; // error already registered
+                    return #err(#alreadyRegistered(staker_id));
                 };
             };
         };

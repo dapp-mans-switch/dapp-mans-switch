@@ -7,7 +7,6 @@ import Types "./types";
 
 import SHA "./utils/SHA256";
 import RNG "./utils/rng";
-import base64 "./utils/base64";
 
 actor {
     type Stake = Types.Stake;
@@ -35,10 +34,16 @@ actor {
     // Staker
     var stakerManager: Staker.StakerManager = Staker.StakerManager();
 
-    public shared(msg) func registerStaker(public_key: Text): async Bool {
-        if (not base64.validateBase64(public_key)) {
-            return false;
-        };
+    /*
+    * Register a staker with his principal caller id.
+    * Params:
+    *   - public_key: public key of staker. Should be a base 64 string
+            Secret shares are encrypted with this key and the staker should be able to
+            decrypt them with his private key.
+    * Returns:
+    *   RegisterStakerResult {#ok: Text, #err: {#alreadyRegistered; #invalidKey}}
+    */
+    public shared(msg) func registerStaker(public_key: Text): async Staker.RegisterStakerResult {
         let staker_id = msg.caller;
         stakerManager.registerStaker(staker_id, public_key);
     };
