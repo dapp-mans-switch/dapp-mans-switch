@@ -307,41 +307,41 @@ export default function Staker(props) {
       <h1>Staker</h1>
       This is the Staker's page.
 
-      <div id="register" class="panel">
+      <div id="register" className="panel">
         <button onClick={() => registerStaker()}>Register Staker</button>
       </div>
 
-      <div class="panel">
+      <div className="panel">
         <h3>Create new Stake</h3>
         <form id="staker_form">
           <label htmlFor="stakeAmount">Amount:</label>
-          <span><input id="stakeAmount" type="number" autocomplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
+          <span><input id="stakeAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
           <label htmlFor="stakeDuration">Duration (Days):</label>
-          <span><input id="stakeDuration" type="number" autocomplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
+          <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
         </form>
-        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} class="rainbow-button" style={{width: 200}}></a>
+        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
       </div>
 
-      <div class="panel">
+      <div className="panel">
         <h3>My Stakes</h3>
         <table id="stakerTable" cellPadding={5}/>
       </div>
 
-      <div class="panel">
+      <div className="panel">
         <h3>My Secret Shares</h3>
         <table id="secretsTable" cellPadding={5}/>
       </div>
 
-      <div class="panel">
+      <div className="panel">
         <h3>Reveal a secret share</h3>
         <form id="reveal-secret-from">
           <label htmlFor="stakerId">Enter secret ID:</label>
-          <span><input id="revealSecretId" type="number" autocomplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
+          <span><input id="revealSecretId" type="number" autoComplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
           <label htmlFor="stakerPrivateKey">Enter your private key:</label>
-          <span><input id="stakerPrivateKey" type="text" autocomplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
+          <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
         </form>
-        <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} class="rainbow-button" style={{width: 330}}></a>
+        <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
       </div>
 
       <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>

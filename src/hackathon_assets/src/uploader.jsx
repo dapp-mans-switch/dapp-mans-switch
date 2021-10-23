@@ -226,35 +226,35 @@ export default function Uploader(props) {
         <div>
             <h1>Uploader</h1>
 
-            <div class="panel">
+            <div className="panel">
                 <h3>My Secrets</h3>
                 <table id="secretsTable" cellPadding={5}/>
             </div>
 
-            <div class="panel">
+            <div className="panel">
                 <h3>Heartbeat</h3>
-                <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} class="rainbow-button" style={{width: 550}}/>
+                <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="rainbow-button" style={{width: 550}}/>
                 <video id="still-alive-video" className="still-alive-video">
                     <source src={stillAliveVideo}/>
                 </video>
             </div>
 
-            <div class="panel">
+            <div className="panel">
               <form id="uploader_form">
                 <h3>Create a Sectret to be published</h3>
-                <textarea id="secret" type="text" autocomplete='off' onChange={(ev) => setSecret(ev.target.value)}/>
+                <textarea id="secret" type="text" autoComplete='off' onChange={(ev) => setSecret(ev.target.value)}/>
                 <br/>
 
                 <label htmlFor="reward">Reward ($HRBT)</label>
-                <span><input id="reward" type="number" autocomplete='off' onChange={(ev) => setReward(ev.target.value)}/></span>
+                <span><input id="reward" type="number" autoComplete='off' onChange={(ev) => setReward(ev.target.value)}/></span>
 
                 <label htmlFor="heartbeatFreq">Heartbeat Frequency (Days)</label>
-                <span><input id="heartbeatFreq" type="number" autocomplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
+                <span><input id="heartbeatFreq" type="number" autoComplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
 
                 <label htmlFor="expiryTime">Latest Reveal Date:</label>
-                <span><input id="expiryTime" type="datetime-local" autocomplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
+                <span><input id="expiryTime" type="datetime-local" autoComplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
 
-                <a id="secret_btn" data-text="Upload secret" autocomplete='off' onClick={uploadSecret} class="rainbow-button" style={{width: 260}}/>
+                <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>
               </form>
             </div>
 

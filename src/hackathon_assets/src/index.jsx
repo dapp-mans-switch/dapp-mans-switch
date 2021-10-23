@@ -5,7 +5,7 @@ import Auth from './auth'
 import keyFlipVideo from './../assets/key-flip.mkv'
 import * as helpers from './helpers'
 
-import { token } from '../../declarations/token';
+// import { token } from '../../declarations/token';
 
 export default function Main() {
   const [amount, setAmount] = React.useState('')
@@ -89,27 +89,27 @@ export default function Main() {
       <h3>using Proof of Stake</h3>
       regularly verify that you are alive, otherwise your uploaded files will get published
 
-      <div class="panel">
-        <video autoPlay loop muted class="key-flip-video">
+      <div className="panel">
+        <video autoPlay loop muted className="key-flip-video">
           <source src={keyFlipVideo}/>
         </video>
 
-        <div id="start-if-auth" class="start-page-button-div">
-          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', props)} class="rainbow-button" style={{width: 150}}></a>
-          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', props)} class="rainbow-button" style={{width: 180}}></a>
-          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', props)} class="rainbow-button" style={{width: 180}}></a>
+        <div id="start-if-auth" className="start-page-button-div">
+          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', props)} className="rainbow-button" style={{width: 150}}></a>
+          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', props)} className="rainbow-button" style={{width: 180}}></a>
+          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', props)} className="rainbow-button" style={{width: 180}}></a>
         </div>
-        <div id="start-if-not-auth" class="start-page-button-div">
-          <a id="loginButton" data-text="Authenticate" class="rainbow-button" style={{width: 220}}></a>
+        <div id="start-if-not-auth" className="start-page-button-div">
+          <a id="loginButton" data-text="Authenticate" className="rainbow-button" style={{width: 220}}></a>
         </div>
       </div>
 
 
-      <div class="panel"> 
+      <div className="panel"> 
         <h2>Wallet</h2>
         <h3 id="balance">Balance: 0 $HRBT</h3>
         <label htmlFor="tokenAmount">But tokens:</label>
-          <span><input id="tokenAmount" type="number" autocomplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
+          <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
         <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
       </div>
 

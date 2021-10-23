@@ -82,7 +82,7 @@ export default function Spectator(props) {
         <h1>Spectator</h1>
         Look at other people's secrets.
         <button onClick={() => listAllSecrets()}>Refresh</button>
-        <div class="panel">
+        <div className="panel">
                 <h2>My Secrets</h2>
                 <table id="secretsTable" cellPadding={5}/>
         </div>
