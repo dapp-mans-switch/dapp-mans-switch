@@ -107,13 +107,17 @@ export default function Staker(props) {
     }
 
     
-    let updatedSecret = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
-    if (updatedSecret.length > 0) {
-      listAllRelevantSecrets()
-      console.log('updatedSecret', updatedSecret[0])
+    let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
+    if (result['ok']) {
+      let updatedSecret = result['ok'] 
+      console.log('updatedSecret', updatedSecret)
       alert('published share')
     }
+    if (result['err']) {
+      console.error(result['err'])
+    }
 
+    listAllRelevantSecrets()
     addButton.classList.remove("trigger-animation")
   }
 
