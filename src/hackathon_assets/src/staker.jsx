@@ -9,7 +9,7 @@ import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation
 
 export default function Staker(props) {
 
-  const hackathon = props.actor;
+  const hackathon = props.canisters.hackathon;
   const identity = props.identity;
 
   const [amount, setAmount] = React.useState('')

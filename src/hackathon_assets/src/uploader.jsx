@@ -10,8 +10,7 @@ import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation
 const TEST = true
 
 export default function Uploader(props) {
-    const hackathon = props.actor;
-    const identity = props.identity;
+    const hackathon = props.canisters.hackathon;
 
     const [secret, setSecret] = React.useState('')
     const [reward, setReward] = React.useState('')

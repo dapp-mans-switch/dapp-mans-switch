@@ -115,6 +115,7 @@ module.exports = {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
       HACKATHON_CANISTER_ID: canisters["hackathon"],
+      TOKEN_CANISTER_ID: canisters["token"],
       LOCAL_II_CANISTER,
       DFX_NETWORK: process.env.DFX_NETWORK || "local"
     }),

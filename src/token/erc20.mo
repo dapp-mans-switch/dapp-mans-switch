@@ -17,14 +17,17 @@ actor {
     // private stable let tkTotalSupply : Nat = 1_000_000_000;
 
 
-	public shared({caller}) func buy_in(amount : Nat) {
+	public shared({caller}) func buyIn(amount : Nat) : async Nat {
 		// TODO
 		//  _____ ___  ____   ___
 		// |_   _/ _ \|  _ \ / _ \
 		//   | || | | | | | | | | |
 		//   | || |_| | |_| | |_| |
 		//   |_| \___/|____/ \___/
-		balances.put(caller, amount);
+
+        let balance = _balanceOf(caller);
+		balances.put(caller, balance + amount);
+        return _balanceOf(caller);
 	};
 
     private stable let _name : Text = tkName;
@@ -57,6 +60,11 @@ actor {
         Nat,       // Amount of tokens.
     >(0, Principal.equal, Principal.hash);
     // balances.put(caller, tkTotalSupply);
+
+    public shared query ({caller}) func myBalance() : async Nat {
+        _balanceOf(caller);
+    };
+
     public query func balanceOf(owner : Principal) : async Nat {
         _balanceOf(owner);
     };

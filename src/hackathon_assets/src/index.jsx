@@ -3,10 +3,14 @@ import { render } from 'react-dom'
 import routToPage from './router'
 import Auth from './auth'
 import keyFlipVideo from './../assets/key-flip.mkv'
+import * as helpers from './helpers'
+
+import { token } from '../../declarations/token';
 
 export default function Main() {
+  const [amount, setAmount] = React.useState('')
 
-  let hackathon
+  let canisters
   let identity
   let auth
 
@@ -21,9 +25,9 @@ export default function Main() {
     let ok = await auth.auth()
     if (ok) {
       identity = await auth.getIdentity()
-      hackathon = await auth.getCanister(identity)
+      canisters = await auth.getCanisters(identity)
       
-      props = {actor: hackathon, identity: identity, auth: auth}
+      props = {canisters: canisters, identity: identity, auth: auth}
       console.log("Identity Principal:", identity.getPrincipal().toString())
     }
 
@@ -33,19 +37,21 @@ export default function Main() {
   async function no_authenticate() {
     auth = new Auth()
     identity = await auth.getAnomymousIdentity()
-    hackathon = auth.getAnomymousCanister()
-    props = {actor: hackathon, identity: identity, auth: auth}
+    canisters = auth.getAnomymousCanisters()
+    props = {canisters: canisters, identity: identity, auth: auth}
     console.log("Identity Principal:", identity.getPrincipal().toString())
     // instead of calling auth.auth(), here we call showMenuIfAuth() directly
     auth.showMenuIfAuth()
+    getBalance(); // TODO remove
   }
   
+  // TODO: call at appropriate place
   // authenticate()
   no_authenticate() // for no auth and anonymous identity
 
 
   async function whoami() {
-    let id = await hackathon.whoami()
+    let id = await canisters.hackathon.whoami()
     let s = id.toString()
     console.log("principal", id)
 
@@ -55,8 +61,25 @@ export default function Main() {
     alert("You are " + s);
   }
 
+  async function getBalance() {
+    const balance = await canisters.token.myBalance()
+    const textLabel = document.getElementById("balance")
+    textLabel.innerHTML = "Balance: " + balance + " $HRBT"
+  }
+
+  async function buyTokens() {
+    try {
+      let n_tokens = helpers.getPositiveNumber(amount)
+      await cansiters.token.buyIn(n_tokens)
+    } catch {
+      alert("Input positive number!")
+    }
+    getBalance()
+  }
+
   React.useEffect(() => {
-    window.scrollTo(0,0); 
+    window.scrollTo(0,0);
+    // getBalance()
   })
   
 
@@ -81,8 +104,17 @@ export default function Main() {
         </div>
       </div>
 
+
+      <div class="panel"> 
+        <h2>Wallet</h2>
+        <h3 id="balance">Balance: 0 $HRBT</h3>
+        <label htmlFor="tokenAmount">But tokens:</label>
+          <span><input id="tokenAmount" type="number" autocomplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
+        <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
+      </div>
+
       
-      {/* <button onClick={() =>  whoami()}>Who Am I?</button> */}
+      <button onClick={() =>  whoami()}>Who Am I?</button>
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>

@@ -4,7 +4,7 @@ import * as helpers from './helpers'
 import * as crypto from './crypto'
 
 export default function Spectator(props) {
-  const hackathon = props.actor;
+  const hackathon = props.canisters.hackathon;
 
   async function listAllSecrets() {
     
