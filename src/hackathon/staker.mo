@@ -26,6 +26,10 @@ module {
     public type GetPrincipalsError = {#stakeIdNotFound: Nat};
     public type GetPrincipalsResult = Result.Result<[Principal], GetPrincipalsError>;
 
+
+    public type EndStakeError = {#stakeNotFound: Nat; #permissionDenied: Principal};
+    public type EndStakeResult = Result.Result<Stake, EndStakeError>;
+
     public type RegisterStakerError = {#alreadyRegistered: Principal; #invalidKey: Text};
     public type RegisterStakerResult = Result.Result<Text, RegisterStakerError>;
 
@@ -130,6 +134,33 @@ module {
                     let newStake = {staker_id; public_key; amount; expiry_time; stake_id};
                     stakes.put(stake_id, newStake);
                     return #ok(stake_id);
+                };
+            };
+        };
+
+        /*
+        * Ends stake by setting the expiry_time to now.
+        */
+        public func endStake(staker_id: Principal, stake_id: Nat) : EndStakeResult {
+            switch (stakes.get(stake_id)) {
+                case null {
+                    return #err(#stakeNotFound(stake_id));
+                };
+                case (? stake) {
+                    if (stake.staker_id != staker_id) {
+                        return #err(#permissionDenied(staker_id));
+                    };
+                    let now = Date.secondsSince1970();
+                    let newStake = {
+                        staker_id = stake.staker_id;
+                        public_key = stake.public_key;
+                        amount = stake.amount;
+                        expiry_time = now; // update
+                        stake_id = stake.stake_id;
+                    };
+                    stakes.put(stake_id, newStake);
+
+                    return #ok(newStake);
                 };
             };
         };

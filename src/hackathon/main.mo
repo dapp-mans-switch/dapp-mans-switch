@@ -79,6 +79,14 @@ actor {
     };
 
     /*
+    * Ends stake by setting the expiry_time to now.
+    */
+    public shared(msg) func endStake(stake_id: Nat): async Staker.EndStakeResult {
+        let staker_id = msg.caller;
+        stakerManager.endStake(staker_id, stake_id);
+    };
+
+    /*
     * Returns stake for stake id if there is a matching stake.
     */
     public query func lookupStake(id: Nat) : async ?Stake {
