@@ -228,7 +228,7 @@ export default function Uploader(props) {
 
             let now = new Date()
             let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
-            console.log("next_heartbeat", next_heartbeat)
+            //console.log("next_heartbeat", next_heartbeat)
             let remainingTimeMS = next_heartbeat - now
             let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
             const heartbeatCell = tr.insertCell(-1)
@@ -256,6 +256,26 @@ export default function Uploader(props) {
     function hideVideo() {
         let aliveVideo = document.getElementById("still-alive-video")
         aliveVideo.style.display = "none"
+    }
+
+    
+    async function checkAvailability() {
+        try {
+            const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
+            const rewardInt = helpers.getPositiveNumber(reward)
+
+            if (isNaN(expiryTimeInUTCSecs)) {
+                return
+            }
+            console.log("here")
+            let nAvailableStakes = await hackathon.getAvailableStakes(expiryTimeInUTCSecs)
+            let secretPrice = await hackathon.getSecretBasePrice()
+            console.log("nAvailableStakes", nAvailableStakes)
+            console.log("Cost", rewardInt + Number(secretPrice))
+
+        } catch (error) {
+            alert('Input positive reward and date!')
+        } 
     }
     
     React.useEffect(() => {
@@ -321,6 +341,8 @@ export default function Uploader(props) {
 
                 <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>
               </form>
+
+                <button onClick={checkAvailability}>Check availability</button>
             </div>
 
             <a onClick={() => {routToPage('Main')}}>

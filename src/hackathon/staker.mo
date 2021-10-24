@@ -271,6 +271,20 @@ module {
         };
 
         /*
+        * Returns the number of stakes which expiry after expiry_time, are valid
+        * and don't belong to author_id.
+        */
+        public func getAvailableStakes(author_id: Principal, expiry_time: Int): Nat {
+            var n: Nat = 0;
+            for ((id, s) in stakes.entries()) {
+                if ((expiry_time < s.expiry_time) and (s.staker_id != author_id) and s.valid) {
+                    n += 1;
+                };
+            };
+            return n;
+        };
+
+        /*
         * Randomly draws stakes proporitional to their amount, which have to be used
         * for a new secret. Does not draw stakes which belong to the author.
         * Params:
@@ -286,7 +300,7 @@ module {
             // first we count the total amount of tokens held by (not expired) stakes
             var totalAmount: Nat = 0;
             for ((id, s) in stakes.entries()) {
-                if ((expiry_time < s.expiry_time) and (s.staker_id != author_id)) {
+                if ((expiry_time < s.expiry_time) and (s.staker_id != author_id) and s.valid) {
                     totalAmount += s.amount;
                 };
             };
@@ -312,7 +326,7 @@ module {
             // we sort the randomAmounts such that we have to loop over the stakes only once
             // and can draw a single stake multiple times in the inner loop
             label outer for ((id, s) in stakes.entries()) {
-                if ((s.expiry_time <= expiry_time) or (s.staker_id == author_id)) {
+                if ((s.expiry_time <= expiry_time) or (s.staker_id == author_id) or not s.valid) {
                     continue outer;
                 };
                 
