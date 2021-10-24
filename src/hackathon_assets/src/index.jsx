@@ -45,12 +45,14 @@ export default function Main() {
     console.log("useEffect")
     window.scrollTo(0,0);
 
+    //auth.showMenuIfNotAuth()
 
-    canisters = await auth.getAnomymousCanisters()
+    let x = await auth.getAnomymousCanisters()
+    // weirdest JS behavior ever! TODO: pls help
+    // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
+    canisters = auth.canisters
     auth.showMenuIfAuth()
-
     getBalance()
-
 
   }, [])
   
