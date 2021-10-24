@@ -47,7 +47,7 @@ export default function Spectator(props) {
             const reconstructedPrivateKey = crypto.reconstructPrivateKey(keyshares)
             const payload = crypto.decryptSecret(s.payload, reconstructedPrivateKey)
 
-            alert("Decrypted secret " + payload)
+            alert("Decrypted secret: " + payload)
           } catch (error) {
             console.log(error)
           }
