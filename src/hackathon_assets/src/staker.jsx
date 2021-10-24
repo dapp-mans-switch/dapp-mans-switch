@@ -258,7 +258,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['amount', 'expiry_time']
+    const col_names = ['Amount', 'Expiry Time']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -279,7 +279,7 @@ export default function Staker(props) {
 
       let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
       let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-      dateCell.innerHTML = expiryDate.toLocaleString('en-GB', options)
+      dateCell.innerHTML = expiryDate.toLocaleString('en-US', options)
 
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
@@ -309,7 +309,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['secret_id', 'n_shares', 'hasRevealed', 'shouldReveal',]
+    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Ready to Reveal',]
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
