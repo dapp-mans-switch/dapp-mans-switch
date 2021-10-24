@@ -12,6 +12,7 @@ const TEST = true
 
 export default function Uploader(props) {
     const hackathon = props.canisters.hackathon;
+    const token = props.canisters.token;
 
     const [secret, setSecret] = React.useState('')
     const [reward, setReward] = React.useState('')
@@ -43,7 +44,7 @@ export default function Uploader(props) {
         if (TEST) {
             testSecretEnDecryption()
             testSharingAndReconstruction()
-            input = {'secret': 'my top secret secret', 'rewardInt': 420, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
+            input = {'secret': 'my top secret secret', 'rewardInt': 10, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
                 input = validateInput(secret, reward, expiryTime, heartbeatFreq)
@@ -99,9 +100,19 @@ export default function Uploader(props) {
         // encrypt them so only the desired staker can read it
         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakePublicKeys)
         console.log("encryptedKeyShares", encryptedKeyShares)
+
+        // tokenomics
+        let secretBasePrice = Number(await hackathon.getSecretBasePrice());
+        let hackathonID = await hackathon.identity();
+        let ok = await token.approve(hackathonID, input.rewardInt + secretBasePrice, []); // should not throw error
+
         // send to backend
         const addSecretResult = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
             input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, keysharesShas, stakeIds)
+
+        
+        removeLoadingAnimation()
+        listAllSecrets()
 
         if (addSecretResult['ok']) {
             let newSecret = addSecretResult['ok']
@@ -109,11 +120,10 @@ export default function Uploader(props) {
             alert(`Secret with ID ${newSecret.secret_id} uploaded!`)
         }
         if (addSecretResult['err']) {
+            alert("Cannot upload secret.")
             console.error(addSecretResult['err'])
         }
         
-        removeLoadingAnimation()
-        listAllSecrets()
     }
 
     ///////////////////////////// TESTS /////////////////////////////

@@ -141,7 +141,7 @@ module {
         };
 
         /*
-        * Deletes stake with stake_id.
+        * Deletes stake with stake_id. Just for internal use.
         */
         public func deleteStake(stake_id: Nat): ?Stake {
             stakes.remove(stake_id);
@@ -177,6 +177,7 @@ module {
                     if (now >= stake_expiry_time) {
                         return #ok(#payout(stake.amount));
                     } else {
+                        // ended stake too soon -> penalty
                         return #ok(#payout(stake.amount / 2));
                     };
                 };

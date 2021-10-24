@@ -262,8 +262,13 @@ actor Hackathon {
         #invalidHeartbeatFreq: Int;
         #invalidListLengths;
         #invalidPublicKey: Text;
-        #insufficientFunds};
+        #transferError: Text};
     public type AddSecretResult = Result.Result<Secret, AddSecretError>;
+
+    let secretBasePrice: Nat = 10;
+    public query func getSecretBasePrice() : async Nat {
+        return secretBasePrice;
+    };
 
     /*
     * Adds a secret.
@@ -309,11 +314,21 @@ actor Hackathon {
 
         switch (stakerManager.getPrincipals(share_holder_stake_ids)) {
             case (#ok(share_holder_ids)) {
-                let secret = secretManager.insert(
-                    author_id, payload, uploader_public_key,
-                    reward, expiry_time, heartbeat_freq,
-                    encrypted_shares, decrypted_share_shas, share_holder_ids, share_holder_stake_ids);
-                return #ok(secret);
+                try {
+                    // amount has to be approved and sufficient balance is required
+                    let ok = await Token.transferFrom(author_id, _this(), reward + secretBasePrice, null);
+                    
+                    let secret = secretManager.insert(
+                        author_id, payload, uploader_public_key,
+                        reward, expiry_time, heartbeat_freq,
+                        encrypted_shares, decrypted_share_shas, share_holder_ids, share_holder_stake_ids);
+                    
+                    return #ok(secret);
+
+                } catch(e) {
+                    return #err(#transferError(Error.message(e)));
+                };
+
             };
             case (#err(#stakeIdNotFound(stake_id))) {
                 return #err(#invalidStakes(share_holder_stake_ids));

@@ -61,6 +61,13 @@ module {
             return newSecret;
         };
 
+        /*
+        * Deletes secret with secret_id. Just for internal use.
+        */
+        public func delete(secret_id: Nat): ?Secret {
+            secrets.remove(secret_id);
+        };
+
 
         /*
         * Returns secret for secret_id if it exists.

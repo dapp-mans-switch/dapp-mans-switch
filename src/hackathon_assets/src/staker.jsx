@@ -156,29 +156,34 @@ export default function Staker(props) {
     let hackathonID = await hackathon.identity();
     let ok = await token.approve(hackathonID, amountInt, []); // should not throw error
     const result = await hackathon.addStake(amountInt, durationInt)
+
+    removeLoadingAnimation()
+    listAllStakes()
+
     if (result['ok']) {
       let newStakeId = result['ok']
       console.log("Stake id:", newStakeId)
     }
     if (result['err']) {
+      alert("Cannot add stake")
       console.error(result['err'])
     }
-    removeLoadingAnimation()
-    listAllStakes()
   }
 
   async function endStake(id) {
     appendLoadingAnimation("stakerTable", true)
     const result = await hackathon.endStake(id)
+
+    removeLoadingAnimation()
+    listAllStakes()
+
     if (result['ok']) {
       console.log("End stake payout:", result['ok'])
     }
     if (result['err']) {
-      console.error(result['err'])
       alert("cannot delete staker with id: " + id)
+      console.error(result['err'])
     }
-    removeLoadingAnimation()
-    listAllStakes()
   }
 
   // write private key to file and safe to downloads
