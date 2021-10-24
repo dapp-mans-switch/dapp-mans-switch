@@ -17,6 +17,7 @@ export default function Main() {
   let props
 
   async function authenticate() {
+    console.log("AUTHENTICATE")
     document.body.style.backgroundColor = "red"; 
     // if you see this then getCanister is too slow and
     // we should deactivate buttons until the asynchronous function is done
@@ -34,6 +35,7 @@ export default function Main() {
   }
 
   async function no_authenticate() {
+    console.log("NO AUTHENTICATE")
     auth = new Auth()
     identity = await auth.getAnomymousIdentity()
     canisters = auth.getAnomymousCanisters()
@@ -44,7 +46,6 @@ export default function Main() {
     // getBalance(); // TODO remove
   }
   
-
   async function whoami() {
     console.log(canisters)
     // let id = await canisters.hackathon.whoami()
@@ -65,17 +66,21 @@ export default function Main() {
   async function buyTokens() {
     try {
       let n_tokens = helpers.getPositiveNumber(amount)
+      console.log(canisters)
       await canisters.token.buyIn(n_tokens)
     } catch (error) {
-      alert("Input positive number! " + error)
+      alert(error)
     }
     getBalance()
   }
 
   React.useEffect(() => {
     window.scrollTo(0,0);
+
+    // TODO: call at appropriate place
     // authenticate()
-    no_authenticate().then(() => getBalance())
+    no_authenticate() // for no auth and anonymous identity
+    //getBalance()
   }, [])
   
 

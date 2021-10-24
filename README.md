@@ -64,3 +64,16 @@ rm package-lock.json
 Also, make sure to `npm install` and to have all dependencies for internet identity installed and execute the calls in the given order.
 
 You can disable authentication in `index.jsx`.
+
+### Testing
+
+To populate backend execute:
+
+```
+dfx start --clean
+dfx deploy
+./backend_tests/populate-stakers.sh 
+./backend_tests/populate-secrets.sh 
+```
+
+The private key for the staker can be seen in `./backend_tests/populate-stakers.sh `.

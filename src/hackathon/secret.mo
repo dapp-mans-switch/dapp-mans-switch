@@ -18,7 +18,14 @@ module {
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
 
-    public type RevealAllSharesError = {#secretNotFound: Nat; #invalidDecryptedSHA: Text; #wrongNumberOfShares: Nat; #alreadyRevealed: Nat; #insufficientFunds: Text};
+    public type RevealAllSharesError = {
+        #secretNotFound: Nat;
+        #invalidDecryptedSHA: Text;
+        #wrongNumberOfShares: Nat;
+        #alreadyRevealed: Nat;
+        #insufficientFunds: Text;
+        #revealedTooSoon: Int;
+    };
     public type RevealAllSharesSuccess = {secret: Secret; payout: Nat};
     public type RevealAllSharesResult = Result.Result<RevealAllSharesSuccess, RevealAllSharesError>;
 
@@ -168,6 +175,11 @@ module {
                 case null { return #err(#secretNotFound(secret_id)) };
                 case (? secret) {
                     var share_counter: Nat = 0;
+
+                    let now = Date.secondsSince1970();
+                    if (now < secret.expiry_time) {
+                        return #err(#revealedTooSoon(secret.expiry_time));
+                    };
 
                     for (i in Iter.range(0, secret.shares.size()-1)) {
                         if (secret.share_holder_ids[i] == staker_id) {

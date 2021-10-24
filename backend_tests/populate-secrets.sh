@@ -4,7 +4,8 @@
 echo "Create secret:"
 
 dfx identity use default
-dfx canister call token approve '(principal "rrkah-fqaaa-aaaaa-aaaaq-cai", 1000, null)'
+dfx canister call token buyIn '40'
+dfx canister call token approve '(principal "rrkah-fqaaa-aaaaa-aaaaq-cai", 40, null)'
 # 1634429840
 dfx canister call hackathon drawStakes '(1635724790, 10)' # 31.10.2021
 dfx canister call hackathon addSecret '(
@@ -95,7 +96,8 @@ dfx canister call hackathon addSecret '(
 
 
 dfx identity use anonymous
-dfx canister call token approve '(principal "rrkah-fqaaa-aaaaa-aaaaq-cai", 1000, null)'
+dfx canister call token buyIn '20'
+dfx canister call token approve '(principal "rrkah-fqaaa-aaaaa-aaaaq-cai", 20, null)'
 dfx canister call hackathon drawStakes '(1635724790, 10)'
 dfx canister call hackathon addSecret '(
     "W+7emmQbDaJlFCZJ0RUE1SPwlCtIZvi8P+oNvscZ.lcbL2dkCK4k604poc9FYQL2lDqf54fjU",
@@ -139,4 +141,8 @@ dfx canister call hackathon addSecret '(
     }
 )'
 
+dfx canister call token myBalance
+
 dfx identity use default
+
+dfx canister call hackathon listAllSecrets
