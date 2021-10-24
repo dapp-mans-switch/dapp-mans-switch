@@ -7,6 +7,7 @@ import * as helpers from './helpers'
 import { convertTypeAcquisitionFromJson } from '../../../node_modules/typescript/lib/typescript'
 
 // import { token } from '../../declarations/token';
+import {getBalance, buyTokens} from './wallet'
 
 export default function Main() {
   const [amount, setAmount] = React.useState(0)
@@ -25,20 +26,15 @@ export default function Main() {
     alert("You are " + s);
   }
 
-  async function getBalance() {
-    let balance = await canisters.token.myBalance()
-    document.getElementById('balance').innerHTML = "Balance: " + balance + " $HRBT"
-  }
-
-  async function buyTokens() {
+  // calls wallet function and passes 
+  async function topUpTokens(can) {
     try {
       let n_tokens = helpers.getPositiveNumber(amount)
       console.log(canisters)
-      await canisters.token.buyIn(n_tokens)
+      buyTokens(n_tokens)
     } catch (error) {
       alert(error)
     }
-    getBalance()
   }
 
   React.useEffect(async () => {
@@ -52,7 +48,7 @@ export default function Main() {
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
     canisters = auth.canisters
     auth.showMenuIfAuth()
-    getBalance()
+    getBalance(canisters)
 
   }, [])
   
@@ -84,8 +80,8 @@ export default function Main() {
         <h3 id="balance">Balance: 0 $HRBT</h3>
         <label htmlFor="tokenAmount">Buy tokens:</label>
           <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
-        <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
-        <button onClick={() => getBalance()}>Show Balance</button>
+        <button id="money" onClick={() => topUpTokens(canisters)}>Infinite Money!!</button>
+        <button onClick={() => getBalance(canisters)}>Show Balance</button>
       </div>
 
       
