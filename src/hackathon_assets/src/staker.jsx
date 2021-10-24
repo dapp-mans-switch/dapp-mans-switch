@@ -89,8 +89,13 @@ export default function Staker(props) {
 
     // check if decryption of secret is allowed (time or heartbeat)
     // check if secret already decrypted
-    if (secret.hasRevealed || !secret.shouldReveal) {
-      console.log("Do not reveal")
+    if (secret.hasRevealed) {
+      alert("You already have revealed this share!")
+      removeLoadingAnimation()
+      return
+    }
+    if (!secret.shouldReveal) {
+      alert("You should not reveal this share yet!")
       removeLoadingAnimation()
       return
     }
@@ -145,9 +150,9 @@ export default function Staker(props) {
       amountInt = helpers.getPositiveNumber(amount)
       durationInt = helpers.getPositiveNumber(duration)
     } catch (error) {
-      console.log(error)
       removeLoadingAnimation()
       alert('Amount and duration must be positive numbers!')
+      console.log(error)
       return
     }
 

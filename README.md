@@ -75,3 +75,5 @@ dfx deploy
 ./backend_tests/populate-stakers.sh 
 ./backend_tests/populate-secrets.sh 
 ```
+
+The private key for the staker can be seen in `./backend_tests/populate-stakers.sh `.

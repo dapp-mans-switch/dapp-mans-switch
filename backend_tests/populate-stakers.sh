@@ -23,7 +23,7 @@ dfx identity use anonymous
 dfx canister call token buyIn 200
 dfx canister call token approve '(principal "rrkah-fqaaa-aaaaa-aaaaq-cai", 100, null)'
 dfx canister call hackathon addStake '(100, 100)'
-dfx canister call hackathon addStake '(100, 100)' # not enough allowance
+# dfx canister call hackathon addStake '(100, 100)' # not enough allowance
 
 dfx identity use default
 dfx canister call token buyIn 10000
