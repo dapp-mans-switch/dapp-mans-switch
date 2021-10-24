@@ -27,8 +27,9 @@ module {
     public type GetPrincipalsResult = Result.Result<[Principal], GetPrincipalsError>;
 
 
-    public type EndStakeError = {#stakeNotFound: Nat; #permissionDenied: Principal};
-    public type EndStakeResult = Result.Result<Stake, EndStakeError>;
+    public type EndStakeError = {#stakeNotFound: Nat; #permissionDenied: Principal; #alreadyPayedOut: Stake; #insufficientFunds: Nat};
+    public type EndStakeSuccess = {#payout: Nat};
+    public type EndStakeResult = Result.Result<EndStakeSuccess, EndStakeError>;
 
     public type RegisterStakerError = {#alreadyRegistered: Principal; #invalidKey: Text};
     public type RegisterStakerResult = Result.Result<Text, RegisterStakerError>;
@@ -130,12 +131,20 @@ module {
                     let stake_id = stakes.size()+1;
                     let now = Date.secondsSince1970();
                     let expiry_time = now + days * 86400;
+                    let valid = true;
                     
-                    let newStake = {staker_id; public_key; amount; expiry_time; stake_id};
+                    let newStake = {staker_id; public_key; amount; expiry_time; stake_id; valid};
                     stakes.put(stake_id, newStake);
                     return #ok(stake_id);
                 };
             };
+        };
+
+        /*
+        * Deletes stake with stake_id.
+        */
+        public func deleteStake(stake_id: Nat): ?Stake {
+            stakes.remove(stake_id);
         };
 
         /*
@@ -150,17 +159,26 @@ module {
                     if (stake.staker_id != staker_id) {
                         return #err(#permissionDenied(staker_id));
                     };
+                    if (not stake.valid) {
+                        return #err(#alreadyPayedOut(stake));
+                    };
                     let now = Date.secondsSince1970();
+                    let stake_expiry_time = stake.expiry_time;
                     let newStake = {
                         staker_id = stake.staker_id;
                         public_key = stake.public_key;
                         amount = stake.amount;
                         expiry_time = now; // update
                         stake_id = stake.stake_id;
+                        valid = false;
                     };
                     stakes.put(stake_id, newStake);
 
-                    return #ok(newStake);
+                    if (now >= stake_expiry_time) {
+                        return #ok(#payout(stake.amount));
+                    } else {
+                        return #ok(#payout(stake.amount / 2));
+                    };
                 };
             };
         };

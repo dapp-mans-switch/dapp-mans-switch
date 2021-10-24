@@ -151,17 +151,10 @@ export default function Staker(props) {
       return
     }
 
-    try {
-      let hackathonID = await hackathon.identity();
-      let ok = await token.approve(hackathonID, amountInt, []);
-    } catch (error) {
-      removeLoadingAnimation()
-      alert(error)
-      return
-    }
-
     document.getElementById('staker_form').reset()
     
+    let hackathonID = await hackathon.identity();
+    let ok = await token.approve(hackathonID, amountInt, []); // should not throw error
     const result = await hackathon.addStake(amountInt, durationInt)
     if (result['ok']) {
       let newStakeId = result['ok']
@@ -176,9 +169,12 @@ export default function Staker(props) {
 
   async function endStake(id) {
     appendLoadingAnimation("stakerTable", true)
-    const deleted = await hackathon.endStake(id)
-    console.log(deleted)
-    if (deleted == false) {
+    const result = await hackathon.endStake(id)
+    if (result['ok']) {
+      console.log("End stake payout:", result['ok'])
+    }
+    if (result['err']) {
+      console.error(result['err'])
       alert("cannot delete staker with id: " + id)
     }
     removeLoadingAnimation()
@@ -298,12 +294,6 @@ export default function Staker(props) {
     listAllRelevantSecrets()
   }, []);
 
-  function debug() {
-    setStakerId(1)
-    listAllStakes()
-    listAllRelevantSecrets()
-  }
-
   return (
     <div class="eventHorizon">
       <div class="header-n-nav">
@@ -368,8 +358,6 @@ export default function Staker(props) {
         </form>
         <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
       </div>
-
-      <button onClick={() => { debug() }}>DEBUG</button>
 
       <a onClick={() => {routToPage('Main')}}>
         <video autoPlay loop muted class="back-button-video">

@@ -78,7 +78,7 @@ actor Hackathon {
     };
 
     /*
-    * Add a stake for staker.
+    * Add a stake for staker. Transfers 'amount' $HRBT tokens to this canister.
     * Params:
     *   - amount: the number of tokens to stake
     *   - days: the duration of the stake in days
@@ -88,21 +88,57 @@ actor Hackathon {
     */
     public shared(msg) func addStake(amount: Nat, days: Nat): async Staker.AddStakeResult {
         let staker_id = msg.caller;
-        try {
-            // amount has to be approved and sufficient balance is required
-            let ok = await Token.transferFrom(staker_id, _this(), amount, null);
-        } catch(e) {
-            return #err(#transferError(Error.message(e)));
+        let r = stakerManager.addStake(staker_id, amount, days);
+        switch (r) {
+            case (#err(e)) {
+                // internal error
+                return r;
+            };
+            case (#ok(stake_id)) {
+                // no internal error -> try transfer of tokens
+                try {
+                    // amount has to be approved and sufficient balance is required
+                    let ok = await Token.transferFrom(staker_id, _this(), amount, null);
+                    return r;
+                } catch(e) {
+                    let s = stakerManager.deleteStake(stake_id); // remove added stake
+                    return #err(#transferError(Error.message(e)));
+                };
+            };
         };
-        stakerManager.addStake(staker_id, amount, days);
     };
 
     /*
     * Ends stake by setting the expiry_time to now.
     */
     public shared(msg) func endStake(stake_id: Nat): async Staker.EndStakeResult {
+        let balance = await Token.myBalance();
+        switch (stakerManager.lookup(stake_id)) {
+            case null {
+                return #err(#stakeNotFound(stake_id));
+            };
+            case (? stake) {
+                if (balance < stake.amount) {
+                    // well sorry, we can't pay you back right now.
+                    // if this happens then some corrupt admin withdrawed tokens from this canister
+                    return #err(#insufficientFunds(balance));
+                };
+            };
+        };
+
         let staker_id = msg.caller;
-        stakerManager.endStake(staker_id, stake_id);
+        let r = stakerManager.endStake(staker_id, stake_id);
+        switch (r) {
+            case (#err(e)) {
+                return r;
+            };
+            case (#ok(#payout(amount))) {
+                // should not throw error, we checked balance above
+                let ok = await Token.transfer(staker_id, amount, null);
+                return #ok(#payout(amount));
+            };
+        };
+
     };
 
     /*

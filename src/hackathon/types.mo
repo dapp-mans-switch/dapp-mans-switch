@@ -5,6 +5,7 @@ module {
         amount: Nat;
         expiry_time: Int; // seconds since 1970-01-01
         stake_id: Nat;
+        valid: Bool;
     };
 
     public type Staker = {
