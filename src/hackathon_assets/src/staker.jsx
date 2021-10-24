@@ -11,7 +11,6 @@ export default function Staker(props) {
 
   const hackathon = props.canisters.hackathon;
   const token = props.canisters.token;
-  const identity = props.identity;
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
@@ -67,7 +66,7 @@ export default function Staker(props) {
 
     document.getElementById("reveal-secret-from").reset()
 
-    const backendPublicKey = await hackathon.lookupPublicKey(identity.getPrincipal())
+    const backendPublicKey = await hackathon.lookupMyPublicKey()
     console.log("PublicKey:", backendPublicKey[0])
     
     let secretId

@@ -6,7 +6,12 @@ import * as token from '../../declarations/token';
 import routToPage from './router'
 
 
-export default class Auth {
+export class Auth {
+
+    constructor () {
+        console.log("Auth Constructor")
+        this.canistersInitialised = false
+    }
 
     // show navigation and logout buttons if authenticated
     showMenuIfAuth() {
@@ -24,9 +29,12 @@ export default class Auth {
     }
 
     async auth() {
+        if (this.canistersInitialised) {
+            console.log("authenticated: canisters intitialised")
+        }
+
         this.authClient = await AuthClient.create();
         if (await this.authClient.isAuthenticated()) {
-            //const identity = await this.authClient.getIdentity();
             this.showMenuIfAuth()
             console.log("authenticated")
             return true;
@@ -38,9 +46,7 @@ export default class Auth {
     }
 
     makeLoginButton() {
-        const loginButton = document.getElementById(
-            "loginButton"
-          );
+        const loginButton = document.getElementById("loginButton");
         
         const days = BigInt(1);
         const hours = BigInt(24);
@@ -63,13 +69,19 @@ export default class Auth {
         };
     }
 
+    /*
     async getIdentity() {
         const identity = await this.authClient.getIdentity();
         return identity;
-    }
+    }*/
 
     async getCanisters(identity) {
-        console.log("Get canister for identity", identity.getPrincipal().toString())
+        if (this.cansisters) {
+            console.log("return cached canisters")
+            return this.cansisters
+        }
+
+        //console.log("Get canister for identity", identity.getPrincipal().toString())
         const hackathonActor = hackathon.createActor(hackathon.canisterId, {
             agentOptions: {
                 identity,
@@ -80,23 +92,45 @@ export default class Auth {
                 identity,
             },
         })
-        return {hackathon: hackathonActor, token: tokenActor};
+
+        this.canistersInitialised = true
+        this.canisters = {hackathon: hackathonActor, token: tokenActor};
+
+        return canisters
     }
 
-    getAnomymousCanisters() {
+    async getAnomymousCanisters() {
+        if (this.canistersInitialised) {
+            return this.cansisters
+        }
+
         const hackathonActor = hackathon.hackathon;
         const tokenActor = token.token;
-        return {hackathon: hackathonActor, token: tokenActor};
+
+        this.canistersInitialised = true
+        this.canisters = {hackathon: hackathonActor, token: tokenActor};
+        console.log("Intitialised canisters in auth")
+        return this.canisters
     }
 
+    getProps() {
+        return {canisters: this.canisters}
+    }
+
+    /*
     async getAnomymousIdentity() {
         this.authClient = await AuthClient.create();
         const identity = await this.authClient.getIdentity();
         return identity;
-    }
+    }*/
     
     async logout() {      
         await this.authClient.logout();
+        this.cansisters = undefined
+        this.authClient = undefined
+        this.canistersInitialised = false
         this.showMenuIfNotAuth()
     }
 };
+
+export const auth = new Auth()
