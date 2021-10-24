@@ -44,7 +44,7 @@ export default function Uploader(props) {
         if (TEST) {
             testSecretEnDecryption()
             testSharingAndReconstruction()
-            input = {'secret': 'my top secret secret', 'rewardInt': 10, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
+            input = {'secret': 'My top secret.', 'rewardInt': 10, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
                 input = validateInput(secret, reward, expiryTime, heartbeatFreq)
