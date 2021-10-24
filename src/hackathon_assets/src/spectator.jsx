@@ -73,7 +73,7 @@ export default function Spectator(props) {
 
         const progressCell = tr.insertCell(-1)
         const minReveal = crypto.minSharesToRecover(n_shares)
-        progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
+        progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
       
         const expiryCell = tr.insertCell(-1)
         expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()

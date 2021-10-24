@@ -113,7 +113,7 @@ export default function Uploader(props) {
 
         // send to backend
         const addSecretResult = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
-            input.expiryTimeInUTCSecs, input.heartbeatFreqInt, encryptedKeyShares, keysharesShas, stakeIds)
+            input.expiryTimeInUTCSecs, input.heartbeatFreqInt * 86400, encryptedKeyShares, keysharesShas, stakeIds)
 
         
         removeLoadingAnimation()
@@ -200,7 +200,7 @@ export default function Uploader(props) {
     
         const table = document.getElementById('secretsTable')
     
-        const col_names = ['secret_id', 'n_shares', 'n_revealed', 'expiry_time', 'last_heartbeat']
+        const col_names = ['Secret ID', 'Reveal Progress', 'Expiry Time', 'Heartbeat Expiration']
         table.innerHTML = ''
     
         const tr = table.insertRow(-1)
@@ -210,23 +210,33 @@ export default function Uploader(props) {
         }
     
         secrets.map(function (s) {
-          const tr = table.insertRow(-1)
-    
-          const idCell = tr.insertCell(-1)
-          idCell.innerHTML = s.secret_id
-    
-          const sharesCell = tr.insertCell(-1)
-          sharesCell.innerHTML = s.shares.length
-    
-          const revealedCell = tr.insertCell(-1)
-          revealedCell.innerHTML = s.revealed.reduce((a,b) => a + b, 0)
-    
-        
-          const expiryCell = tr.insertCell(-1)
-          expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
 
-          const heartbeatCell = tr.insertCell(-1)
-          heartbeatCell.innerHTML = helpers.secondsSinceEpocheToDate(s.last_heartbeat).toLocaleString()
+            let n_shares = s.shares.length;
+            let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
+
+            const tr = table.insertRow(-1)
+
+            const idCell = tr.insertCell(-1)
+            idCell.innerHTML = s.secret_id
+
+            const progressCell = tr.insertCell(-1)
+            const minReveal = crypto.minSharesToRecover(n_shares)
+            progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
+
+            const expiryCell = tr.insertCell(-1)
+            expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
+
+            let now = new Date()
+            let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
+            console.log("next_heartbeat", next_heartbeat)
+            let remainingTimeMS = next_heartbeat - now
+            let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
+            const heartbeatCell = tr.insertCell(-1)
+            heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
+
+            if (remainingTimeHR < 12) {
+                heartbeatCell.style.color = '#ed2939';
+            }
         });
     }
 
