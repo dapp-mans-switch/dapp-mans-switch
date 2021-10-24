@@ -3,6 +3,9 @@ import routToPage from './router'
 import * as helpers from './helpers'
 import * as crypto from './crypto'
 
+import backButtonVideo from './../assets/back_button.mkv'
+
+
 export default function Spectator(props) {
   const hackathon = props.actor;
 
@@ -74,12 +77,20 @@ export default function Spectator(props) {
   
   React.useEffect(() => {
     listAllSecrets()
-  })
+  }, [])
 
 
     return (
-      <div>
-        <h1>Spectator</h1>
+      <div class="eventHorizon">
+        <div class="header-n-nav">
+          <a onClick={() => {routToPage('Main')}}>
+            <video autoPlay loop muted class="back-button-video">
+              <source src={backButtonVideo}/>
+            </video>
+          </a>
+          <h1>Spectator</h1>
+        </div>
+
         Look at other people's secrets.
         <button onClick={() => listAllSecrets()}>Refresh</button>
         <div class="panel">

@@ -5,6 +5,7 @@ import * as helpers from './helpers'
 import routToPage from './router'
 
 import stillAliveVideo from './../assets/im_alive.mkv'
+import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
 const TEST = true
@@ -220,12 +221,35 @@ export default function Uploader(props) {
     
     React.useEffect(() => {
         listAllSecrets()
-      })
+      }, [])
 
 
     return (
-        <div>
-            <h1>Uploader</h1>
+        <div class="eventHorizon">
+            <div class="header-n-nav">
+                <a onClick={() => {routToPage('Main')}}>
+                    <video autoPlay loop muted class="back-button-video">
+                        <source src={backButtonVideo}/>
+                    </video>
+                </a>
+                <h1>Uploader</h1>
+            </div>
+        
+            <div class="description-and-wallet">
+                <div class="description">
+                    <p>Post your secrets here.</p>
+                    <p>Paying higher rewards incentivises more staker to keep your secret secure.</p>
+                </div>
+                <div class="wallet-in-app">
+                <div>
+                    <p>Balance:</p>
+                    <b>300 $HRBT</b>
+                </div>
+                <div>
+                    <button>Top Up + 100 $HRBT</button>
+                </div>
+                </div>
+            </div>
 
             <div class="panel">
                 <h3>My Secrets</h3>
@@ -259,8 +283,12 @@ export default function Uploader(props) {
               </form>
             </div>
 
-            <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
-
+            <a onClick={() => {routToPage('Main')}}>
+                <video autoPlay loop muted class="back-button-video">
+                    <source src={backButtonVideo}/>
+                </video>
+            </a>
+            
         </div>
         )
     }

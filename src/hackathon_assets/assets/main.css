@@ -7,14 +7,40 @@ body {
     background-size: cover;
     color: black;
     text-align: center;
-    margin-bottom: 200px;
+    margin-bottom: 100px;
     overscroll-behavior: none;
+}
+
+.eventHorizon {
+    margin: 0 auto 0 auto;
+    justify-content: center;
+    width: 80%;
+    min-width: 550px;
+    max-width: 750px;
+}
+
+h2 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+p {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 h3 {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+
+.header-n-nav{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+} 
+
 
 img {
     max-width: 50vw;
@@ -52,7 +78,7 @@ textarea {
 
 .key-flip-video {
     margin-top: 3%;
-    width: 100%;
+    width: 90%;
 }
 
 .still-alive-video {
@@ -75,6 +101,9 @@ textarea {
     bottom: 15px;
 }
 
+.back-button-video{
+    width: 100px;
+}
 
 .start-page-button-div {
     display: flex;
@@ -151,12 +180,9 @@ section {
 
 
 .panel {
-    margin: 30px auto 40px auto;
+    margin: 30px 0 40px 0;
     padding: 10px;
     line-height: 2;
-    width: 80%;
-    min-width: 550px;
-    max-width: 750px;
     border-radius: 20px;
     background: rgb(224,229,236,0.8);
     backdrop-filter: blur(8px);
@@ -164,6 +190,34 @@ section {
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
+
+.description-and-wallet {
+    display: flex;
+    justify-content: center;
+    margin: 10px auto;
+}
+
+.description {
+    margin: auto;
+    text-align: left;
+}
+
+.wallet-in-app {
+    color:rgb(255, 255, 255);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 20px auto;
+    padding: 30px 10px 30px 10px;
+    line-height: 1;
+    width: 50%;
+    min-width: 380px;
+    border-radius: 20px;
+    background: rgba(38, 0, 255, 0.7);
+    backdrop-filter: blur(8px);
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
+        -9px -9px 16px  rgba(255,255,255, 0.5);
+}
 
 
 form {

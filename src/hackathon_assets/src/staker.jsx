@@ -3,7 +3,7 @@ import routToPage from './router'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
 
-import loadingVideo from './../assets/loading.mkv'
+import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
 
@@ -230,6 +230,8 @@ export default function Staker(props) {
         deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
       } else {
         deleteButton.disabled = true;
+        amountCell.style.color = '#1010104d';
+        dateCell.style.color = '#1010104d';
       }
 
       deleteButtonCell.appendChild(deleteButton)
@@ -284,7 +286,7 @@ export default function Staker(props) {
   React.useEffect(() => {
     listAllStakes()
     listAllRelevantSecrets()
-  })
+  }, []);
 
   function debug() {
     setStakerId(1)
@@ -293,9 +295,32 @@ export default function Staker(props) {
   }
 
   return (
-    <div>
-      <h1>Staker</h1>
-      This is the Staker's page.
+    <div class="eventHorizon">
+      <div class="header-n-nav">
+        <a onClick={() => {routToPage('Main')}}>
+          <video autoPlay loop muted class="back-button-video">
+            <source src={backButtonVideo}/>
+          </video>
+        </a>
+        <h1>Staker</h1>
+      </div>
+
+      <div class="description-and-wallet">
+        <div class="description">
+          <p>Stake $HRBT to receive shares.</p>
+          <p>When you reveal a secret at the right time, you will be richly rewarded.</p>
+        </div>
+        <div class="wallet-in-app">
+          <div>
+            <p>Balance:</p>
+            <b>300 $HRBT</b>
+          </div>
+          <div>
+            <button>Top Up + 100 $HRBT</button>
+          </div>
+        </div>
+      </div>
+      
 
       <div id="register" class="panel">
         <button onClick={() => registerStaker()}>Register Staker</button>
@@ -334,8 +359,13 @@ export default function Staker(props) {
         <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} class="rainbow-button" style={{width: 330}}></a>
       </div>
 
-      <button onClick={() => {routToPage("Main")}}>Back to Start Page</button>
       <button onClick={() => { debug() }}>DEBUG</button>
+
+      <a onClick={() => {routToPage('Main')}}>
+        <video autoPlay loop muted class="back-button-video">
+          <source src={backButtonVideo}/>
+        </video>
+      </a>
     </div>
   );
 

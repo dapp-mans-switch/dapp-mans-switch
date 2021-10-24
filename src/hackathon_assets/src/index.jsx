@@ -61,7 +61,7 @@ export default function Main() {
   
 
   return (
-    <div>
+    <div class="eventHorizon">
       <h1>Dead Man’s Switch</h1>
       <h3>using Proof of Stake</h3>
       regularly verify that you are alive, otherwise your uploaded files will get published
