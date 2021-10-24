@@ -2,10 +2,12 @@ import * as React from 'react'
 import routToPage from './router'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
+import { render } from 'react-dom'
 
 import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 import {errorPopup} from './errorPopup'
+import Wallet from './wallet'
 
 export default function Staker(props) {
 
@@ -353,10 +355,16 @@ export default function Staker(props) {
     });
   }
 
+  async function createWallet() {
+    render(React.createElement(Wallet, props), document.getElementById('my-wallet'))
+  }
+
+
   React.useEffect(() => {
     window.scrollTo(0,0);
     listAllStakes()
     listAllRelevantSecrets()
+    createWallet()
   }, []);
 
   return (
@@ -375,15 +383,7 @@ export default function Staker(props) {
           <p>Stake $HRBT to receive shares.</p>
           <p>When you reveal a secret at the right time, you will be richly rewarded.</p>
         </div>
-        <div class="wallet-in-app">
-          <div>
-            <p>Balance:</p>
-            <b>300 $HRBT</b>
-          </div>
-          <div>
-            <button>Top Up + 100 $HRBT</button>
-          </div>
-        </div>
+        <div id="my-wallet"/>
       </div>
       
 

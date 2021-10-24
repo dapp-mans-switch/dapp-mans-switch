@@ -2,12 +2,10 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
 import { auth } from './auth'
-import keyFlipVideo from './../assets/key-flip.mkv'
-import * as helpers from './helpers'
-import { convertTypeAcquisitionFromJson } from '../../../node_modules/typescript/lib/typescript'
+import Wallet from './wallet'
 
-// import { token } from '../../declarations/token';
-import {getBalance, buyTokens} from './wallet'
+import keyFlipVideo from './../assets/key-flip.mkv'
+
 
 export default function Main() {
   const [amount, setAmount] = React.useState(0)
@@ -26,15 +24,8 @@ export default function Main() {
     alert("You are " + s);
   }
 
-  // calls wallet function and passes 
-  async function topUpTokens(can) {
-    try {
-      let n_tokens = helpers.getPositiveNumber(amount)
-      console.log(canisters)
-      buyTokens(n_tokens)
-    } catch (error) {
-      alert(error)
-    }
+  async function createWallet() {
+    render(React.createElement(Wallet, auth.getProps()), document.getElementById('my-wallet'))
   }
 
   React.useEffect(async () => {
@@ -48,8 +39,7 @@ export default function Main() {
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
     canisters = auth.canisters
     auth.showMenuIfAuth()
-    getBalance(canisters)
-
+    createWallet()
   }, [])
   
 
@@ -74,16 +64,7 @@ export default function Main() {
         </div>
       </div>
 
-
-      <div className="panel"> 
-        <h2>Wallet</h2>
-        <h3 id="balance">Balance: 0 $HRBT</h3>
-        <label htmlFor="tokenAmount">Buy tokens:</label>
-          <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
-        <button id="money" onClick={() => topUpTokens(canisters)}>Infinite Money!!</button>
-        <button onClick={() => getBalance(canisters)}>Show Balance</button>
-      </div>
-
+      <div id="my-wallet"/>
       
       <button onClick={() =>  whoami()}>Who Am I?</button>
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>

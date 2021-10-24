@@ -1,8 +1,11 @@
 import * as React from 'react'
+import { render } from 'react-dom'
 import * as crypto from './crypto'
 import sha256 from 'js-sha256'
 import * as helpers from './helpers'
 import routToPage from './router'
+import { render } from 'react-dom'
+import Wallet from './wallet'
 
 import stillAliveVideo from './../assets/im_alive.mkv'
 import backButtonVideo from './../assets/back_button.mkv'
@@ -247,10 +250,15 @@ export default function Uploader(props) {
         let aliveVideo = document.getElementById("still-alive-video")
         aliveVideo.style.display = "none"
     }
+
+    async function createWallet() {
+        render(React.createElement(Wallet, props), document.getElementById('my-wallet'))
+    }
     
     React.useEffect(() => {
         window.scrollTo(0,0);
         listAllSecrets()
+        createWallet()
       }, [])
 
 
@@ -270,15 +278,7 @@ export default function Uploader(props) {
                     <p>Post your secrets here.</p>
                     <p>Paying higher rewards incentivizes stakers to keep your secret secure.</p>
                 </div>
-                <div class="wallet-in-app">
-                <div>
-                    <p>Balance:</p>
-                    <b>300 $HRBT</b>
-                </div>
-                <div>
-                    <button>Top Up + 100 $HRBT</button>
-                </div>
-                </div>
+                <div id="my-wallet"/>
             </div>
 
             <div className="panel">
