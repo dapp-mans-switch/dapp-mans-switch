@@ -260,7 +260,7 @@ actor Hackathon {
         #invalidStakes: [Nat];
         #invalidReward: Nat;
         #invalidHeartbeatFreq: Int;
-        #invalidListLengths;
+        #invalidListLengths: Int;
         #invalidPublicKey: Text;
         #transferError: Text};
     public type AddSecretResult = Result.Result<Secret, AddSecretError>;
@@ -306,7 +306,7 @@ actor Hackathon {
             return #err(#invalidHeartbeatFreq(heartbeat_freq));
         };
         if ((encrypted_shares.size() != decrypted_share_shas.size()) or (decrypted_share_shas.size() != share_holder_stake_ids.size())) {
-            return #err(#invalidListLengths);
+            return #err(#invalidListLengths(encrypted_shares.size()));
         };
         if (not base64.validateBase64(uploader_public_key)) {
             return #err(#invalidPublicKey(uploader_public_key));

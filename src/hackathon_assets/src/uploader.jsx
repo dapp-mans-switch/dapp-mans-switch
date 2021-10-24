@@ -73,20 +73,23 @@ export default function Uploader(props) {
         // const stakes = await helpers.drawStakes() // <- fails now with this
         const result = await hackathon.drawStakes(input.expiryTimeInUTCSecs, number_of_shares);
         let stakes
-        if (result['ok']) {
+        if ('ok' in result) {
             stakes = result['ok']
         }
-        if (result['err']) {
+        if ('err' in result) {
+            alert(`There are no stakes for the set expiry time!`)
             console.error(result['err'])
+            removeLoadingAnimation()
             return
         }
 
         console.log("Stakes", stakes)
         if (stakes.length == 0) {
+            // should not be possible, handled above
             alert("Not enough stakes in system (have to be different from author)")
-            removeLoadingAnimation()
             return
         }
+
         const stakePublicKeys = helpers.getPublicKeysOfStakes(stakes)
         const stakeIds = helpers.getIdsOfStakes(stakes)
         console.log("StakeIds", stakeIds)
@@ -116,14 +119,29 @@ export default function Uploader(props) {
         removeLoadingAnimation()
         listAllSecrets()
 
-        if (addSecretResult['ok']) {
+        if ('ok' in addSecretResult) {
             let newSecret = addSecretResult['ok']
             console.log("newSecret", newSecret)
             alert(`Secret with ID ${newSecret.secret_id} uploaded!`)
         }
-        if (addSecretResult['err']) {
-            alert("Cannot upload secret.")
-            console.error(addSecretResult['err'])
+        if ('err' in addSecretResult) {
+            const err = addSecretResult['err']
+            if ('invalidStakes' in err) {
+                alert(`Could not upload secret: Uploaded invalid stakes!`) // should not happen as we draw stakes from backend above
+            } else if ('invalidReward' in err) {
+                alert(`Could not upload secret: Invalid reward ${err['invalidReward']}!`) // should not happen as we validate input
+            } else if ('invalidHeartbeatFreq' in err) {
+                alert(`Could not upload secret: Invalid heatbeat frequency ${err['invalidHeartbeatFreq']}!`) // should not happen as we validate input
+            } else if ('invalidListLengths' in err) {
+                alert(`Could not upload secret: Lengths of lists should be the same!`) // should not happen
+            } else if ('invalidPublicKey' in err) {
+                alert(`Could not upload secret: Invalid public key!`) // should not happen as we get it from crypto.js
+            } else if ('transferError' in err) {
+                alert(`Transfer error: ${err['transferError']}`)
+            } else {
+                alert(`Something went wrong!`)
+            }
+            console.error(err)
         }
         
     }

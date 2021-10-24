@@ -28,7 +28,7 @@ export default function Staker(props) {
 
     const result = await hackathon.registerStaker(keyPair.publicKey)
 
-    if (result['ok']) {
+    if ('ok' in result) {
       let publicKey = result['ok']
       console.log("Staker registerd with public key", publicKey)
       console.log("PrivateKey:", keyPair.privateKey)
@@ -36,14 +36,19 @@ export default function Staker(props) {
       downloadPrivateKey(keyPair.privateKey)
       alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
     }
-    if (result['err']) {
-      if (result['err']['alreadyRegistered']) {
-        let principal = result['err']['alreadyRegistered']
-        console.error("Staker already registered!", principal)
+
+    if ('err' in result) {
+      const err = result['err']
+      if ('alreadyRegistered' in err) {
+        let principal = err['alreadyRegistered']
+        alert(`User with principal ${principal.toString()} is already a registered staker!`)
+      } else if ('invalidKey' in err) {
+        // base64 is guaranteed by crypto.js
+        alert(`Generated public key ${err['invalidKey']} is not a valid key!`)
       } else {
-        // base64 is guaranteed
-        console.error(result['err'])
+        alert(`Something went wrong!`)
       }
+      console.error("RegisterStakerError:", err)
     }
 
     listAllStakes()
@@ -70,7 +75,7 @@ export default function Staker(props) {
       secretId = helpers.getNaturalNumber(revealSecretId)
     } catch (error) {
       console.log(error)
-      alert('Invalid numbers entered')
+      alert('Secret id must be a positive number!')
       removeLoadingAnimation()
       return
     }
@@ -79,7 +84,7 @@ export default function Staker(props) {
     //console.log('relevantSecret', relevantSecret)
 
     if (relevantSecret.len == 0) {
-      console.log("no secret for secret_id")
+      alert(`No secret for id ${secretId}!`)
       removeLoadingAnimation()
       return
     }
@@ -90,12 +95,12 @@ export default function Staker(props) {
     // check if decryption of secret is allowed (time or heartbeat)
     // check if secret already decrypted
     if (secret.hasRevealed) {
-      alert("You already have revealed this share!")
+      alert("You already have revealed your share of this secret!")
       removeLoadingAnimation()
       return
     }
     if (!secret.shouldReveal) {
-      alert("You should not reveal this share yet!")
+      alert("You should not reveal your shares of this secret yet!")
       removeLoadingAnimation()
       return
     }
@@ -113,21 +118,37 @@ export default function Staker(props) {
 
 
     } catch (error) {
-      console.log(`failed decryption`)
-      console.log(error)
+      console.log(`Failed decryption: ${error}`)
+      alert(`Failed decryption: ${error}`)
       removeLoadingAnimation()
       return
     }
 
     
     let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
-    if (result['ok']) {
-      let updatedSecret = result['ok'] 
-      console.log('updatedSecret', updatedSecret)
-      alert('published share')
+    if ('ok' in result) {
+      let payout = result['ok']['payout']
+      console.log('updatedSecret', result['ok']['secret'])
+      alert(`Successfully revealed your shares for secret with id ${secret.secret_id} with payout ${payout}`)
     }
-    if (result['err']) {
-      console.error(result['err'])
+    if ('err' in result) {
+      const err = result['err']
+      if ('secretNotFound' in err) {
+        alert(`Secret with id ${err['secretNotFound']} was not found!`)
+      } else if ('invalidDecryptedSHA' in err) {
+        alert(`SHA of decrypted share did not match!`)  // wrong shares, wrong order -> should not happen
+      } else if ('wrongNumberOfShares' in err) {
+        alert(`Invalid number of shares uploaded!`) // -> should not happen
+      } else if ('alreadyRevealed' in err) {
+        alert(`You have already revealed this secret!`)
+      } else if ('insufficientFunds' in err) {
+        alert(`Insufficient funds: ${err['insufficientFunds']}`)
+      } else if ('revealedTooSoon' in err) {
+        alert(`You should not reveal this secret yet!`)
+      } else {
+        alert(`Something went wrong!`)
+      }
+      console.error(err)
     }
 
     listAllRelevantSecrets()
@@ -165,12 +186,21 @@ export default function Staker(props) {
     removeLoadingAnimation()
     listAllStakes()
 
-    if (result['ok']) {
+    if ('ok' in result) {
       let newStakeId = result['ok']
-      console.log("Stake id:", newStakeId)
+      alert(`Stake with id ${newStakeId} was added!`)
     }
-    if (result['err']) {
-      alert("Cannot add stake")
+    if ('err' in result) {
+      const err = result['err']
+      if ('unknownStaker' in err) {
+        alert(`You (${err['unknownStaker'].toString()}) are not a registered staker!`)
+      } else if ('invalidDuration' in err) {
+        alert(`Could not add a stake with invalid duration ${err['invalidDuration']}`)
+      } else if ('transferError' in err) {
+        alert(`Failed token transfer: ${err['transferError']}`)
+      } else {
+        alert(`Something went wrong!`)
+      }
       console.error(result['err'])
     }
   }
@@ -182,12 +212,25 @@ export default function Staker(props) {
     removeLoadingAnimation()
     listAllStakes()
 
-    if (result['ok']) {
-      console.log("End stake payout:", result['ok'])
+    if ('ok' in result) {
+      alert(`End stake with payout ${result['ok']['payout']}`)
     }
-    if (result['err']) {
-      alert("cannot delete staker with id: " + id)
-      console.error(result['err'])
+    if ('err' in result) {
+      const err = result['err']
+      if ('stakeNotFound' in err) {
+        let stake_id = err['stakeNotFound']
+        alert(`Stake with id ${stake_id} was not found!`)
+      } else if ('permissionDenied' in err) {
+        // should not happen as staker only sees his stakes.
+        alert(`You don't have permission to end this stake.`)
+      } else if ('alreadyPayedOut' in err) {
+        alert(`Stake was already ended and payed out!`)
+      } else if ('insufficientFunds' in err) {
+        alert(`Insufficient funds: ${err['insufficientFunds']}`)
+      } else {
+        alert(`Something went wrong!`)
+      }
+      console.error(err)
     }
   }
 
