@@ -4,16 +4,16 @@ import routToPage from './router'
 import Auth from './auth'
 import keyFlipVideo from './../assets/key-flip.mkv'
 import * as helpers from './helpers'
+import { convertTypeAcquisitionFromJson } from '../../../node_modules/typescript/lib/typescript'
 
 // import { token } from '../../declarations/token';
 
 export default function Main() {
-  const [amount, setAmount] = React.useState('')
-
+  const [amount, setAmount] = React.useState(0)
+  let balance = 0
   let canisters
   let identity
   let auth
-
   let props
 
   async function authenticate() {
@@ -31,7 +31,6 @@ export default function Main() {
       props = {canisters: canisters, identity: identity, auth: auth}
       console.log("Identity Principal:", identity.getPrincipal().toString())
     }
-
     document.body.style.backgroundColor = "#E0E5EC";
   }
 
@@ -44,24 +43,24 @@ export default function Main() {
     console.log("Identity Principal:", identity.getPrincipal().toString())
     // instead of calling auth.auth(), here we call showMenuIfAuth() directly
     auth.showMenuIfAuth()
-    getBalance(); // TODO remove
+    // getBalance(); // TODO remove
   }
-
+  
   async function whoami() {
-    let id = await canisters.hackathon.whoami()
-    let s = id.toString()
-    console.log("principal", id)
+    console.log(canisters)
+    // let id = await canisters.hackathon.whoami()
+    // let s = id.toString()
+    // console.log("principal", id)
 
-    if (s == '2vxsx-fae') {
-      s += " (anonymous)"
-    }
-    alert("You are " + s);
+    // if (s == '2vxsx-fae') {
+    //   s += " (anonymous)"
+    // }
+    // alert("You are " + s);
   }
 
   async function getBalance() {
-    const balance = await canisters.token.myBalance()
-    const textLabel = document.getElementById("balance")
-    textLabel.innerHTML = "Balance: " + balance + " $HRBT"
+    balance = await canisters.token.myBalance()
+    document.getElementById('balance').innerHTML = "Balance: " + balance + " $HRBT"
   }
 
   async function buyTokens() {
@@ -113,6 +112,7 @@ export default function Main() {
         <label htmlFor="tokenAmount">But tokens:</label>
           <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
         <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
+        <button onClick={() => getBalance()}>Show Balance</button>
       </div>
 
       
