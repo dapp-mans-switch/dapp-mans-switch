@@ -25,6 +25,7 @@ module {
         #alreadyRevealed: Nat;
         #insufficientFunds: Text;
         #revealedTooSoon: Int;
+        #tooLate: Secret;
     };
     public type RevealAllSharesSuccess = {secret: Secret; payout: Nat};
     public type RevealAllSharesResult = Result.Result<RevealAllSharesSuccess, RevealAllSharesError>;
@@ -246,6 +247,11 @@ module {
                         revealed = newRevealed; // update
                     };
                     secrets.put(secret_id, newSecret);
+
+                    var payout = share_counter;
+                    if (now - secret.expiry_time > 86400 * 3) {
+                        return #err(#tooLate(secret)); // too late
+                    };
 
                     return #ok({secret=newSecret; payout=share_counter});
                 };

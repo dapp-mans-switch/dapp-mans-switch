@@ -146,6 +146,8 @@ export default function Staker(props) {
         alert(`Insufficient funds: ${err['insufficientFunds']}`)
       } else if ('revealedTooSoon' in err) {
         alert(`You should not reveal this secret yet!`)
+      } else if ('tooLate' in err) {
+        alert(`You uploaded the secret shares too late. Maximum is 3 days. You receive no payout!`)
       } else {
         alert(`Something went wrong!`)
       }
