@@ -5,7 +5,7 @@ export async function getBalance(canisters) {
 }
 
 // top up balance, canisters are passed as well
-async function buyTokens(n_tokens, canisters) {
+export async function buyTokens(n_tokens, canisters) {
     await canisters.token.buyIn(n_tokens)
     getBalance()
   }

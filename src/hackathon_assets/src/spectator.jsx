@@ -101,8 +101,14 @@ export default function Spectator(props) {
         </div>
 
         Look at other people's secrets.
+        
         <div>
-         <button onClick={() => listAllSecrets()}>Refresh</button>
+          <a id="staker_button" data-text="Refresh" onClick={() => listAllSecrets()} className="rainbow-button" style={{width: 150}}></a>
+        </div>
+
+        <div className="panel">
+            <h2>Decrypted Secrets</h2>
+            <table id="decryptedSecretsTable" cellPadding={5}/>
         </div>
 
         <div className="panel">
@@ -110,11 +116,12 @@ export default function Spectator(props) {
             <table id="secretsTable" cellPadding={5}/>
         </div>
 
-        <div className="panel">
-            <h2>Decrypted Secrets</h2>
-            <table id="decryptedSecretsTable" cellPadding={5}/>
-        </div>
-        <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
+        <a onClick={() => {routToPage('Main')}}>
+          <video autoPlay loop muted class="back-button-video">
+            <source src={backButtonVideo}/>
+          </video>
+        </a>
+
       </div>
     );
   };
