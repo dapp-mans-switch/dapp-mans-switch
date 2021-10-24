@@ -38,7 +38,7 @@ actor Hackathon {
         Principal.fromActor(Hackathon);
     };
 
-    public shared (msg) func whoami() : async Principal {
+    public shared query (msg) func whoami() : async Principal {
         msg.caller
     };
 
@@ -190,6 +190,16 @@ actor Hackathon {
     */
     public query func listAllStakers() : async [Staker] {
         stakerManager.listAllStakers();
+    };
+
+
+    /*
+    * Returns the number of stakes which expiry after expiry_time, are valid
+    * and don't belong to author_id.
+    */
+    public shared query (msg) func getAvailableStakes(expiry_time: Int): async Nat {
+        let author_id: Principal = msg.caller;
+        stakerManager.getAvailableStakes(author_id, expiry_time);
     };
 
     /*
