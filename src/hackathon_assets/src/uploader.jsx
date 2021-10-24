@@ -42,8 +42,8 @@ export default function Uploader(props) {
         appendLoadingAnimation("uploader_form", false)
         let input
         if (TEST) {
-            //testSecretEnDecryption()
-            //testSharingAndReconstruction()
+            testSecretEnDecryption()
+            testSharingAndReconstruction()
             input = {'secret': 'my top secret secret', 'rewardInt': 10, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
@@ -156,7 +156,7 @@ export default function Uploader(props) {
          const staker3PublicKey = staker3KeyPair.publicKey
          const stakerPublicKeys = [staker1PublicKey, staker2PublicKey, staker3PublicKey]
 
-         const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
+         const keyshares = crypto.computeKeyShares(uploaderPrivateKey, 3)
          const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
  
          // lets say 1 of the 3 keyshares got lost
