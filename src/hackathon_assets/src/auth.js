@@ -29,9 +29,10 @@ export class Auth {
     }
 
     async auth() {
+        /*
         if (this.canistersInitialised) {
             console.log("authenticated: canisters intitialised")
-        }
+        }*/
 
         this.authClient = await AuthClient.create();
         if (await this.authClient.isAuthenticated()) {
@@ -75,11 +76,13 @@ export class Auth {
         return identity;
     }*/
 
-    async getCanisters(identity) {
+    async getCanisters() {
         if (this.cansisters) {
             console.log("return cached canisters")
             return this.cansisters
         }
+        
+        const identity = await this.authClient.getIdentity();
 
         //console.log("Get canister for identity", identity.getPrincipal().toString())
         const hackathonActor = hackathon.createActor(hackathon.canisterId, {
@@ -96,7 +99,7 @@ export class Auth {
         this.canistersInitialised = true
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
 
-        return canisters
+        return this.canisters
     }
 
     async getAnomymousCanisters() {

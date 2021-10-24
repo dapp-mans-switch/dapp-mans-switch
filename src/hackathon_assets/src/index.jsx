@@ -34,9 +34,13 @@ export default function Main() {
 
     //auth.showMenuIfNotAuth()
 
-    let x = await auth.getAnomymousCanisters()
+    await auth.auth()
+    let x = await auth.getCanisters()
+
+    //let x = await auth.getAnomymousCanisters()
     // weirdest JS behavior ever! TODO: pls help
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
+    
     canisters = auth.canisters
     auth.showMenuIfAuth()
     createWallet()
