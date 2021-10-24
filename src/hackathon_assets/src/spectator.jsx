@@ -18,60 +18,69 @@ export default function Spectator(props) {
 
     console.log("Secrets", secrets)
 
-    const table = document.getElementById('secretsTable')
+    const alltable = document.getElementById('secretsTable')
 
-    const col_names = ['secret_id', 'n_shares', 'n_revealed', 'expiry_time', 'last_heartbeat']
-    table.innerHTML = ''
-
-    const tr = table.insertRow(-1)
-    for (const cn of col_names) {
+    alltable.innerHTML = ''
+    const tr = alltable.insertRow(-1)
+    for (const cn of ['Secret ID', 'Reveal Progress', 'Expiry Time', 'Last Heartbeat']) {
       const tabCell = tr.insertCell(-1)
+      tabCell.innerHTML = cn
+    }
+
+    const dectable = document.getElementById('decryptedSecretsTable')
+    dectable.innerHTML = ''
+    const dec_tr = dectable.insertRow(-1)
+    for (const cn of ['Secret ID', 'Payload']) {
+      const tabCell = dec_tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
 
     secrets.map(function (s) {
       let n_shares = s.shares.length;
       let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
-      const tr = table.insertRow(-1)
-      tr.addEventListener("click", function() {
-        if (crypto.enoughSharesToDecrypt(n_shares, n_revealed)) {
-          try {
-            let keyshares = {}
-            for (let i=0; i<n_shares; i++) {
-              let share = s.shares[i]
-              let ok = s.revealed[i]
-              if (ok) {
-                keyshares[i+1] = crypto.base64ToKeyShare(share)
-              }
+
+      let canDecrypted = crypto.enoughSharesToDecrypt(n_shares, n_revealed);
+      if (canDecrypted) {
+        try {
+          let keyshares = {}
+          for (let i=0; i<n_shares; i++) {
+            let share = s.shares[i]
+            let ok = s.revealed[i]
+            if (ok) {
+              keyshares[i+1] = crypto.base64ToKeyShare(share)
             }
-            const reconstructedPrivateKey = crypto.reconstructPrivateKey(keyshares)
-            const payload = crypto.decryptSecret(s.payload, reconstructedPrivateKey)
-
-            alert("Decrypted secret: " + payload)
-          } catch (error) {
-            console.log(error)
           }
-        
-        } else {
-          alert("Cannot decrypt")
+          const reconstructedPrivateKey = crypto.reconstructPrivateKey(keyshares)
+          const payload = crypto.decryptSecret(s.payload, reconstructedPrivateKey)
+
+
+          const tr = dectable.insertRow(-1)
+
+          const idCell = tr.insertCell(-1)
+          idCell.innerHTML = s.secret_id
+
+          const payloadCell = tr.insertCell(-1)
+          payloadCell.innerHTML = payload
+
+        } catch (error) {
+          console.log(error)
         }
-      })
+      } else {
+        const tr = alltable.insertRow(-1)
 
-      const idCell = tr.insertCell(-1)
-      idCell.innerHTML = s.secret_id
+        const idCell = tr.insertCell(-1)
+        idCell.innerHTML = s.secret_id
 
-      const sharesCell = tr.insertCell(-1)
-      sharesCell.innerHTML = n_shares
+        const progressCell = tr.insertCell(-1)
+        const minReveal = crypto.minSharesToRecover(n_shares)
+        progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
+      
+        const expiryCell = tr.insertCell(-1)
+        expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
 
-      const revealedCell = tr.insertCell(-1)
-      revealedCell.innerHTML = n_revealed
-
-    
-      const expiryCell = tr.insertCell(-1)
-      expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
-
-      const heartbeatCell = tr.insertCell(-1)
-      heartbeatCell.innerHTML = helpers.secondsSinceEpocheToDate(s.last_heartbeat).toLocaleString()
+        const heartbeatCell = tr.insertCell(-1)
+        heartbeatCell.innerHTML = helpers.secondsSinceEpocheToDate(s.last_heartbeat).toLocaleString()
+      }
     });
   }
   
@@ -92,10 +101,18 @@ export default function Spectator(props) {
         </div>
 
         Look at other people's secrets.
-        <button onClick={() => listAllSecrets()}>Refresh</button>
+        <div>
+         <button onClick={() => listAllSecrets()}>Refresh</button>
+        </div>
+
         <div className="panel">
-                <h2>My Secrets</h2>
-                <table id="secretsTable" cellPadding={5}/>
+            <h2>Live Secrets</h2>
+            <table id="secretsTable" cellPadding={5}/>
+        </div>
+
+        <div className="panel">
+            <h2>Decrypted Secrets</h2>
+            <table id="decryptedSecretsTable" cellPadding={5}/>
         </div>
         <button onClick={() => {routToPage('Main')}}>Back to Start Page</button>
       </div>
