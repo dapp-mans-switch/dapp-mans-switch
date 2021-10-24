@@ -1,6 +1,6 @@
 import { hackathon } from '../../declarations/hackathon'
 import * as crypto from './crypto'
-import { min } from 'mathjs'
+import { floor } from 'mathjs'
 
 /*export async function drawStakes() {
     const stakes = await hackathon.listAllStakes()
@@ -95,6 +95,9 @@ export function getNaturalNumber(string) {
 }
 
 export function secondsSinceEpocheToDate(string) {
-    let d = new Date(parseInt(string) * 1000) // seconds to milliseconds
-    return d
+    return new Date(parseInt(string) * 1000) // seconds to milliseconds
+}
+
+export function secondsSinceEpoch() {
+    return floor((new Date()) / 1000) // milliseconds to seconds
 }
