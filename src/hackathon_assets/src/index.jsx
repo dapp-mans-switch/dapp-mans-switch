@@ -82,7 +82,7 @@ export default function Main() {
       <div className="panel"> 
         <h2>Wallet</h2>
         <h3 id="balance">Balance: 0 $HRBT</h3>
-        <label htmlFor="tokenAmount">But tokens:</label>
+        <label htmlFor="tokenAmount">Buy tokens:</label>
           <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
         <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
         <button onClick={() => getBalance()}>Show Balance</button>

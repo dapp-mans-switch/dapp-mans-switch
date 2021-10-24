@@ -267,7 +267,7 @@ export default function Uploader(props) {
             <div class="description-and-wallet">
                 <div class="description">
                     <p>Post your secrets here.</p>
-                    <p>Paying higher rewards incentivises more staker to keep your secret secure.</p>
+                    <p>Paying higher rewards incentivizes stakers to keep your secret secure.</p>
                 </div>
                 <div class="wallet-in-app">
                 <div>
@@ -295,7 +295,7 @@ export default function Uploader(props) {
 
             <div className="panel">
               <form id="uploader_form">
-                <h3>Create a Sectret to be published</h3>
+                <h3>Create a Secret to be published</h3>
                 <textarea id="secret" type="text" autoComplete='off' onChange={(ev) => setSecret(ev.target.value)}/>
                 <br/>
 
