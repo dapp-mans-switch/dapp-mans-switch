@@ -269,7 +269,7 @@ module {
         * E.g. His/Her shares, if they should reveal or not; if they have revealed.
         */
         private func toRelevantSecret(s: Secret, staker_id: Principal): RelevantSecret {
-            let shouldReveal = shouldRevealSecret(s);
+            var shouldReveal = shouldRevealSecret(s);
             var hasRevealed = false;
 
             let relevantShares = Buffer.Buffer<Text>(s.shares.size());
@@ -279,6 +279,8 @@ module {
                     hasRevealed := s.revealed[i]; // have all the same boolean for same staker_id
                 };
             };
+
+            shouldReveal := hasRevealed and not hasRevealed;
 
             let relevantSecret = {
                 secret_id = s.secret_id;
