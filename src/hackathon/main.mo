@@ -109,7 +109,7 @@ actor Hackathon {
     };
 
     /*
-    * Ends stake by setting the expiry_time to now.
+    * Ends stake by setting the expiry_time to now. Gives back tokens depending on end time.
     */
     public shared(msg) func endStake(stake_id: Nat): async Staker.EndStakeResult {
         let balance = await Token.myBalance();
@@ -121,7 +121,7 @@ actor Hackathon {
                 if (balance < stake.amount) {
                     // well sorry, we can't pay you back right now.
                     // if this happens then some corrupt admin withdrawed tokens from this canister
-                    return #err(#insufficientFunds(balance));
+                    return #err(#insufficientFunds("We are sorry that at this point we cannot payout your reward. The stake remains valid. Contact support!"));
                 };
             };
         };
@@ -271,7 +271,7 @@ actor Hackathon {
     };
 
     /*
-    * Adds a secret.
+    * Adds a secret. Transfers reward + secretBasePrice tokens to this canister.
     * Params:
     *   - payload : Enrypted secret.
     *   - uploader_public_key: Public key of secret encryption.
@@ -365,13 +365,29 @@ actor Hackathon {
     * The shares have to be in correct order. This is guaranteed if the shares are obtained by getRelevantSecret.
     * Too make sure that the stake holder uploads the correct shares, the decrypted shares are compared against
     * the decrypted_share_shas of the secret (created by the secret author).
+    * Pays out reward to caller.
     * Params:
     *   secret_id: id of secret
     *   shares: decrypted shares
     */
     public shared(msg) func revealAllShares(secret_id: Nat, shares: [Text]): async Secret.RevealAllSharesResult {
         let staker_id = msg.caller;
-        secretManager.revealAllShares(secret_id, staker_id, shares);
+        let r = secretManager.revealAllShares(secret_id, staker_id, shares);
+        switch (r) {
+            case (#err(e)) {
+                return r;
+            };
+            case (#ok(s)) {
+                try {
+                    let ok = await Token.transfer(staker_id, s.payout, null);
+                    return r;
+                } catch(e) {
+                    // should not happen as author id pays for all payouts
+                    // we reveal the secret anyway but don't payout
+                    return #err(#insufficientFunds("We are sorry that at this point we cannot payout your reward. The shares are revealed anyways. Contact support!"));
+                };
+            };
+        };
     };
 
 

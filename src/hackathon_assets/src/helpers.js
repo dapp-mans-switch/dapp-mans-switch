@@ -2,7 +2,7 @@ import { hackathon } from '../../declarations/hackathon'
 import * as crypto from './crypto'
 import { min } from 'mathjs'
 
-export async function drawStakes() {
+/*export async function drawStakes() {
     const stakes = await hackathon.listAllStakes()
     if (stakes.length == 0) {
         console.error('no stakes :(')
@@ -19,7 +19,7 @@ export async function drawStakes() {
         chosenStakes.push(stakes[i % stakes.length])
     }
     return chosenStakes
-}
+}*/
 
 export function getPublicKeysOfStakes(stakes) {
     let pubKeys = []

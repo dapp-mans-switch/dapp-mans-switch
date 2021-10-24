@@ -27,7 +27,7 @@ module {
     public type GetPrincipalsResult = Result.Result<[Principal], GetPrincipalsError>;
 
 
-    public type EndStakeError = {#stakeNotFound: Nat; #permissionDenied: Principal; #alreadyPayedOut: Stake; #insufficientFunds: Nat};
+    public type EndStakeError = {#stakeNotFound: Nat; #permissionDenied: Principal; #alreadyPayedOut: Stake; #insufficientFunds: Text};
     public type EndStakeSuccess = {#payout: Nat};
     public type EndStakeResult = Result.Result<EndStakeSuccess, EndStakeError>;
 
@@ -298,7 +298,9 @@ module {
             let entropy: Blob = await Random.blob(); 
             let seeds: RNG.Seeds = RNG.getSeedsFromEntropy(entropy);
             let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seeds, totalAmount, n), Nat.compare);  
-            D.print("randomAmounts:"); // TODO: remove
+            // TODO: remove
+            D.print("totalAmount: " # Nat.toText(totalAmount));
+            D.print("randomAmounts:");
             for (a in randomAmounts.vals()) { D.print(Nat.toText(a)); };        
 
             // now we iterate over all stakes

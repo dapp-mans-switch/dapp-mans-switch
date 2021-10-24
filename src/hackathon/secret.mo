@@ -18,8 +18,9 @@ module {
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
 
-    public type RevealAllSharesError = {#secretNotFound: Nat; #invalidDecryptedSHA: Text; #wrongNumberOfShares: Nat};
-    public type RevealAllSharesResult = Result.Result<Secret, RevealAllSharesError>;
+    public type RevealAllSharesError = {#secretNotFound: Nat; #invalidDecryptedSHA: Text; #wrongNumberOfShares: Nat; #alreadyRevealed: Nat; #insufficientFunds: Text};
+    public type RevealAllSharesSuccess = {secret: Secret; payout: Nat};
+    public type RevealAllSharesResult = Result.Result<RevealAllSharesSuccess, RevealAllSharesError>;
 
     public class SecretManager() {
 
@@ -167,6 +168,15 @@ module {
                 case null { return #err(#secretNotFound(secret_id)) };
                 case (? secret) {
                     var share_counter: Nat = 0;
+
+                    for (i in Iter.range(0, secret.shares.size()-1)) {
+                        if (secret.share_holder_ids[i] == staker_id) {
+                            if (secret.revealed[i]) {
+                                return #err(#alreadyRevealed(i));
+                            };
+                        };
+                    };
+
                     let _newShares = Array.init<Text>(secret.shares.size(), "");
                     let _newRevealed = Array.init<Bool>(secret.shares.size(), false);
 
@@ -225,7 +235,7 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
 
-                    return #ok(newSecret);
+                    return #ok({secret=newSecret; payout=share_counter});
                 };
             };
         };

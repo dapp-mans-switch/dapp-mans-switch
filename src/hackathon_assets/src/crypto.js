@@ -3,8 +3,12 @@ import { split, join } from 'shamir'
 import { floor } from 'mathjs'
 import * as asymCrypto from 'asymmetric-crypto'
 
-export const NUMBER_OF_SHARES = 3
-const MIN_SHARES_TO_RECOVER = floor(NUMBER_OF_SHARES/2)+1
+//export const NUMBER_OF_SHARES = 3
+//const MIN_SHARES_TO_RECOVER = floor(NUMBER_OF_SHARES/2)+1
+
+export function minSharesToRecover(number_of_shares) {
+    return floor(number_of_shares/2)+1
+}
 
 export function enoughSharesToDecrypt(nShares, nSharesToRecover) {
     return nSharesToRecover >= (floor(nShares/2) + 1)
@@ -17,11 +21,11 @@ export function generateKeyPair() {
     return {privateKey, publicKey}
 }
 
-export function computeKeyShares(private_key) {
+export function computeKeyShares(private_key, number_of_shares) {
     // https://dev.to/simbo1905/shamir-s-secret-sharing-scheme-in-javascript-2o3g
     const utf8Encoder = new TextEncoder()
     const secretBytes = utf8Encoder.encode(private_key)
-    const shares = split(randomBytes, NUMBER_OF_SHARES, MIN_SHARES_TO_RECOVER, secretBytes)
+    const shares = split(randomBytes, number_of_shares, minSharesToRecover(number_of_shares), secretBytes)
     return shares
 }
 

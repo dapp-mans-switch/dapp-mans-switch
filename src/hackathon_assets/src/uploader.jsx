@@ -42,8 +42,8 @@ export default function Uploader(props) {
         appendLoadingAnimation("uploader_form", false)
         let input
         if (TEST) {
-            testSecretEnDecryption()
-            testSharingAndReconstruction()
+            //testSecretEnDecryption()
+            //testSharingAndReconstruction()
             input = {'secret': 'my top secret secret', 'rewardInt': 10, 'expiryTimeInUTCSecs': 1634429840, 'heartbeatFreqInt': 1}
         } else {
             try {
@@ -67,9 +67,11 @@ export default function Uploader(props) {
         // encrypt the secret
         const encryptedSecret = crypto.encryptSecret(input.secret, uploaderPrivateKey)
 
+        const number_of_shares = input.rewardInt; // TODO: ok?, limit reward?
+
         // choose stakers
         // const stakes = await helpers.drawStakes() // <- fails now with this
-        const result = await hackathon.drawStakes(input.expiryTimeInUTCSecs, crypto.NUMBER_OF_SHARES);
+        const result = await hackathon.drawStakes(input.expiryTimeInUTCSecs, number_of_shares);
         let stakes
         if (result['ok']) {
             stakes = result['ok']
@@ -90,7 +92,7 @@ export default function Uploader(props) {
         console.log("StakeIds", stakeIds)
 
         // create shares of the private key
-        const keyshares = crypto.computeKeyShares(uploaderPrivateKey)
+        const keyshares = crypto.computeKeyShares(uploaderPrivateKey, number_of_shares)
         const keysharesBase64 = Object.values(keyshares).map(crypto.keyShareToBase64)
         console.log("keysharesBase64", keysharesBase64)
 
