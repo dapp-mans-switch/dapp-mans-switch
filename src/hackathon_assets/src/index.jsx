@@ -3,10 +3,14 @@ import { render } from 'react-dom'
 import routToPage from './router'
 import Auth from './auth'
 import keyFlipVideo from './../assets/key-flip.mkv'
+import * as helpers from './helpers'
+
+// import { token } from '../../declarations/token';
 
 export default function Main() {
+  const [amount, setAmount] = React.useState('')
 
-  let hackathon
+  let canisters
   let identity
   let auth
 
@@ -21,9 +25,9 @@ export default function Main() {
     let ok = await auth.auth()
     if (ok) {
       identity = await auth.getIdentity()
-      hackathon = await auth.getCanister(identity)
+      canisters = await auth.getCanisters(identity)
       
-      props = {actor: hackathon, identity: identity, auth: auth}
+      props = {canisters: canisters, identity: identity, auth: auth}
       console.log("Identity Principal:", identity.getPrincipal().toString())
     }
 
@@ -33,19 +37,21 @@ export default function Main() {
   async function no_authenticate() {
     auth = new Auth()
     identity = await auth.getAnomymousIdentity()
-    hackathon = auth.getAnomymousCanister()
-    props = {actor: hackathon, identity: identity, auth: auth}
+    canisters = auth.getAnomymousCanisters()
+    props = {canisters: canisters, identity: identity, auth: auth}
     console.log("Identity Principal:", identity.getPrincipal().toString())
     // instead of calling auth.auth(), here we call showMenuIfAuth() directly
     auth.showMenuIfAuth()
+    getBalance(); // TODO remove
   }
   
+  // TODO: call at appropriate place
   // authenticate()
   no_authenticate() // for no auth and anonymous identity
 
 
   async function whoami() {
-    let id = await hackathon.whoami()
+    let id = await canisters.hackathon.whoami()
     let s = id.toString()
     console.log("principal", id)
 
@@ -55,9 +61,26 @@ export default function Main() {
     alert("You are " + s);
   }
 
+  async function getBalance() {
+    const balance = await canisters.token.myBalance()
+    const textLabel = document.getElementById("balance")
+    textLabel.innerHTML = "Balance: " + balance + " $HRBT"
+  }
+
+  async function buyTokens() {
+    try {
+      let n_tokens = helpers.getPositiveNumber(amount)
+      await canisters.token.buyIn(n_tokens)
+    } catch (error) {
+      alert("Input positive number! " + error)
+    }
+    getBalance()
+  }
+
   React.useEffect(() => {
-    window.scrollTo(0,0); 
-  })
+    window.scrollTo(0,0);
+    //getBalance()
+  }, [])
   
 
   return (
@@ -66,23 +89,32 @@ export default function Main() {
       <h3>using Proof of Stake</h3>
       regularly verify that you are alive, otherwise your uploaded files will get published
 
-      <div class="panel">
-        <video autoPlay loop muted class="key-flip-video">
+      <div className="panel">
+        <video autoPlay loop muted className="key-flip-video">
           <source src={keyFlipVideo}/>
         </video>
 
-        <div id="start-if-auth" class="start-page-button-div">
-          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', props)} class="rainbow-button" style={{width: 150}}></a>
-          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', props)} class="rainbow-button" style={{width: 180}}></a>
-          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', props)} class="rainbow-button" style={{width: 180}}></a>
+        <div id="start-if-auth" className="start-page-button-div">
+          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', props)} className="rainbow-button" style={{width: 150}}></a>
+          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', props)} className="rainbow-button" style={{width: 180}}></a>
+          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', props)} className="rainbow-button" style={{width: 180}}></a>
         </div>
-        <div id="start-if-not-auth" class="start-page-button-div">
-          <a id="loginButton" data-text="Authenticate" class="rainbow-button" style={{width: 220}}></a>
+        <div id="start-if-not-auth" className="start-page-button-div">
+          <a id="loginButton" data-text="Authenticate" className="rainbow-button" style={{width: 220}}></a>
         </div>
       </div>
 
+
+      <div className="panel"> 
+        <h2>Wallet</h2>
+        <h3 id="balance">Balance: 0 $HRBT</h3>
+        <label htmlFor="tokenAmount">But tokens:</label>
+          <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
+        <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
+      </div>
+
       
-      {/* <button onClick={() =>  whoami()}>Who Am I?</button> */}
+      <button onClick={() =>  whoami()}>Who Am I?</button>
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>

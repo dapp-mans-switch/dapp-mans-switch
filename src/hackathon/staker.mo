@@ -33,7 +33,7 @@ module {
     public type RegisterStakerError = {#alreadyRegistered: Principal; #invalidKey: Text};
     public type RegisterStakerResult = Result.Result<Text, RegisterStakerError>;
 
-    public type AddStakeError = {#unknownStaker: Principal; #invalidDuration: Int};
+    public type AddStakeError = {#unknownStaker: Principal; #invalidDuration: Int; #transferError: Text};
     public type AddStakeResult = Result.Result<Nat, AddStakeError>;
 
     public type DrawStakesError = {#noStakes: Int};

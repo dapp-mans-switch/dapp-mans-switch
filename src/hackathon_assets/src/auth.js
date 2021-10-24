@@ -1,6 +1,7 @@
 import { AuthClient } from "@dfinity/auth-client";
 
-import { canisterId, createActor, hackathon } from '../../declarations/hackathon';
+import * as hackathon from '../../declarations/hackathon';
+import * as token from '../../declarations/token';
 
 import routToPage from './router'
 
@@ -67,20 +68,25 @@ export default class Auth {
         return identity;
     }
 
-    async getCanister(identity) {
+    async getCanisters(identity) {
         console.log("Get canister for identity", identity.getPrincipal().toString())
-        const actor = createActor(canisterId, {
+        const hackathonActor = hackathon.createActor(hackathon.canisterId, {
             agentOptions: {
                 identity,
             },
         })
-        return actor;
+        const tokenActor = token.createActor(token.canisterId, {
+            agentOptions: {
+                identity,
+            },
+        })
+        return {hackathon: hackathonActor, token: tokenActor};
     }
 
-    getAnomymousCanister() {
-        //this.showMenuIfAuth();
-        const actor = hackathon;
-        return actor;
+    getAnomymousCanisters() {
+        const hackathonActor = hackathon.hackathon;
+        const tokenActor = token.token;
+        return {hackathon: hackathonActor, token: tokenActor};
     }
 
     async getAnomymousIdentity() {

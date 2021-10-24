@@ -4,9 +4,16 @@
       "main": "src/hackathon/main.mo",
       "type": "motoko"
     },
+
+    "token": {
+      "main": "src/token/erc20.mo",
+      "type": "motoko"
+    },
+
     "hackathon_assets": {
       "dependencies": [
-        "hackathon"
+        "hackathon",
+        "token"
       ],
       "frontend": {
         "entrypoint": "src/hackathon_assets/src/index.html"

@@ -7,7 +7,7 @@ import backButtonVideo from './../assets/back_button.mkv'
 
 
 export default function Spectator(props) {
-  const hackathon = props.actor;
+  const hackathon = props.canisters.hackathon;
 
   async function listAllSecrets() {
     
@@ -93,7 +93,7 @@ export default function Spectator(props) {
 
         Look at other people's secrets.
         <button onClick={() => listAllSecrets()}>Refresh</button>
-        <div class="panel">
+        <div className="panel">
                 <h2>My Secrets</h2>
                 <table id="secretsTable" cellPadding={5}/>
         </div>
