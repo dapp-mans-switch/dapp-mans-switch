@@ -304,11 +304,11 @@ export default function Staker(props) {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
 
-    //console.log(relevantSecrets)
+    console.log(relevantSecrets)
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['secret_id', 'n_shares', 'shouldReveal', 'hasRevealed']
+    const col_names = ['secret_id', 'n_shares', 'hasRevealed', 'shouldReveal',]
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -321,28 +321,41 @@ export default function Staker(props) {
       const tr = table.insertRow(-1)
 
       const idCell = tr.insertCell(-1)
-      
-      const secretIdText = document.getElementById('revealSecretId')
-      // TODO: make visibile that cell is clickable
-      idCell.addEventListener("click", function() {
-        console.log(s.secret_id)
-        setRevealSecretId(s.secret_id)
-        secretIdText.value = s.secret_id
-      })
       idCell.innerHTML = s.secret_id
 
       const sharesCell = tr.insertCell(-1)
       sharesCell.innerHTML = s.relevantShares.length
 
-      const shouldCell = tr.insertCell(-1)
-      shouldCell.innerHTML = s.shouldReveal
-
       const hasCell = tr.insertCell(-1)
       hasCell.innerHTML = s.hasRevealed
+      if (s.hasRevealed) {
+        hasCell.innerHTML = "&#9989"
+      } else {
+        hasCell.innerHTML = "&#10060"
+      }
+
+      // enable reveal button only of should reveal is true
+      const secretIdText = document.getElementById('revealSecretId')
+      const revealButtonCell = tr.insertCell(-1)
+      let revealButton = document.createElement('button')
+      revealButton.innerHTML = "Reveal"
+      revealButton.className = "revealButton"
+
+      // shouldCell.innerHTML = s.shouldReveal
+      if (s.shouldReveal) {
+        revealButton.addEventListener("click", function() {
+          setRevealSecretId(s.secret_id)
+          secretIdText.value = s.secret_id
+        })
+      } else {
+        revealButton.disabled = true
+      }
+      revealButtonCell.appendChild(revealButton)
     });
   }
 
   React.useEffect(() => {
+    window.scrollTo(0,0);
     listAllStakes()
     listAllRelevantSecrets()
   }, []);

@@ -258,3 +258,14 @@ table {
     border-color: rgb(255, 0, 0);
     background-color: rgba(255,255,255, 0);
 }
+
+.revealButton {
+    font-family: inherit;
+    font-size: 1.2rem;
+    width: 90px;
+    height: 40px;
+    border-width: 5px;
+    border-radius: 10px;
+    border-color: rgb(0, 209, 80);
+    background-color: rgba(255,255,255, 0);
+}
