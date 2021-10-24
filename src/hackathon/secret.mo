@@ -280,7 +280,7 @@ module {
                 };
             };
 
-            shouldReveal := hasRevealed and not hasRevealed;
+            shouldReveal := shouldReveal and not hasRevealed;
 
             let relevantSecret = {
                 secret_id = s.secret_id;
