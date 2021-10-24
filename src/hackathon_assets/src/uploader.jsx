@@ -226,8 +226,9 @@ export default function Uploader(props) {
             const minReveal = crypto.minSharesToRecover(n_shares)
             progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
 
+            let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             const expiryCell = tr.insertCell(-1)
-            expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
+            expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString('en-GB', options)      
 
             let now = new Date()
             let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
