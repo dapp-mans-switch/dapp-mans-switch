@@ -5,7 +5,7 @@ import * as helpers from './helpers'
 
 import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
-
+import {errorPopup} from './errorPopup'
 
 export default function Staker(props) {
 

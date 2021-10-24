@@ -9,9 +9,9 @@ import { convertTypeAcquisitionFromJson } from '../../../node_modules/typescript
 // import { token } from '../../declarations/token';
 
 export default function Main() {
-  const [amount, setAmount] = React.useState('')
-  const [balance, setBalance] = React.useState('')
-  const [canisters, setCanisters] = React.useState('')
+  const [amount, setAmount] = React.useState(0)
+  let balance = 0
+  let canisters
   let identity
   let auth
   let props
@@ -25,19 +25,18 @@ export default function Main() {
     let ok = await auth.auth()
     if (ok) {
       identity = await auth.getIdentity()
-      setCanisters(await auth.getCanisters(identity))
+      canisters = await auth.getCanisters(identity)
       
       props = {canisters: canisters, identity: identity, auth: auth}
       console.log("Identity Principal:", identity.getPrincipal().toString())
     }
-
     document.body.style.backgroundColor = "#E0E5EC";
   }
 
   async function no_authenticate() {
     auth = new Auth()
     identity = await auth.getAnomymousIdentity()
-    setCanisters(auth.getAnomymousCanisters())
+    canisters = auth.getAnomymousCanisters()
     props = {canisters: canisters, identity: identity, auth: auth}
     console.log("Identity Principal:", identity.getPrincipal().toString())
     // instead of calling auth.auth(), here we call showMenuIfAuth() directly
@@ -47,20 +46,20 @@ export default function Main() {
   
 
   async function whoami() {
-    let id = await canisters.hackathon.whoami()
-    let s = id.toString()
-    console.log("principal", id)
+    console.log(canisters)
+    // let id = await canisters.hackathon.whoami()
+    // let s = id.toString()
+    // console.log("principal", id)
 
-    if (s == '2vxsx-fae') {
-      s += " (anonymous)"
-    }
-    alert("You are " + s);
+    // if (s == '2vxsx-fae') {
+    //   s += " (anonymous)"
+    // }
+    // alert("You are " + s);
   }
 
   async function getBalance() {
-    const bal = await canisters.token.myBalance()
-    setBalance(bal)
-    // setBalance(10)
+    balance = await canisters.token.myBalance()
+    document.getElementById('balance').innerHTML = "Balance: " + balance + " $HRBT"
   }
 
   async function buyTokens() {
@@ -76,8 +75,7 @@ export default function Main() {
   React.useEffect(() => {
     window.scrollTo(0,0);
     // authenticate()
-    no_authenticate()
-    // getBalance()
+    no_authenticate().then(() => getBalance())
   }, [])
   
 
@@ -105,7 +103,7 @@ export default function Main() {
 
       <div className="panel"> 
         <h2>Wallet</h2>
-        <h3 id="balance">Balance: {balance} $HRBT</h3>
+        <h3 id="balance">Balance: 0 $HRBT</h3>
         <label htmlFor="tokenAmount">But tokens:</label>
           <span><input id="tokenAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
         <button id="money" onClick={() => buyTokens()}>Infinite Money!!</button>
