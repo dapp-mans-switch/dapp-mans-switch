@@ -184,7 +184,7 @@ dfx canister call hackathon addSecret '(
 )'
 dfx canister call hackathon drawStakes '(1635724790, 10)'
 dfx canister call hackathon addSecret '(
-    "W+7emmQbDaJlFCZJ0RUE1SPwlCtIZvi8P+oNvscZ.lcbL2dkCK4k604poc9FYQL2lDqf54fjU",
+    "f1D+5N5327l5Sr84Mkc1J761fA0FLqrrXTKw7duui+s=.ZsrhvWyUJuiMAe32A+DAe7yGC9Bq4pmS",
     "hPNWOv9BgvEvsQCbdgJEQdwVaBFnfxmzJ+FO9FcBSY0=",
     10, 1635108034, 86400,
     vec {

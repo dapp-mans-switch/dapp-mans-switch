@@ -12,7 +12,7 @@ import stillAliveVideo from './../assets/im_alive.mkv'
 import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
-const TEST = true
+const TEST = false
 
 export default function Uploader(props) {
     const hackathon = props.canisters.hackathon;
@@ -54,7 +54,7 @@ export default function Uploader(props) {
                 input = validateInput(secret, reward, expiryTime, heartbeatFreq)
             } catch (error) {
                 console.log(error)
-                alert('Please check your input!')
+                alert('Please check your input: ' + error)
                 removeLoadingAnimation()
                 return
             }
@@ -71,7 +71,7 @@ export default function Uploader(props) {
         // encrypt the secret
         const encryptedSecret = crypto.encryptSecret(input.secret, uploaderPrivateKey)
 
-        const number_of_shares = input.rewardInt; // TODO: ok?, limit reward?
+        const number_of_shares = min(input.rewardInt, 255); // for now 1 token/stake payout, 255 is maximum crypto.js can handle
 
         // choose stakers
         // const stakes = await helpers.drawStakes() // <- fails now with this
@@ -222,7 +222,7 @@ export default function Uploader(props) {
         secretsWithInfo.map(function (x) {
             let s = x[0]
             let revealInProgress = x[1]
-            console.log(s, revealInProgress)
+            //console.log(s, revealInProgress)
 
             let tr
             if (revealInProgress) {
