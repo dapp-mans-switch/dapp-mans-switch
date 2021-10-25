@@ -31,21 +31,16 @@ export default function Main() {
     render(React.createElement(Wallet, auth.getProps()), document.getElementById('my-wallet'))
   }
 
-  function logout() {
-    auth.logout()
-    //location.reload()
-  }
-
   React.useEffect(async () => {
     console.log("useEffect")
     window.scrollTo(0,0);
 
     // use with auth
-    //await auth.auth()
-    //let x = await auth.getCanisters()
+    await auth.auth()
+    let x = await auth.getCanisters()
 
     // use without auth
-    let x = await auth.getAnomymousCanisters()
+    // let x = await auth.getAnomymousCanisters()
     // weirdest JS behavior ever! TODO: pls help
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
     
@@ -79,7 +74,7 @@ export default function Main() {
       <div id="my-wallet"/>
       {/* TODO: remove */}
       <button onClick={() =>  whoami()}>Who Am I?</button>
-      <button id="logoutButton" onClick={() => logout()}>Logout</button>
+      <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>
   );
