@@ -8,6 +8,7 @@ import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 import {errorPopup} from './errorPopup'
 import Wallet from './wallet'
+import * as helpers from '.helpers'
 
 export default function Staker(props) {
 
@@ -299,8 +300,7 @@ export default function Staker(props) {
       const dateCell = tr.insertCell(-1)
 
       let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
-      let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-      dateCell.innerHTML = expiryDate.toLocaleString('en-US', options)
+      dateCell.innerHTML = expiryDate
 
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
@@ -330,7 +330,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Ready to reveal',]
+    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Expires on', 'Ready to reveal',]
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -355,6 +355,9 @@ export default function Staker(props) {
       } else {
         hasCell.innerHTML = "&#10060"
       }
+
+      const expiresOnCell = tr.insertCell(-1)
+      expiresOnCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time)
 
       // enable reveal button only of should reveal is true
       const secretIdText = document.getElementById('revealSecretId')

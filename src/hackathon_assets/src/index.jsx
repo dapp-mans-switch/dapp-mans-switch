@@ -9,8 +9,6 @@ import keyFlipVideo from './../assets/key-flip.mkv'
 
 export default function Main() {
   const [amount, setAmount] = React.useState(0)
-
-  console.log("Main function body")
   let canisters = auth.canisters
 
   async function whoami() {
@@ -29,18 +27,15 @@ export default function Main() {
   }
 
   React.useEffect(async () => {
-    console.log("useEffect")
     window.scrollTo(0,0);
 
     // use with auth
     await auth.auth()
-    // let x = await auth.getCanisters()
+    let x = await auth.getCanisters()
 
-    // use without auth
-    let x = await auth.getAnomymousCanisters()
-    // weirdest JS behavior ever! TODO: pls help
-    // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
-
+    // uncomment next line to use without auth
+    // let x = await auth.getAnomymousCanisters()
+   
     canisters = auth.canisters
     console.log("useEffect Canisters", x, canisters)
     createWallet()

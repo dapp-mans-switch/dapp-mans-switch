@@ -292,6 +292,7 @@ module {
             let relevantSecret = {
                 secret_id = s.secret_id;
                 uploader_public_key = s.uploader_public_key;
+                expiry_time = s.expiry_time;
                 relevantShares = relevantShares.toArray();
                 shouldReveal = shouldReveal;
                 hasRevealed = hasRevealed;
