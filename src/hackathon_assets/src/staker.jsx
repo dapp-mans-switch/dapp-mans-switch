@@ -168,6 +168,10 @@ export default function Staker(props) {
       return
     }
 
+    // disable stake button to prevent multi staking
+    let startStakeButton = document.getElementById('add_new_stake_button')
+    startStakeButton.style.pointerEvents = "none"
+
     appendLoadingAnimation("add_new_stake_button", false)
     console.log("addStake")
 
@@ -180,12 +184,10 @@ export default function Staker(props) {
       removeLoadingAnimation()
       alert('Amount and duration must be positive numbers!')
       console.log(error)
+      // re-enable stake button
+      startStakeButton.style.pointerEvents = "auto"
       return
     }
-
-    setAmount(null)
-    setDuration(null)
-    document.getElementById('staker_form').reset()
 
     let hackathonID = await hackathon.identity();
     let ok = await token.approve(hackathonID, amountInt, []); // should not throw error
@@ -197,6 +199,10 @@ export default function Staker(props) {
     if ('ok' in result) {
       let newStakeId = result['ok']
       alert(`Stake with id ${newStakeId} was added!`)
+      // reset form after successful stake
+      setAmount(null)
+      setDuration(null)
+      document.getElementById('staker_form').reset()
     }
     if ('err' in result) {
       const err = result['err']
@@ -211,6 +217,10 @@ export default function Staker(props) {
       }
       console.error(result['err'])
     }
+
+    // re-enable stake button
+    startStakeButton.style.pointerEvents = "auto"
+
     // this.walletRef.current.getBalance()
     window.getBalance()
   }
