@@ -43,6 +43,10 @@ export default function Uploader(props) {
     }
 
     async function uploadSecret() {
+        // disable upload button to prevent multi upload
+        let uploadButton = document.getElementById('secret_btn')
+        uploadButton.style.pointerEvents = "none"
+
         appendLoadingAnimation("uploader_form", false)
         let input
         if (TEST) {
@@ -56,12 +60,11 @@ export default function Uploader(props) {
                 console.log(error)
                 alert('Please check your input: ' + error)
                 removeLoadingAnimation()
+                // re-enable upload button
+                uploadButton.style.pointerEvents = "auto"
                 return
             }
         }
-
-        // clear form to prevent multi upload
-        document.getElementById('uploader_form').reset()
 
         // uploader generates a fresh key pair
         const uploaderKeyPair = crypto.generateKeyPair()
@@ -84,6 +87,8 @@ export default function Uploader(props) {
             alert(`There are no stakes for the set expiry time!`)
             console.error(result['err'])
             removeLoadingAnimation()
+            // re-enable upload button
+            uploadButton.style.pointerEvents = "auto"
             return
         }
 
@@ -91,6 +96,8 @@ export default function Uploader(props) {
         if (stakes.length == 0) {
             // should not be possible, handled above
             alert("Not enough stakes in system (have to be different from author)")
+            // re-enable upload button
+            uploadButton.style.pointerEvents = "auto"
             return
         }
 
@@ -119,7 +126,7 @@ export default function Uploader(props) {
         const addSecretResult = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
             input.expiryTimeInUTCSecs, input.heartbeatFreqInt * 86400, encryptedKeyShares, keysharesShas, stakeIds)
 
-        
+
         removeLoadingAnimation()
         listAllSecrets()
         window.getBalance()
@@ -128,6 +135,12 @@ export default function Uploader(props) {
             let newSecret = addSecretResult['ok']
             console.log("newSecret", newSecret)
             alert(`Secret with ID ${newSecret.secret_id} uploaded!`)
+            // reset form after successful upload
+            setSecret(null)
+            setReward(null)
+            setExpiryTime(null)
+            setHeartbeatFreq(null)
+            document.getElementById('uploader_form').reset()
         }
         if ('err' in addSecretResult) {
             const err = addSecretResult['err']
@@ -148,7 +161,8 @@ export default function Uploader(props) {
             }
             console.error(err)
         }
-        
+        // re-enable upload button
+        uploadButton.style.pointerEvents = "auto"
     }
 
     ///////////////////////////// TESTS /////////////////////////////
@@ -181,12 +195,12 @@ export default function Uploader(props) {
 
          const keyshares = crypto.computeKeyShares(uploaderPrivateKey, 3)
          const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
- 
+
          // lets say 1 of the 3 keyshares got lost
          const share1 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[0], staker1PrivateKey, uploaderPublicKey))
          const share2 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey))
          const share3 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[2], staker3PrivateKey, uploaderPublicKey))
-         
+
          const shares = {1: share1, 3: share3}
          const reconstructedPrivateKey = crypto.reconstructPrivateKey(shares)
          // can still reconstruct
@@ -195,15 +209,15 @@ export default function Uploader(props) {
 
 
     async function listAllSecrets() {
-    
+
         let secretsWithInfo = await hackathon.listMySecretsPlusRevealInfo()
-        secretsWithInfo.sort(function(a, b) { 
+        secretsWithInfo.sort(function(a, b) {
           return - (parseInt(b[0].secret_id) - parseInt(a[0].secret_id));
         });
-        
+
         const tableAlive = document.getElementById('secretsTableAlive')
         const tableReveal = document.getElementById('secretsTableReveal')
-    
+
         tableAlive.innerHTML = ''
         const tr = tableAlive.insertRow(-1)
         for (const cn of ['Secret ID', 'Expiry time', 'Heartbeat']) {
@@ -212,13 +226,13 @@ export default function Uploader(props) {
         }
 
         tableReveal.innerHTML = ''
-    
+
         const tr2 = tableReveal.insertRow(-1)
         for (const cn of  ['Secret ID', 'Expiry time', 'Progress']) {
           const tabCell = tr2.insertCell(-1)
           tabCell.innerHTML = cn
         }
-    
+
         secretsWithInfo.map(function (x) {
             let s = x[0]
             let revealInProgress = x[1]
@@ -236,7 +250,7 @@ export default function Uploader(props) {
 
             let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             const expiryCell = tr.insertCell(-1)
-            expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString('en-GB', options)      
+            expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString('en-GB', options)
 
             if (revealInProgress) {
                 let n_shares = s.shares.length;
@@ -253,7 +267,7 @@ export default function Uploader(props) {
                 let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
                 const heartbeatCell = tr.insertCell(-1)
                 heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
-    
+
                 if (remainingTimeHR < 12) {
                     heartbeatCell.style.color = '#ed2939';
                 }
@@ -278,7 +292,7 @@ export default function Uploader(props) {
         let aliveVideo = document.getElementById("still-alive-video")
         aliveVideo.style.display = "none"
     }
-    
+
     async function checkAvailability() {
         try {
             const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
@@ -301,7 +315,7 @@ export default function Uploader(props) {
     async function createWallet() {
         render(React.createElement(Wallet, props), document.getElementById('my-wallet'))
     }
-    
+
     React.useEffect(() => {
         window.scrollTo(0,0);
         listAllSecrets()
@@ -319,7 +333,7 @@ export default function Uploader(props) {
                 </a>
                 <h1>Uploader</h1>
             </div>
-        
+
             <div class="description-and-wallet">
                 <div class="description">
                     <p>Post your Secrets here.</p>
@@ -370,7 +384,7 @@ export default function Uploader(props) {
                     <source src={backButtonVideo}/>
                 </video>
             </a>
-            
+
         </div>
         )
     }
