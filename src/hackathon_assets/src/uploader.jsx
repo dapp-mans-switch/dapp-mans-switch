@@ -329,19 +329,19 @@ export default function Uploader(props) {
             </div>
 
             <div className="panel">
-                <h3>My Secrets</h3>
-                <b>Alive</b>
-                <table id="secretsTableAlive" cellPadding={5}/>
-                <b>Reveal in Progress</b>
-                <table id="secretsTableReveal" cellPadding={5}/>
-            </div>
-
-            <div className="panel">
                 <h3>Heartbeat</h3>
                 <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="rainbow-button" style={{width: 550}}/>
                 <video id="still-alive-video" className="still-alive-video">
                     <source src={stillAliveVideo}/>
                 </video>
+            </div>
+
+            <div className="panel">
+                <h3>My Secrets</h3>
+                <b>Alive</b>
+                <table id="secretsTableAlive" cellPadding={5}/>
+                <b>Reveal in Progress</b>
+                <table id="secretsTableReveal" cellPadding={5}/>
             </div>
 
             <div className="panel">
