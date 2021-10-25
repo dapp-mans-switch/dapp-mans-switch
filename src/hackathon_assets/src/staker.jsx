@@ -72,7 +72,7 @@ export default function Staker(props) {
 
     const backendPublicKey = await hackathon.lookupMyPublicKey()
     console.log("PublicKey:", backendPublicKey[0])
-    
+
     let secretId
     try {
       secretId = helpers.getNaturalNumber(revealSecretId)
@@ -127,7 +127,7 @@ export default function Staker(props) {
       return
     }
 
-    
+
     let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
     if ('ok' in result) {
       let payout = result['ok']['payout']
@@ -183,8 +183,10 @@ export default function Staker(props) {
       return
     }
 
+    setAmount(null)
+    setDuration(null)
     document.getElementById('staker_form').reset()
-    
+
     let hackathonID = await hackathon.identity();
     let ok = await token.approve(hackathonID, amountInt, []); // should not throw error
     const result = await hackathon.addStake(amountInt, durationInt)
@@ -240,7 +242,7 @@ export default function Staker(props) {
       }
       console.error(err)
     }
-    
+
     window.getBalance()
   }
 
@@ -261,7 +263,7 @@ export default function Staker(props) {
 
   async function listAllStakes() {
     let stakes = await hackathon.listMyStakes()
-    stakes.sort(function(a, b) { 
+    stakes.sort(function(a, b) {
       return - (parseInt(b.staker_id) - parseInt(a.staker_id));
     });
 
@@ -310,7 +312,7 @@ export default function Staker(props) {
   async function listAllRelevantSecrets() {
 
     let relevantSecrets = await hackathon.listRelevantSecrets()
-    relevantSecrets.sort(function(a, b) { 
+    relevantSecrets.sort(function(a, b) {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
 
@@ -411,7 +413,7 @@ export default function Staker(props) {
         </div>
         <div id="my-wallet"/>
       </div>
-      
+
 
       <div id="register" className="panel" hidden={true}>
         <a id="register_staker_btn" data-text="Register as Staker" onClick={() => registerStaker()} className="rainbow-button" style={{width: 330}}></a>
@@ -451,7 +453,7 @@ export default function Staker(props) {
           <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
         </div>
       </div>
-      
+
 
       <a onClick={() => {routToPage('Main')}}>
         <video autoPlay loop muted class="back-button-video">
