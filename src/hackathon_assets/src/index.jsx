@@ -77,7 +77,6 @@ export default function Main() {
       <div id="my-wallet"/>
       {/* TODO: remove */}
       <button onClick={() =>  whoami()}>Who Am I?</button>
-      <button onClick={async () =>  { await canisters.hackathon.dropTables() } }>Drop Tables</button>
       <button id="logoutButton" onClick={() => logout()}>Logout</button>
 
     </div>

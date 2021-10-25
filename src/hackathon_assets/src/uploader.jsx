@@ -6,6 +6,7 @@ import * as helpers from './helpers'
 import routToPage from './router'
 import { render } from 'react-dom'
 import Wallet from './wallet'
+import { min } from 'mathjs'
 
 import stillAliveVideo from './../assets/im_alive.mkv'
 import backButtonVideo from './../assets/back_button.mkv'
@@ -245,7 +246,7 @@ export default function Uploader(props) {
 
                 const progressCell = tr.insertCell(-1)
                 const minReveal = crypto.minSharesToRecover(n_shares)
-                progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
+                progressCell.innerHTML = (min(n_revealed, minReveal)  / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
             } else {
                 let now = new Date()
                 let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
