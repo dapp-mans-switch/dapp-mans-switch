@@ -366,7 +366,7 @@ export default function Uploader(props) {
             </div>
 
             <a onClick={() => {routToPage('Main')}}>
-                <video autoPlay loop muted class="back-button-video">
+                <video autoPlay loop muted class="back-button-big">
                     <source src={backButtonVideo}/>
                 </video>
             </a>

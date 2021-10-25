@@ -34,10 +34,10 @@ export default function Main() {
 
     // use with auth
     await auth.auth()
-    let x = await auth.getCanisters()
+    // let x = await auth.getCanisters()
 
     // use without auth
-    // let x = await auth.getAnomymousCanisters()
+    let x = await auth.getAnomymousCanisters()
     // weirdest JS behavior ever! TODO: pls help
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
 

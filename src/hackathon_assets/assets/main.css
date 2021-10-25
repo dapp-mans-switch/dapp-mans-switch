@@ -107,6 +107,10 @@ textarea {
     width: 100px;
 }
 
+.back-button-big {
+    width: 200px;
+}
+
 .start-page-button-div {
     display: none;
     margin: 0 5% 2% 5%;
