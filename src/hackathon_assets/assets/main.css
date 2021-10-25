@@ -1,5 +1,5 @@
 body {
-    font-family: "Tahoma";
+    font-family: "Tahoma",sans-serif;
     font-size: 1.5rem;
     background-color:#E0E5EC;
     /* background-image is set in index.html */
@@ -39,7 +39,7 @@ h3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
-} 
+}
 
 
 img {
@@ -58,7 +58,7 @@ input {
     border-radius: 10px;
     padding-left: 10px;
     margin-left: -10px;
-    box-shadow: inset 7px 7px 7px rgb(163,177,198,0.6), 
+    box-shadow: inset 7px 7px 7px rgb(163,177,198,0.6),
                 inset -7px -7px 7px  rgba(255,255,255, 0.5);
 }
 
@@ -72,7 +72,7 @@ textarea {
     border-radius: 10px;
     padding: 15px;
     margin-left: -10px;
-    box-shadow: inset 7px 7px 7px rgb(163,177,198,0.6), 
+    box-shadow: inset 7px 7px 7px rgb(163,177,198,0.6),
                 inset -7px -7px 7px  rgba(255,255,255, 0.5);
 }
 
@@ -157,7 +157,7 @@ section {
     justify-content:center;
     font-weight:bold;
     font-size: 1em;
-    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6),
         -9px -9px 16px  rgba(255,255,255, 0.5);
     }
 
@@ -196,7 +196,7 @@ section {
     border-radius: 20px;
     background: rgb(224,229,236,0.8);
     backdrop-filter: blur(8px);
-    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6),
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
@@ -225,7 +225,7 @@ section {
     border-radius: 20px;
     background: rgba(38, 0, 255, 0.7);
     backdrop-filter: blur(8px);
-    box-shadow: 9px 9px 16px rgb(163,177,198,0.6), 
+    box-shadow: 9px 9px 16px rgb(163,177,198,0.6),
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
