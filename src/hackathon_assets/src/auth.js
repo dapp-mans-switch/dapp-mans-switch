@@ -6,11 +6,12 @@ import * as token from '../../declarations/token';
 import routToPage from './router'
 
 
-export class Auth {
+class Auth {
 
     constructor () {
         console.log("Auth Constructor")
         this.canistersInitialised = false
+        this.state = 0
     }
 
     // show navigation and logout buttons if authenticated
@@ -77,7 +78,7 @@ export class Auth {
     }*/
 
     async getCanisters() {
-        if (this.cansisters) {
+        if (this.canistersInitialised) {
             console.log("return cached canisters")
             return this.cansisters
         }
@@ -97,6 +98,7 @@ export class Auth {
         })
 
         this.canistersInitialised = true
+        this.state += 1
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
 
         return this.canisters
