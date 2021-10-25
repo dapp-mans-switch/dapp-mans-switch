@@ -12,7 +12,7 @@ export default function Main() {
   
   console.log("Main function body")
   let canisters = auth.canisters
-  if (auth.state == 2) {
+  if (auth.state == 1) {
     location.reload()
   }
 

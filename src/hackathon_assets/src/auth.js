@@ -99,7 +99,6 @@ class Auth {
         })
 
         this.canistersInitialised = true
-        this.state += 1
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
 
         return this.canisters
