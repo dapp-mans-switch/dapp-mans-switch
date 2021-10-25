@@ -93,8 +93,9 @@ module {
             assert(author_id == secret.author_id);
 
             var heartbeat = Date.secondsSince1970();
-            if (heartbeat > secret.expiry_time) {
-                heartbeat := secret.expiry_time;
+            if (shouldRevealSecret(secret)) {
+                // don't update heartbeat if secret should already be revealed
+                heartbeat := secret.last_heartbeat;
             };
 
             let newSecret = {

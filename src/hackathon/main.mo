@@ -403,6 +403,12 @@ actor Hackathon {
 
     // ---------------------------------------------------------------------------------------------
 
+    // TODO: remove
+    public shared(msg) func dropTables() {
+        secretManager.secrets := HashMap.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
+        stakerManager.stakes := HashMap.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
+        stakerManager.stakers := HashMap.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
+    };
 
     // System stability
 

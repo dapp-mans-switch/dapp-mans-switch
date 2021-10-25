@@ -119,6 +119,7 @@ class Auth {
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
 
         console.log("Intitialised canisters in auth")
+        this.showMenuIfAuth()
         return this.canisters
     }
 
