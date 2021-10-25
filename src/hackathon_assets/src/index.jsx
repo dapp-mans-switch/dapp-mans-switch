@@ -67,7 +67,6 @@ export default function Main() {
         </div>
         <div id="start-if-not-auth" className="start-page-button-div">
           <a id="loginButton" data-text="Authenticate" className="rainbow-button" style={{width: 220}}></a>
-          {/* TODO: might not work unauthenticated */}
           <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
         </div>
       </div>
