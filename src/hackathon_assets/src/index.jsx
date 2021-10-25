@@ -9,10 +9,9 @@ import keyFlipVideo from './../assets/key-flip.mkv'
 
 export default function Main() {
   const [amount, setAmount] = React.useState(0)
-  
+
   console.log("Main function body")
-  let canisters = auth.canisters
-  /*if (auth.state == 1) {
+  let canisters = auth.canisters /*if (auth.state == 1) {
     location.reload()
   }*/
 
@@ -43,12 +42,12 @@ export default function Main() {
     // let x = await auth.getAnomymousCanisters()
     // weirdest JS behavior ever! TODO: pls help
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
-    
+
     canisters = auth.canisters
     console.log("useEffect Canisters", x, canisters)
     createWallet()
   }, [])
-  
+
 
   return (
     <div class="eventHorizon">
@@ -68,6 +67,8 @@ export default function Main() {
         </div>
         <div id="start-if-not-auth" className="start-page-button-div">
           <a id="loginButton" data-text="Authenticate" className="rainbow-button" style={{width: 220}}></a>
+          {/* TODO: might not work unauthenticated */}
+          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
         </div>
       </div>
 
