@@ -29,11 +29,12 @@ export default function Main() {
   React.useEffect(async () => {
     window.scrollTo(0,0);
 
-    // uncomment next line to use with auth
-    // await auth.auth(); let x = await auth.getCanisters()
+    // use with auth
+    await auth.auth()
+    let x = await auth.getCanisters()
 
     // uncomment next line to use without auth
-    let x = await auth.getAnomymousCanisters()
+    // let x = await auth.getAnomymousCanisters()
    
     canisters = auth.canisters
     console.log("useEffect Canisters", x, canisters)
