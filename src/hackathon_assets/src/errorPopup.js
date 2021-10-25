@@ -1,12 +1,32 @@
-export function errorPopup(message = "Default Error Message", elementId) {
-    let button = document.getElementById(elementId)
+export function errorPopup(message = "An error occurred, please try again later.", elementId, confirm=false) {
+    if (document.getElementById("errorDiv")) {
+        return
+    }
+
+    let triggerButton = document.getElementById(elementId)
     
     let errorDiv = document.createElement("div")
     errorDiv.id = "errorDiv"
     errorDiv.classList.add('error-div')
-    errorDiv.innerHTML = message
+    errorDiv.innerText = message
 
-    button.parentElement.insertBefore(errorDiv, button.nextSibling)
+    if (confirm) {
+        let confirmButton = document.createElement("button")
+        confirmButton.id = "confirmButton"
+        confirmButton.innerText = "Got it!"
 
-    setTimeout(() => {document.getElementById("errorDiv").remove()}, 5000)
+        let flex = document.createElement("div")
+        flex.style.display = "flex"
+        flex.style.flexDirection = "row"
+        flex.style.justifyContent = "center"
+        flex.id = "errorFlex"
+        flex.appendChild(errorDiv)
+        flex.appendChild(confirmButton)
+
+        triggerButton.parentElement.insertBefore(flex, triggerButton.nextSibling)
+        confirmButton.onclick = function() { document.getElementById("errorFlex").remove() }
+    } else {
+        triggerButton.parentElement.insertBefore(errorDiv, triggerButton.nextSibling)
+        setTimeout(() => {document.getElementById("errorDiv").remove()}, 5000)
+    }
 }

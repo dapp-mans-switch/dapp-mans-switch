@@ -8,7 +8,6 @@ import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 import {errorPopup} from './errorPopup'
 import Wallet from './wallet'
-import * as helpers from '.helpers'
 
 export default function Staker(props) {
 
@@ -183,7 +182,7 @@ export default function Staker(props) {
       durationInt = helpers.getPositiveNumber(duration)
     } catch (error) {
       removeLoadingAnimation()
-      alert('Amount and duration must be positive numbers!')
+      errorPopup('Amount and duration must be positive numbers!', 'add_new_stake_button')
       console.log(error)
       // re-enable stake button
       startStakeButton.style.pointerEvents = "auto"
@@ -441,7 +440,7 @@ export default function Staker(props) {
             <label htmlFor="stakeDuration">Duration (days):</label>
             <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
           </form>
-          <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
+          <a id="add_new_stake_button" data-text="Start stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
         </div>
 
         <div className="panel">
