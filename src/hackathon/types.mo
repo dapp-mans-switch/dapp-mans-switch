@@ -42,6 +42,7 @@ module {
     public type RelevantSecret = {
         secret_id: Nat;
         uploader_public_key: Text;
+        expiry_time: Int; // seconds since 1970-01-01
         relevantShares: [Text];
         shouldReveal: Bool;
         hasRevealed: Bool;
