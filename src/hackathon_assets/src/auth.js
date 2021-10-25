@@ -53,6 +53,7 @@ class Auth {
         const days = BigInt(1);
         const hours = BigInt(24);
         const nanoseconds = BigInt(3600000000000);
+        this.state += 1
 
         loginButton.onclick = async () => {
             await this.authClient.login({
