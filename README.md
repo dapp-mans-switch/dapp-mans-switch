@@ -32,6 +32,7 @@ Make sure you have installed:
 
 ```bash
 cd ICP-hackathon
+rm -rf .dfx
 npm install
 dfx start --clean
 dfx deploy
@@ -39,6 +40,7 @@ dfx deploy
 
 ```bash
 cd internet-identity
+rm -rf .dfx
 npm install
 II_ENV=development dfx deploy --no-wallet --argument '(null)'
 ```
