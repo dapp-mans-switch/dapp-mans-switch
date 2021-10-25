@@ -244,6 +244,15 @@ actor Hackathon {
     };
 
     /*
+    * Returns all secrets which are authored by caller
+    * with additional bool whether reveal process in in progress.
+    */
+    public shared query (msg) func listMySecretsPlusRevealInfo() : async [(Secret, Bool)] {
+        let author_id = msg.caller;
+        secretManager.listSecretsPlusInfoOf(author_id);
+    };
+
+    /*
     * Returns the all secrets for which were authored by author_id.
     */
     public query func listSecrets(author_id: Principal) : async [Secret] {
@@ -403,6 +412,12 @@ actor Hackathon {
 
     // ---------------------------------------------------------------------------------------------
 
+    // TODO: remove
+    public shared(msg) func dropTables() {
+        secretManager.secrets := HashMap.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
+        stakerManager.stakes := HashMap.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
+        stakerManager.stakers := HashMap.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
+    };
 
     // System stability
 

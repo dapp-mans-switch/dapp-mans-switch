@@ -159,6 +159,7 @@ export default function Staker(props) {
     listAllRelevantSecrets()
     addButton.classList.remove("trigger-animation")
     removeLoadingAnimation()
+    window.getBalance()
   }
 
   async function addStake() {
@@ -239,6 +240,8 @@ export default function Staker(props) {
       }
       console.error(err)
     }
+    
+    window.getBalance()
   }
 
   // write private key to file and safe to downloads

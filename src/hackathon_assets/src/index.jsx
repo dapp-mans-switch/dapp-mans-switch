@@ -12,9 +12,9 @@ export default function Main() {
   
   console.log("Main function body")
   let canisters = auth.canisters
-  if (auth.state == 1) {
+  /*if (auth.state == 1) {
     location.reload()
-  }
+  }*/
 
   async function whoami() {
     let id = await canisters.hackathon.whoami()
@@ -33,22 +33,22 @@ export default function Main() {
 
   function logout() {
     auth.logout()
-    location.reload()
+    //location.reload()
   }
 
   React.useEffect(async () => {
     console.log("useEffect")
     window.scrollTo(0,0);
 
-    await auth.auth()
-    let x = await auth.getCanisters()
+    //await auth.auth()
+    //let x = await auth.getCanisters()
 
-    //let x = await auth.getAnomymousCanisters()
+    let x = await auth.getAnomymousCanisters()
     // weirdest JS behavior ever! TODO: pls help
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
     
     canisters = auth.canisters
-    console.log(canisters)
+    console.log("useEffect Canisters", x, canisters)
     createWallet()
   }, [])
   
@@ -75,7 +75,7 @@ export default function Main() {
       </div>
 
       <div id="my-wallet"/>
-      
+      {/* TODO: remove */}
       <button onClick={() =>  whoami()}>Who Am I?</button>
       <button id="logoutButton" onClick={() => logout()}>Logout</button>
 

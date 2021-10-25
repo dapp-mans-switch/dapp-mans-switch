@@ -6,6 +6,7 @@ import * as helpers from './helpers'
 import routToPage from './router'
 import { render } from 'react-dom'
 import Wallet from './wallet'
+import { min } from 'mathjs'
 
 import stillAliveVideo from './../assets/im_alive.mkv'
 import backButtonVideo from './../assets/back_button.mkv'
@@ -195,52 +196,69 @@ export default function Uploader(props) {
 
     async function listAllSecrets() {
     
-        let secrets = await hackathon.listMySecrets()
-        secrets.sort(function(a, b) { 
-          return - (parseInt(b.secret_id) - parseInt(a.secret_id));
+        let secretsWithInfo = await hackathon.listMySecretsPlusRevealInfo()
+        secretsWithInfo.sort(function(a, b) { 
+          return - (parseInt(b[0].secret_id) - parseInt(a[0].secret_id));
         });
     
-        console.log("Secrets", secrets)
+        console.log("secretsWithInfo", secretsWithInfo)
     
-        const table = document.getElementById('secretsTable')
+        const tableAlive = document.getElementById('secretsTableAlive')
+        const tableReveal = document.getElementById('secretsTableReveal')
     
-        const col_names = ['Secret ID', 'Reveal Progress', 'Expiry Time', 'Heartbeat Expiration']
-        table.innerHTML = ''
-    
-        const tr = table.insertRow(-1)
-        for (const cn of col_names) {
+        tableAlive.innerHTML = ''
+        const tr = tableAlive.insertRow(-1)
+        for (const cn of ['Secret ID', 'Expiry Time', 'Heartbeat Expiration']) {
           const tabCell = tr.insertCell(-1)
           tabCell.innerHTML = cn
         }
+
+        tableReveal.innerHTML = ''
     
-        secrets.map(function (s) {
+        const tr2 = tableReveal.insertRow(-1)
+        for (const cn of  ['Secret ID', 'Expiry Time', 'Reveal  Progress']) {
+          const tabCell = tr2.insertCell(-1)
+          tabCell.innerHTML = cn
+        }
+    
+        secretsWithInfo.map(function (x) {
+            let s = x[0]
+            let revealInProgress = x[1]
+            console.log(s, revealInProgress)
 
-            let n_shares = s.shares.length;
-            let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
-
-            const tr = table.insertRow(-1)
+            let tr
+            if (revealInProgress) {
+                tr = tableReveal.insertRow(-1)
+            } else {
+                tr = tableAlive.insertRow(-1)
+            }
 
             const idCell = tr.insertCell(-1)
             idCell.innerHTML = s.secret_id
-
-            const progressCell = tr.insertCell(-1)
-            const minReveal = crypto.minSharesToRecover(n_shares)
-            progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
 
             let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             const expiryCell = tr.insertCell(-1)
             expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString('en-GB', options)      
 
-            let now = new Date()
-            let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
-            //console.log("next_heartbeat", next_heartbeat)
-            let remainingTimeMS = next_heartbeat - now
-            let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
-            const heartbeatCell = tr.insertCell(-1)
-            heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
+            if (revealInProgress) {
+                let n_shares = s.shares.length;
+                let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
 
-            if (remainingTimeHR < 12) {
-                heartbeatCell.style.color = '#ed2939';
+                const progressCell = tr.insertCell(-1)
+                const minReveal = crypto.minSharesToRecover(n_shares)
+                progressCell.innerHTML = (min(n_revealed, minReveal)  / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
+            } else {
+                let now = new Date()
+                let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
+                //console.log("next_heartbeat", next_heartbeat)
+                let remainingTimeMS = next_heartbeat - now
+                let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
+                const heartbeatCell = tr.insertCell(-1)
+                heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
+    
+                if (remainingTimeHR < 12) {
+                    heartbeatCell.style.color = '#ed2939';
+                }
             }
         });
     }
@@ -314,7 +332,10 @@ export default function Uploader(props) {
 
             <div className="panel">
                 <h3>My Secrets</h3>
-                <table id="secretsTable" cellPadding={5}/>
+                <p>Alive</p>
+                <table id="secretsTableAlive" cellPadding={5}/>
+                <p>Reveal in Progress</p>
+                <table id="secretsTableReveal" cellPadding={5}/>
             </div>
 
             <div className="panel">

@@ -11,7 +11,7 @@ class Auth {
     constructor () {
         console.log("Auth Constructor")
         this.canistersInitialised = false
-        this.state = 0
+        //this.state = 0
     }
 
     // show navigation and logout buttons if authenticated
@@ -54,14 +54,15 @@ class Auth {
         const days = BigInt(1);
         const hours = BigInt(24);
         const nanoseconds = BigInt(3600000000000);
-        this.state += 1
+        //this.state += 1
 
         loginButton.onclick = async () => {
             await this.authClient.login({
                 onSuccess: async () => {
                     const identity = await this.authClient.getIdentity();
                     console.log("Success", identity.getPrincipal().toString())
-                    routToPage('Main')
+                    location.reload()
+                    //routToPage('Main')
                 },
                 identityProvider:
                     process.env.DFX_NETWORK === "ic"
@@ -101,6 +102,8 @@ class Auth {
 
         this.canistersInitialised = true
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
+        
+        console.log("Intitialised canisters in auth")
 
         return this.canisters
     }
@@ -115,7 +118,9 @@ class Auth {
 
         this.canistersInitialised = true
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
+
         console.log("Intitialised canisters in auth")
+        this.showMenuIfAuth()
         return this.canisters
     }
 
@@ -135,7 +140,8 @@ class Auth {
         this.cansisters = undefined
         this.authClient = undefined
         this.canistersInitialised = false
-        this.showMenuIfNotAuth()
+        location.reload()
+        //this.showMenuIfNotAuth()
     }
 };
 

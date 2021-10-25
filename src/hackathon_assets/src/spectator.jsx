@@ -2,6 +2,7 @@ import * as React from 'react'
 import routToPage from './router'
 import * as helpers from './helpers'
 import * as crypto from './crypto'
+import { min } from 'mathjs'
 
 import backButtonVideo from './../assets/back_button.mkv'
 
@@ -73,7 +74,7 @@ export default function Spectator(props) {
 
         const progressCell = tr.insertCell(-1)
         const minReveal = crypto.minSharesToRecover(n_shares)
-        progressCell.innerHTML = (n_revealed / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
+        progressCell.innerHTML = (min(n_revealed, minReveal) / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
       
         const expiryCell = tr.insertCell(-1)
         expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
