@@ -244,6 +244,15 @@ actor Hackathon {
     };
 
     /*
+    * Returns all secrets which are authored by caller
+    * with additional bool whether reveal process in in progress.
+    */
+    public shared query (msg) func listMySecretsPlusRevealInfo() : async [(Secret, Bool)] {
+        let author_id = msg.caller;
+        secretManager.listSecretsPlusInfoOf(author_id);
+    };
+
+    /*
     * Returns the all secrets for which were authored by author_id.
     */
     public query func listSecrets(author_id: Principal) : async [Secret] {

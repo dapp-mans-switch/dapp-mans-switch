@@ -342,5 +342,20 @@ module {
             };
             return allSecrets.toArray();
         };
+
+        /*
+        * Returns all secrets which are authored by author_id
+        * with additional bool whether reveal process in in progress.
+        */
+        public func listSecretsPlusInfoOf(author_id: Principal) : [(Secret,Bool)] {
+            let allSecrets = Buffer.Buffer<(Secret, Bool)>(0);
+            for ((id, s) in secrets.entries()) {
+                if (s.author_id == author_id) {
+                    let revealInProgress = shouldRevealSecret(s);   
+                    allSecrets.add((s, revealInProgress));
+                };
+            };
+            return allSecrets.toArray();
+        };
     };
 }
