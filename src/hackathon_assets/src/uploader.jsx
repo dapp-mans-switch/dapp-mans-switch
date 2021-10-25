@@ -206,7 +206,7 @@ export default function Uploader(props) {
     
         tableAlive.innerHTML = ''
         const tr = tableAlive.insertRow(-1)
-        for (const cn of ['Secret ID', 'Expiry Time', 'Heartbeat']) {
+        for (const cn of ['Secret ID', 'Expiry time', 'Heartbeat']) {
           const tabCell = tr.insertCell(-1)
           tabCell.innerHTML = cn
         }
@@ -214,7 +214,7 @@ export default function Uploader(props) {
         tableReveal.innerHTML = ''
     
         const tr2 = tableReveal.insertRow(-1)
-        for (const cn of  ['Secret ID', 'Expiry Time', 'Progress']) {
+        for (const cn of  ['Secret ID', 'Expiry time', 'Progress']) {
           const tabCell = tr2.insertCell(-1)
           tabCell.innerHTML = cn
         }
@@ -322,8 +322,8 @@ export default function Uploader(props) {
         
             <div class="description-and-wallet">
                 <div class="description">
-                    <p>Post your secrets here.</p>
-                    <p>Paying higher rewards incentivizes stakers to keep your secret secure.</p>
+                    <p>Post your Secrets here.</p>
+                    <p>Paying higher rewards incentivizes stakers to keep your Secret secure.</p>
                 </div>
                 <div id="my-wallet"/>
             </div>
@@ -346,17 +346,17 @@ export default function Uploader(props) {
 
             <div className="panel">
               <form id="uploader_form">
-                <h3>Create a Secret to be published</h3>
+                <h3>Upload a new Secret</h3>
                 <textarea id="secret" type="text" autoComplete='off' onChange={(ev) => setSecret(ev.target.value)}/>
                 <br/>
 
                 <label htmlFor="reward">Reward ($HRBT)</label>
                 <span><input id="reward" type="number" autoComplete='off' onChange={(ev) => setReward(ev.target.value)}/></span>
 
-                <label htmlFor="heartbeatFreq">Heartbeat Frequency (Days)</label>
+                <label htmlFor="heartbeatFreq">Heartbeat frequency (days)</label>
                 <span><input id="heartbeatFreq" type="number" autoComplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
 
-                <label htmlFor="expiryTime">Latest Reveal Date:</label>
+                <label htmlFor="expiryTime">Latest reveal date:</label>
                 <span><input id="expiryTime" type="datetime-local" autoComplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
 
                 <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>

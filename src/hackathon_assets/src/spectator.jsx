@@ -23,7 +23,7 @@ export default function Spectator(props) {
 
     alltable.innerHTML = ''
     const tr = alltable.insertRow(-1)
-    for (const cn of ['Secret ID', 'Reveal Progress', 'Expiry Time', 'Last Heartbeat']) {
+    for (const cn of ['Secret ID', 'Reveal progress', 'Expiry time', 'Last heartbeat']) {
       const tabCell = tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
@@ -101,7 +101,7 @@ export default function Spectator(props) {
           <h1>Spectator</h1>
         </div>
 
-        Look at other people's secrets.
+        Look at other people's Secrets.
         
         <div>
           <a id="staker_button" data-text="Refresh" onClick={() => listAllSecrets()} className="rainbow-button" style={{width: 150}}></a>

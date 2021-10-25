@@ -269,7 +269,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['Amount', 'Expiry Time']
+    const col_names = ['Amount', 'Expiry time']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -294,7 +294,7 @@ export default function Staker(props) {
 
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
-      deleteButton.innerHTML = "End Stake"
+      deleteButton.innerHTML = "End stake"
       deleteButton.className = "endStakeButton"
       let newDate = new Date()
       if (newDate < expiryDate) {
@@ -320,7 +320,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Ready to Reveal',]
+    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Ready to reveal',]
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -421,11 +421,11 @@ export default function Staker(props) {
 
       <div id="signedUp" hidden={true}>
         <div className="panel">
-          <h3>Create new Stake</h3>
+          <h3>Create New Stake</h3>
           <form id="staker_form">
             <label htmlFor="stakeAmount">Amount:</label>
             <span><input id="stakeAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
-            <label htmlFor="stakeDuration">Duration (Days):</label>
+            <label htmlFor="stakeDuration">Duration (days):</label>
             <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
           </form>
           <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
@@ -442,9 +442,9 @@ export default function Staker(props) {
         </div>
 
         <div className="panel">
-          <h3>Reveal a secret share</h3>
+          <h3>Reveal a Secret Share</h3>
           <form id="reveal-secret-from">
-            <label htmlFor="stakerId">Enter secret ID:</label>
+            <label htmlFor="stakerId">Enter Secret ID:</label>
             <span><input id="revealSecretId" type="number" autoComplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
             <label htmlFor="stakerPrivateKey">Enter your private key:</label>

@@ -49,9 +49,8 @@ export default function Main() {
 
   return (
     <div class="eventHorizon">
-      <h1>Dead Man’s Switch</h1>
-      <h3>using Proof of Stake</h3>
-      regularly verify that you are alive, otherwise your uploaded files will get published
+      <h1>Yeet Man’s Switch</h1>
+      Regularly verify that you are alive, otherwise your uploaded Secrets will get published.
 
       <div className="panel">
         <video autoPlay loop muted className="key-flip-video">
