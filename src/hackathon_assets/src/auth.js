@@ -36,15 +36,16 @@ class Auth {
         }*/
 
         this.authClient = await AuthClient.create();
-        if (await this.authClient.isAuthenticated()) {
-            this.showMenuIfAuth()
-            console.log("authenticated")
-            return true;
-        } else {
-            console.log("not authenticated")
-            this.showMenuIfNotAuth()
-            return false;
-        }
+        // if (await this.authClient.isAuthenticated()) {
+        //     this.showMenuIfAuth()
+        //     console.log("authenticated")
+        //     return true;
+        // } else {
+        //     console.log("not authenticated")
+        //     this.showMenuIfNotAuth()
+        //     return false;
+        // }
+        this.showMenuIfAuth()
     }
 
     makeLoginButton() {
