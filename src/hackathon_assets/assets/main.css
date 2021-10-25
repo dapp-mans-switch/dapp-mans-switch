@@ -108,7 +108,7 @@ textarea {
 }
 
 .start-page-button-div {
-    display: flex;
+    display: none;
     margin: 0 5% 2% 5%;
 }
 

@@ -200,15 +200,13 @@ export default function Uploader(props) {
         secretsWithInfo.sort(function(a, b) { 
           return - (parseInt(b[0].secret_id) - parseInt(a[0].secret_id));
         });
-    
-        console.log("secretsWithInfo", secretsWithInfo)
-    
+        
         const tableAlive = document.getElementById('secretsTableAlive')
         const tableReveal = document.getElementById('secretsTableReveal')
     
         tableAlive.innerHTML = ''
         const tr = tableAlive.insertRow(-1)
-        for (const cn of ['Secret ID', 'Expiry Time', 'Heartbeat Expiration']) {
+        for (const cn of ['Secret ID', 'Expiry Time', 'Heartbeat']) {
           const tabCell = tr.insertCell(-1)
           tabCell.innerHTML = cn
         }
@@ -216,7 +214,7 @@ export default function Uploader(props) {
         tableReveal.innerHTML = ''
     
         const tr2 = tableReveal.insertRow(-1)
-        for (const cn of  ['Secret ID', 'Expiry Time', 'Reveal  Progress']) {
+        for (const cn of  ['Secret ID', 'Expiry Time', 'Progress']) {
           const tabCell = tr2.insertCell(-1)
           tabCell.innerHTML = cn
         }
@@ -332,9 +330,9 @@ export default function Uploader(props) {
 
             <div className="panel">
                 <h3>My Secrets</h3>
-                <p>Alive</p>
+                <b>Alive</b>
                 <table id="secretsTableAlive" cellPadding={5}/>
-                <p>Reveal in Progress</p>
+                <b>Reveal in Progress</b>
                 <table id="secretsTableReveal" cellPadding={5}/>
             </div>
 

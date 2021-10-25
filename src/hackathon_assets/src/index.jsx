@@ -40,9 +40,11 @@ export default function Main() {
     console.log("useEffect")
     window.scrollTo(0,0);
 
+    // use with auth
     //await auth.auth()
     //let x = await auth.getCanisters()
 
+    // use without auth
     let x = await auth.getAnomymousCanisters()
     // weirdest JS behavior ever! TODO: pls help
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters

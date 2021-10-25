@@ -30,22 +30,17 @@ class Auth {
     }
 
     async auth() {
-        /*
-        if (this.canistersInitialised) {
-            console.log("authenticated: canisters intitialised")
-        }*/
-
         this.authClient = await AuthClient.create();
-        // if (await this.authClient.isAuthenticated()) {
-        //     this.showMenuIfAuth()
-        //     console.log("authenticated")
-        //     return true;
-        // } else {
-        //     console.log("not authenticated")
-        //     this.showMenuIfNotAuth()
-        //     return false;
-        // }
-        this.showMenuIfAuth()
+        if (await this.authClient.isAuthenticated()) {
+            this.showMenuIfAuth()
+            console.log("authenticated")
+            return true;
+        } else {
+            console.log("not authenticated")
+            this.showMenuIfNotAuth()
+            return false;
+        }
+
     }
 
     makeLoginButton() {
@@ -110,6 +105,7 @@ class Auth {
 
     async getAnomymousCanisters() {
         if (this.canistersInitialised) {
+            this.showMenuIfAuth()
             return this.cansisters
         }
 
