@@ -88,6 +88,7 @@ textarea {
 }
 
 .loading-video{
+    z-index: -1;
     width: 80px;
     position: fixed;
     right: 60px;
@@ -100,6 +101,7 @@ textarea {
 .loading-video-bottom{
     bottom: 15px;
 }
+
 
 .back-button-video{
     width: 100px;

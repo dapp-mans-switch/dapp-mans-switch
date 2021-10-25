@@ -1,4 +1,5 @@
-import * as React from 'react'
+import React from 'react'
+import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
 
 export default function Wallet(props) {
@@ -14,13 +15,21 @@ export default function Wallet(props) {
 
     // top up balance (+100 $HRBT)
     async function buyTokens() {
+        appendLoadingAnimation("topUpButton", false)
         await token.buyIn(100)
+        getBalance()
+        removeLoadingAnimation()
+    }
+
+    // make getBalance a global window-function
+    window.getBalance = function() {
         getBalance()
     }
 
     React.useEffect(() => {
         getBalance()
     }, []);
+
 
     return(
         <div class="wallet-in-app">
@@ -29,7 +38,7 @@ export default function Wallet(props) {
                 <b id="walletBalance">0 $HRBT</b>
             </div>
             <div>
-                <button onClick={buyTokens}>Top Up + 100 $HRBT</button>
+                <button id="topUpButton" onClick={buyTokens}>Top Up + 100 $HRBT</button>
             </div>
         </div>
     );

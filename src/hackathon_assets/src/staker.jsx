@@ -13,6 +13,7 @@ export default function Staker(props) {
 
   const hackathon = props.canisters.hackathon;
   const token = props.canisters.token;
+  // let walletRef = React.createRef()
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
@@ -204,6 +205,8 @@ export default function Staker(props) {
       }
       console.error(result['err'])
     }
+    // this.walletRef.current.getBalance()
+    window.getBalance()
   }
 
   async function endStake(id) {
@@ -357,6 +360,7 @@ export default function Staker(props) {
 
   async function createWallet() {
     render(React.createElement(Wallet, props), document.getElementById('my-wallet'))
+    // render(React.createElement(Wallet, {...props, ref: {walletRef}}), document.getElementById('my-wallet'))
   }
 
 

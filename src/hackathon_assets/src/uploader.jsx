@@ -121,6 +121,7 @@ export default function Uploader(props) {
         
         removeLoadingAnimation()
         listAllSecrets()
+        window.getBalance()
 
         if ('ok' in addSecretResult) {
             let newSecret = addSecretResult['ok']
