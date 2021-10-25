@@ -312,10 +312,10 @@ module {
             let entropy: Blob = await Random.blob(); 
             let seeds: RNG.Seeds = RNG.getSeedsFromEntropy(entropy);
             let randomAmounts: [Nat] = Array.sort(RNG.randomNumbersBelow(seeds, totalAmount, n), Nat.compare);  
-            // TODO: remove
-            D.print("totalAmount: " # Nat.toText(totalAmount));
-            D.print("randomAmounts:");
-            for (a in randomAmounts.vals()) { D.print(Nat.toText(a)); };        
+            
+            // D.print("totalAmount: " # Nat.toText(totalAmount));
+            // D.print("randomAmounts:");
+            // for (a in randomAmounts.vals()) { D.print(Nat.toText(a)); };        
 
             // now we iterate over all stakes
             let drawnStakes = Buffer.Buffer<Stake>(0);

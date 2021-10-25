@@ -6,11 +6,12 @@ import * as token from '../../declarations/token';
 import routToPage from './router'
 
 
-export class Auth {
+class Auth {
 
     constructor () {
         console.log("Auth Constructor")
         this.canistersInitialised = false
+        this.state = 0
     }
 
     // show navigation and logout buttons if authenticated
@@ -29,9 +30,10 @@ export class Auth {
     }
 
     async auth() {
+        /*
         if (this.canistersInitialised) {
             console.log("authenticated: canisters intitialised")
-        }
+        }*/
 
         this.authClient = await AuthClient.create();
         if (await this.authClient.isAuthenticated()) {
@@ -51,6 +53,7 @@ export class Auth {
         const days = BigInt(1);
         const hours = BigInt(24);
         const nanoseconds = BigInt(3600000000000);
+        this.state += 1
 
         loginButton.onclick = async () => {
             await this.authClient.login({
@@ -75,11 +78,13 @@ export class Auth {
         return identity;
     }*/
 
-    async getCanisters(identity) {
-        if (this.cansisters) {
+    async getCanisters() {
+        if (this.canistersInitialised) {
             console.log("return cached canisters")
             return this.cansisters
         }
+        
+        const identity = await this.authClient.getIdentity();
 
         //console.log("Get canister for identity", identity.getPrincipal().toString())
         const hackathonActor = hackathon.createActor(hackathon.canisterId, {
@@ -96,7 +101,7 @@ export class Auth {
         this.canistersInitialised = true
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
 
-        return canisters
+        return this.canisters
     }
 
     async getAnomymousCanisters() {

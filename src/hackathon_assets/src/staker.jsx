@@ -54,6 +54,7 @@ export default function Staker(props) {
     }
 
     listAllStakes()
+    renderRegisterXORStakerPanels()
   }
 
   async function revealSecretShare() {
@@ -147,6 +148,8 @@ export default function Staker(props) {
         alert(`Insufficient funds: ${err['insufficientFunds']}`)
       } else if ('revealedTooSoon' in err) {
         alert(`You should not reveal this secret yet!`)
+      } else if ('tooLate' in err) {
+        alert(`You uploaded the secret shares too late. Maximum is 3 days. You receive no payout!`)
       } else {
         alert(`Something went wrong!`)
       }
@@ -261,7 +264,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['amount', 'expiry_time']
+    const col_names = ['Amount', 'Expiry Time']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -282,7 +285,7 @@ export default function Staker(props) {
 
       let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
       let options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-      dateCell.innerHTML = expiryDate.toLocaleString('en-GB', options)
+      dateCell.innerHTML = expiryDate.toLocaleString('en-US', options)
 
       const deleteButtonCell = tr.insertCell(-1)
       const deleteButton = document.createElement('button')
@@ -312,7 +315,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['secret_id', 'n_shares', 'hasRevealed', 'shouldReveal',]
+    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Ready to Reveal',]
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -369,7 +372,23 @@ export default function Staker(props) {
     listAllStakes()
     listAllRelevantSecrets()
     createWallet()
+    renderRegisterXORStakerPanels()
   }, []);
+
+
+  async function renderRegisterXORStakerPanels() {
+    const reg = await isRegistered()
+    const signedUp = document.getElementById("signedUp")
+    const register = document.getElementById("register")
+    if (reg) {
+      signedUp.hidden = false
+      register.hidden = true
+    } else {
+      signedUp.hidden = true
+      register.hidden = false
+    }
+  }
+
 
   return (
     <div class="eventHorizon">
@@ -384,49 +403,52 @@ export default function Staker(props) {
 
       <div class="description-and-wallet">
         <div class="description">
-          <p>Stake $HRBT to receive shares.</p>
-          <p>When you reveal a secret at the right time, you will be richly rewarded.</p>
+          <p>Stake $HRBT to receive Secret shares.</p>
+          <p>When you reveal a Secret at the right time, you will be richly rewarded.</p>
         </div>
         <div id="my-wallet"/>
       </div>
       
 
-      <div id="register" className="panel">
-        <button onClick={() => registerStaker()}>Register Staker</button>
+      <div id="register" className="panel" hidden={true}>
+        <a id="register_staker_btn" data-text="Register as Staker" onClick={() => registerStaker()} className="rainbow-button" style={{width: 330}}></a>
       </div>
 
-      <div className="panel">
-        <h3>Create new Stake</h3>
-        <form id="staker_form">
-          <label htmlFor="stakeAmount">Amount:</label>
-          <span><input id="stakeAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
-          <label htmlFor="stakeDuration">Duration (Days):</label>
-          <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
-        </form>
-        <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
-      </div>
+      <div id="signedUp" hidden={true}>
+        <div className="panel">
+          <h3>Create new Stake</h3>
+          <form id="staker_form">
+            <label htmlFor="stakeAmount">Amount:</label>
+            <span><input id="stakeAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
+            <label htmlFor="stakeDuration">Duration (Days):</label>
+            <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
+          </form>
+          <a id="add_new_stake_button" data-text="Start Stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
+        </div>
 
-      <div className="panel">
-        <h3>My Stakes</h3>
-        <table id="stakerTable" cellPadding={5}/>
-      </div>
+        <div className="panel">
+          <h3>My Stakes</h3>
+          <table id="stakerTable" cellPadding={5}/>
+        </div>
 
-      <div className="panel">
-        <h3>My Secret Shares</h3>
-        <table id="secretsTable" cellPadding={5}/>
-      </div>
+        <div className="panel">
+          <h3>My Secret Shares</h3>
+          <table id="secretsTable" cellPadding={5}/>
+        </div>
 
-      <div className="panel">
-        <h3>Reveal a secret share</h3>
-        <form id="reveal-secret-from">
-          <label htmlFor="stakerId">Enter secret ID:</label>
-          <span><input id="revealSecretId" type="number" autoComplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
+        <div className="panel">
+          <h3>Reveal a secret share</h3>
+          <form id="reveal-secret-from">
+            <label htmlFor="stakerId">Enter secret ID:</label>
+            <span><input id="revealSecretId" type="number" autoComplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
-          <label htmlFor="stakerPrivateKey">Enter your private key:</label>
-          <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
-        </form>
-        <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
+            <label htmlFor="stakerPrivateKey">Enter your private key:</label>
+            <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
+          </form>
+          <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
+        </div>
       </div>
+      
 
       <a onClick={() => {routToPage('Main')}}>
         <video autoPlay loop muted class="back-button-video">
