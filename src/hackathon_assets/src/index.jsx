@@ -12,9 +12,9 @@ export default function Main() {
   
   console.log("Main function body")
   let canisters = auth.canisters
-  if (auth.state == 1) {
+  /*if (auth.state == 1) {
     location.reload()
-  }
+  }*/
 
   async function whoami() {
     let id = await canisters.hackathon.whoami()
@@ -33,7 +33,7 @@ export default function Main() {
 
   function logout() {
     auth.logout()
-    location.reload()
+    //location.reload()
   }
 
   React.useEffect(async () => {
@@ -48,7 +48,7 @@ export default function Main() {
     // x can be undefined even though we only return this.canisters (=auth.canisters) in getAnomymousCanisters
     
     canisters = auth.canisters
-    console.log(canisters)
+    console.log("useEffect Canisters", canisters)
     createWallet()
   }, [])
   
