@@ -11,9 +11,7 @@ export default function Main() {
   const [amount, setAmount] = React.useState(0)
 
   console.log("Main function body")
-  let canisters = auth.canisters /*if (auth.state == 1) {
-    location.reload()
-  }*/
+  let canisters = auth.canisters
 
   async function whoami() {
     let id = await canisters.hackathon.whoami()
@@ -72,7 +70,6 @@ export default function Main() {
       </div>
 
       <div id="my-wallet"/>
-      {/* TODO: remove */}
       <button onClick={() =>  whoami()}>Who Am I?</button>
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 

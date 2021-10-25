@@ -11,7 +11,6 @@ class Auth {
     constructor () {
         console.log("Auth Constructor")
         this.canistersInitialised = false
-        //this.state = 0
     }
 
     // show navigation and logout buttons if authenticated
@@ -27,6 +26,7 @@ class Auth {
         document.getElementById("start-if-auth").style.display = "none";
         this.makeLoginButton()
         document.getElementById("logoutButton").style.display = "none";
+        document.getElementById("my-wallet").style.display = "none"
     }
 
     async auth() {
@@ -49,7 +49,6 @@ class Auth {
         const days = BigInt(1);
         const hours = BigInt(24);
         const nanoseconds = BigInt(3600000000000);
-        //this.state += 1
 
         loginButton.onclick = async () => {
             await this.authClient.login({
@@ -57,7 +56,6 @@ class Auth {
                     const identity = await this.authClient.getIdentity();
                     console.log("Success", identity.getPrincipal().toString())
                     location.reload()
-                    //routToPage('Main')
                 },
                 identityProvider:
                     process.env.DFX_NETWORK === "ic"
