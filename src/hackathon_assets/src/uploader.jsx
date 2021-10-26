@@ -262,8 +262,8 @@ export default function Uploader(props) {
                 progressCell.innerHTML = (min(n_revealed, minReveal)  / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
             } else {
                 let now = new Date()
-                let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
-                //console.log("next_heartbeat", next_heartbeat)
+                let next_heartbeat = new Date(Number(s.last_heartbeat + s.heartbeat_freq) * 1000)//helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
+                console.log("next_heartbeat", next_heartbeat, now, Number(next_heartbeat), Number(now))
                 let remainingTimeMS = next_heartbeat - now
                 let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
                 const heartbeatCell = tr.insertCell(-1)
