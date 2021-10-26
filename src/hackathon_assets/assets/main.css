@@ -25,8 +25,8 @@ h2 {
 }
 
 p {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
+    line-height: 2rem;
 }
 
 h3 {
@@ -218,10 +218,24 @@ section {
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
+.explainer {
+    text-align: start;
+    font-size: 1.3rem;
+    padding: 15px 30px;
+}
+
+.explainer-next-to-wallet {
+    text-align: start;
+    font-size: 1.3rem;
+    padding: 15px 30px;
+    margin: 0 40px 0 0;
+}
+
 
 .description-and-wallet {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin: 10px auto;
 }
 
