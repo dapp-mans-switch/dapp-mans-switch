@@ -456,10 +456,10 @@ export default function Staker(props) {
         <div className="panel">
           <h3>Reveal a Secret Share</h3>
           <form id="reveal-secret-from">
-            <label htmlFor="stakerId">Enter Secret ID:</label>
+            <label htmlFor="stakerId">Secret ID:</label>
             <span><input id="revealSecretId" type="number" autoComplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
 
-            <label htmlFor="stakerPrivateKey">Enter your private key:</label>
+            <label htmlFor="stakerPrivateKey">Your private key:</label>
             <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
           </form>
           <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
