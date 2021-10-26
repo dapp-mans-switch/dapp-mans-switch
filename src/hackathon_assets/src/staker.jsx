@@ -36,7 +36,7 @@ export default function Staker(props) {
       console.log("PrivateKey:", keyPair.privateKey)
 
       downloadPrivateKey(keyPair.privateKey)
-      errorPopup(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`, "register_staker_btn", true)
+      errorPopup(`The private key was saved as a download.\nMake sure to store this file securely, since you will need it to decrypt your Secret shares to earn rewards.`, "register_staker_btn", true)
     }
 
     if ('err' in result) {
