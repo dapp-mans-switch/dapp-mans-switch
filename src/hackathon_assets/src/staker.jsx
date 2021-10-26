@@ -264,7 +264,7 @@ export default function Staker(props) {
     }
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(privateKey));
-    element.setAttribute('download', 'private_key');
+    element.setAttribute('download', 'yeet_man_switch_private_key');
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
