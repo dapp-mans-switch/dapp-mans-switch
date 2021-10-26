@@ -1,13 +1,15 @@
 import * as React from 'react'
-import routToPage from './router'
+import { render } from 'react-dom'
+
 import * as crypto from './crypto'
 import * as helpers from './helpers'
-import { render } from 'react-dom'
+import routToPage from './router'
 
 import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 import {errorPopup} from './errorPopup'
 import Wallet from './wallet'
+
 
 export default function Staker(props) {
 
@@ -17,14 +19,24 @@ export default function Staker(props) {
 
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
-  const [stakerId, setStakerId] = React.useState('')
   const [revealSecretId, setRevealSecretId] = React.useState('')
+  const [stakerId, setStakerId] = React.useState('')
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
+
+  /**
+   * Checks whether the current user is registered as a staker.
+   */
   async function isRegistered() {
     return await hackathon.isRegistered()
   }
 
+
+  /**
+   * Registers a new staker.
+   * Creats a public/private keypair that is used for en- and decrypting shares.
+   * Sends the public key to the backend and downloads the private key.
+   */
   async function registerStaker() {
     const keyPair = crypto.generateKeyPair()
 
@@ -57,6 +69,10 @@ export default function Staker(props) {
     renderRegisterXORStakerPanels()
   }
 
+
+  /**
+   * Get the encrypted shares for a given secret from the backend, decrypt and upload them.
+   */
   async function revealSecretShare() {
     if (!(await isRegistered())) {
       alert("Please register first!")
@@ -91,17 +107,19 @@ export default function Staker(props) {
       removeLoadingAnimation()
       return
     }
+
     let secret = relevantSecret[0]
 
     console.log("Secret to reveal", secret)
 
-    // check if decryption of secret is allowed (time or heartbeat)
     // check if secret already decrypted
     if (secret.hasRevealed) {
       errorPopup("You already have revealed your share of this secret!", 'reveal_secret_share_button', true)
       removeLoadingAnimation()
       return
     }
+
+    // check if decryption of secret is allowed (time or heartbeat)
     if (!secret.shouldReveal) {
       errorPopup("You should not reveal your shares of this secret yet!", 'reveal_secret_share_button', true)
       removeLoadingAnimation()
@@ -118,8 +136,6 @@ export default function Staker(props) {
         decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], stakerPrivateKey, uploaderPublicKey))
       }
       console.log("decryptedShares", decryptedShares)
-
-
     } catch (error) {
       console.log(`Failed decryption: ${error}`)
       errorPopup(`Failed decryption: ${error}`, 'reveal_secret_share_button')
@@ -127,14 +143,12 @@ export default function Staker(props) {
       return
     }
 
-
     let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
     if ('ok' in result) {
       let payout = result['ok']['payout']
       console.log('updatedSecret', result['ok']['secret'])
       errorPopup(`Successfully revealed your shares for secret with id ${secret.secret_id} with payout ${payout}`, 'reveal_secret_share_button', true)
-    }
-    if ('err' in result) {
+    } else if ('err' in result) {
       const err = result['err']
       if ('secretNotFound' in err) {
         errorPopup(`Secret with id ${err['secretNotFound']} was not found!`, 'reveal_secret_share_button')
@@ -162,6 +176,10 @@ export default function Staker(props) {
     window.getBalance()
   }
 
+
+  /**
+   * Creates a new stake.
+   */
   async function addStake() {
     if (!(await isRegistered())) {
       alert("Please register first!")
@@ -203,8 +221,7 @@ export default function Staker(props) {
       setAmount(null)
       setDuration(null)
       document.getElementById('staker_form').reset()
-    }
-    if ('err' in result) {
+    } else if ('err' in result) {
       const err = result['err']
       if ('unknownStaker' in err) {
         errorPopup(`You (${err['unknownStaker'].toString()}) are not a registered staker!`, 'add_new_stake_button')
@@ -225,6 +242,11 @@ export default function Staker(props) {
     window.getBalance()
   }
 
+
+  /**
+   * Ends a given stake.
+   * More info in the relevant backend function.
+   */
   async function endStake(id) {
     appendLoadingAnimation("stakerTable", true)
     const result = await hackathon.endStake(id)
@@ -256,8 +278,11 @@ export default function Staker(props) {
     window.getBalance()
   }
 
-  // write private key to file and safe to downloads
-  // staker_id is prepended to the file name
+
+  /*
+  * Writes private key to a file and downloads it.
+  * staker_id is prepended to the file name TODO: no, it's not (yet)
+  */
   function downloadPrivateKey(privateKey) {
     if (privateKey == null) {
       alert("Please create your private key first")
@@ -271,6 +296,10 @@ export default function Staker(props) {
     document.body.removeChild(element);
   }
 
+
+  /**
+   * Populates the 'My Stakes' table.
+   */
   async function listAllStakes() {
     let stakes = await hackathon.listMyStakes()
     stakes.sort(function(a, b) {
@@ -289,7 +318,6 @@ export default function Staker(props) {
     }
     // const deleteCell = tr.insertCell(-1)
     // deleteCell.innerHTML = "delete"
-
 
     stakes.map(function (s) {
       const tr = table.insertRow(-1)
@@ -318,8 +346,11 @@ export default function Staker(props) {
     });
   }
 
-  async function listAllRelevantSecrets() {
 
+  /**
+   * Populates the 'My Secret Shares' table.
+   */
+  async function listAllRelevantSecrets() {
     let relevantSecrets = await hackathon.listRelevantSecrets()
     relevantSecrets.sort(function(a, b) {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
@@ -410,11 +441,15 @@ export default function Staker(props) {
     });
   }
 
+  
   async function requestPayout(secretId) {
     const result = await hackathon.requestPayout(secretId)
     console.log("requestPayout", result)
   }
 
+  /**
+   * Renders the wallet.
+   */
   async function createWallet() {
     render(React.createElement(Wallet, props), document.getElementById('my-wallet'))
     // render(React.createElement(Wallet, {...props, ref: {walletRef}}), document.getElementById('my-wallet'))
@@ -430,6 +465,9 @@ export default function Staker(props) {
   }, []);
 
 
+  /**
+   * Decides what view is to be rendered based on registration status.
+   */
   async function renderRegisterXORStakerPanels() {
     const reg = await isRegistered()
     const signedUp = document.getElementById("signedUp")
@@ -462,7 +500,6 @@ export default function Staker(props) {
         </div>
         <div id="my-wallet"/>
       </div>
-
 
       <div id="register" className="panel" hidden={true}>
         <a id="register_staker_btn" data-text="Register as Staker" onClick={() => registerStaker()} className="rainbow-button" style={{width: 330}}></a>
@@ -503,7 +540,6 @@ export default function Staker(props) {
         </div>
       </div>
 
-
       <a onClick={() => {routToPage('Main')}}>
         <video autoPlay loop muted class="back-button-big">
           <source src={backButtonVideo}/>
@@ -511,6 +547,4 @@ export default function Staker(props) {
       </a>
     </div>
   );
-
 };
-
