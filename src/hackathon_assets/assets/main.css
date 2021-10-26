@@ -249,9 +249,11 @@ section {
 
 .topup-button {
     border-radius: 15px;
-    padding: 10px;
-    line-height: 1.5;
-    background-color: rgba(255, 255, 255, 0.838);
+    border: solid white;
+    padding: 8px 10px;
+    line-height: 1.4;
+    color: white;
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .wallet-loading-animation {
