@@ -32,7 +32,7 @@ module {
 
         shares: [Text];
         decrypted_share_shas: [Text];
-        revealed: [Bool];
+        revealed: [Bool]; // is true if stake has revealed share or secret expired and reward was paid out
     };
 
     /*
@@ -43,9 +43,10 @@ module {
         secret_id: Nat;
         uploader_public_key: Text;
         expiry_time: Int; // seconds since 1970-01-01
+        last_heartbeat: Int;
         relevantShares: [Text];
         shouldReveal: Bool;
-        hasRevealed: Bool;
+        hasPayedout: Bool;
     };
 
 }

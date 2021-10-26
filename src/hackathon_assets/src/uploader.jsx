@@ -217,12 +217,11 @@ export default function Uploader(props) {
 
                 const progressCell = tr.insertCell(-1)
                 const minReveal = crypto.minSharesToRecover(n_shares)
-                progressCell.innerHTML = (min(n_revealed, minReveal)  / minReveal * 100.0).toLocaleString(undefined, { minimumFractionDigits: 2}) + " %"
+                progressCell.innerHTML = (min(n_revealed, minReveal)  / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
             } else {
                 let now = new Date()
-                let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
-                // console.log("next_heartbeat", next_heartbeat)
-                let remainingTimeMS = new Date(next_heartbeat) - now
+                let next_heartbeat = new Date(Number(s.last_heartbeat + s.heartbeat_freq) * 1000)
+                let remainingTimeMS = next_heartbeat - now
                 let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
                 const heartbeatCell = tr.insertCell(-1)
                 heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"

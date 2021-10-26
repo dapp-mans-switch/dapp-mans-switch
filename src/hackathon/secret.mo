@@ -4,6 +4,7 @@ import Hash "mo:base/Hash";
 import List "mo:base/List";
 import Map "mo:base/HashMap";
 import Nat "mo:base/Nat";
+import Int "mo:base/Int";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 import Buffer "mo:base/Buffer";
@@ -24,11 +25,15 @@ module {
         #wrongNumberOfShares: Nat;
         #alreadyRevealed: Nat;
         #insufficientFunds: Text;
-        #revealedTooSoon: Int;
+        #shouldNotReveal: Int;
         #tooLate: Secret;
+        #secretExpired: Int;
     };
     public type RevealAllSharesSuccess = {secret: Secret; payout: Nat};
     public type RevealAllSharesResult = Result.Result<RevealAllSharesSuccess, RevealAllSharesError>;
+    
+    public type RequestPayoutError = {#alreadyPayedOut: Nat; #shouldReveal: Secret; #secretNotFound: Nat; #insufficientFunds: Text};
+    public type RequestPayoutResult = Result.Result<Nat, RequestPayoutError>;
 
     public class SecretManager() {
 
@@ -138,12 +143,12 @@ module {
 
         /*
         * Checks if a secret should be revealed.
-        * This is the case if the last heartbeat was too long ago or if the expiry_time is in the past.
+        * This is the case if the last heartbeat was too long ago.
         */
         public func shouldRevealSecret(secret: Secret) : Bool {
             let now = Date.secondsSince1970();
-            // either secret has expired or last heartbeat is too long ago
-            let revealOk: Bool = (now > secret.expiry_time) or (now - secret.last_heartbeat > secret.heartbeat_freq);
+            // check if last heartbeat is too long ago, if all heartbeats were made until expiry time then secret remains encrypted
+            let revealOk: Bool = (Int.min(now, secret.expiry_time) - secret.last_heartbeat) > secret.heartbeat_freq;
             return revealOk;
         };
 
@@ -178,9 +183,8 @@ module {
                 case (? secret) {
                     var share_counter: Nat = 0;
 
-                    let now = Date.secondsSince1970();
-                    if (now < secret.expiry_time) {
-                        return #err(#revealedTooSoon(secret.expiry_time));
+                    if (not shouldRevealSecret(secret)) {
+                        return #err(#shouldNotReveal(secret.last_heartbeat + secret.heartbeat_freq));
                     };
 
                     for (i in Iter.range(0, secret.shares.size()-1)) {
@@ -250,11 +254,77 @@ module {
                     secrets.put(secret_id, newSecret);
 
                     var payout = share_counter;
+                    let now = Date.secondsSince1970();
                     if (now - secret.expiry_time > 86400 * 3) {
                         return #err(#tooLate(secret)); // too late
                     };
 
                     return #ok({secret=newSecret; payout=share_counter});
+                };
+            };
+        };
+
+        /*
+        * If an author of a secret sends all required heartbeat and the secret expires,
+        * then stakers can request payout.
+        */
+        public func requestPayout(secret_id: Nat, staker_id: Principal): RequestPayoutResult {
+            let secret = secrets.get(secret_id);
+            switch secret {
+                case null { return #err(#secretNotFound(secret_id)) };
+                case (? secret) {
+
+                    if (shouldRevealSecret(secret)) {
+                        return #err(#shouldReveal(secret)); // do not payout if shares should be revealed
+                    };
+
+                    for (i in Iter.range(0, secret.shares.size()-1)) {
+                        if (secret.share_holder_ids[i] == staker_id) {
+                            if (secret.revealed[i]) {
+                                return #err(#alreadyPayedOut(i));
+                            };
+                        };
+                    };
+
+                    var share_counter: Nat = 0;
+                    let _newRevealed = Array.init<Bool>(secret.shares.size(), false);
+
+                    for (i in Iter.range(0, _newRevealed.size()-1)) {
+                        
+                        if (secret.share_holder_ids[i] == staker_id) {
+                            _newRevealed[i] := true;
+                            share_counter += 1;
+
+                        } else {
+                            _newRevealed[i] := secret.revealed[i];
+                        };
+                    };
+                    let newRevealed: [Bool] = Array.freeze(_newRevealed);
+
+                    let newSecret = {
+                        secret_id = secret.secret_id;
+                        author_id = secret.author_id;
+
+                        payload = secret.payload;
+                        uploader_public_key = secret.uploader_public_key;
+                        reward = secret.reward;
+
+                        expiry_time = secret.expiry_time;
+                        last_heartbeat = secret.last_heartbeat;
+                        heartbeat_freq = secret.heartbeat_freq;
+
+                        share_holder_ids = secret.share_holder_ids;
+                        share_holder_stake_ids = secret.share_holder_stake_ids;
+
+                        shares = secret.shares;
+                        decrypted_share_shas = secret.decrypted_share_shas;
+                        revealed = newRevealed; // update
+                    };
+                    secrets.put(secret_id, newSecret);
+                    
+                    let payout = share_counter;
+
+                    return #ok(payout);
                 };
             };
         };
@@ -277,25 +347,26 @@ module {
         */
         private func toRelevantSecret(s: Secret, staker_id: Principal): RelevantSecret {
             var shouldReveal = shouldRevealSecret(s);
-            var hasRevealed = false;
+            var hasPayedout = false;
 
             let relevantShares = Buffer.Buffer<Text>(s.shares.size());
             for (i in Iter.range(0, s.shares.size()-1)) {
                 if (s.share_holder_ids[i] == staker_id) {
                     relevantShares.add(s.shares[i]);
-                    hasRevealed := s.revealed[i]; // have all the same boolean for same staker_id
+                    hasPayedout := s.revealed[i]; // have all the same boolean for same staker_id
                 };
             };
 
-            shouldReveal := shouldReveal and not hasRevealed;
+            shouldReveal := shouldReveal and not hasPayedout;
 
             let relevantSecret = {
                 secret_id = s.secret_id;
                 uploader_public_key = s.uploader_public_key;
                 expiry_time = s.expiry_time;
+                last_heartbeat = s.last_heartbeat;
                 relevantShares = relevantShares.toArray();
                 shouldReveal = shouldReveal;
-                hasRevealed = hasRevealed;
+                hasPayedout = hasPayedout;
             };
 
             return relevantSecret;

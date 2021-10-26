@@ -329,7 +329,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Expires on', 'Ready to reveal',]
+    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Expires on', '']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -348,8 +348,8 @@ export default function Staker(props) {
       sharesCell.innerHTML = s.relevantShares.length
 
       const hasCell = tr.insertCell(-1)
-      hasCell.innerHTML = s.hasRevealed
-      if (s.hasRevealed) {
+      hasCell.innerHTML = s.hasPayedout
+      if (s.hasPayedout) {
         hasCell.innerHTML = "&#9989"
       } else {
         hasCell.innerHTML = "&#10060"
@@ -358,24 +358,61 @@ export default function Staker(props) {
       const expiresOnCell = tr.insertCell(-1)
       expiresOnCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time)
 
-      // enable reveal button only of should reveal is true
-      const secretIdText = document.getElementById('revealSecretId')
-      const revealButtonCell = tr.insertCell(-1)
-      let revealButton = document.createElement('button')
-      revealButton.innerHTML = "Reveal"
-      revealButton.className = "revealButton"
+      
+      const buttonCell = tr.insertCell(-1)
+
 
       // shouldCell.innerHTML = s.shouldReveal
       if (s.shouldReveal) {
-        revealButton.addEventListener("click", function() {
+        // enable reveal button only of should reveal is true
+        const secretIdText = document.getElementById('revealSecretId')
+        let button = document.createElement('button')
+        buttonCell.appendChild(button)
+        button.innerHTML = "Reveal"
+        button.className = "revealButton"
+        button.addEventListener("click", function() {
           setRevealSecretId(s.secret_id)
           secretIdText.value = s.secret_id
+          document.getElementById("reveal-secret-from").scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"})
         })
+
+        if (s.hasPayedout) {
+          // already revealed
+          button.disabled = true
+          hasCell.innerHTML = "&#9989"
+        } else {
+          hasCell.innerHTML = "&#10071"
+        }
+
       } else {
-        revealButton.disabled = true
+          if (s.expiry_time < new Date() / 1000) {
+            // expired secret, can request payout?
+            let button = document.createElement('button')
+            buttonCell.appendChild(button)
+            button.innerHTML = "Payout"
+            button.className = "revealButton"
+            button.addEventListener("click", function() {
+              requestPayout(s.secret_id)
+            })
+
+            if (s.hasPayedout) {
+              // cannot request payout -> already payed out
+              button.disabled = true
+              hasCell.innerHTML = "&#9989"
+            } else {
+              hasCell.innerHTML = "&#10071"
+            }
+          } else {
+            // secret author still alive
+              hasCell.innerHTML = "&#128147"
+          }
       }
-      revealButtonCell.appendChild(revealButton)
     });
+  }
+
+  async function requestPayout(secretId) {
+    const result = await hackathon.requestPayout(secretId)
+    console.log("requestPayout", result)
   }
 
   async function createWallet() {

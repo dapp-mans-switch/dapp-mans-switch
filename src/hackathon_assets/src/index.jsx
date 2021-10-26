@@ -5,6 +5,7 @@ import { auth } from './auth'
 import Wallet from './wallet'
 
 import keyFlipVideo from './../assets/key-flip.mkv'
+import { hackathon } from '../../declarations/hackathon/index'
 
 
 export default function Main() {
@@ -64,6 +65,10 @@ export default function Main() {
 
       <div id="my-wallet"/>
       <button onClick={() =>  whoami()}>Who Am I?</button>
+      <button onClick={async () => {
+        await hackathon.changeToDemoData();
+        console.log("Demo Data!")
+        }}>Demo Data!</button>
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>

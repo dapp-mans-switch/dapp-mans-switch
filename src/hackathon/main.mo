@@ -14,6 +14,7 @@ import Types "./types";
 import SHA "./utils/SHA256";
 import RNG "./utils/rng";
 import base64 "./utils/base64";
+import Demo "./demo_data/demo_data";
 
 import Token "canister:token";
 
@@ -372,7 +373,7 @@ actor Hackathon {
 
     /*
     * Checks if a secret should be revealed.
-    * This is the case if the last heartbeat was too long ago or if the expiry_time is in the past.
+    * This is the case if the last heartbeat was too long ago.
     */
     public query func shouldReveal(secret_id: Nat) : async Bool {
         return secretManager.shouldReveal(secret_id);
@@ -409,14 +410,48 @@ actor Hackathon {
         };
     };
 
+    
+    /*
+    * If an author of a secret sends all required heartbeat and the secret expires,
+    * then stakers can request payout.
+    */
+    public shared(msg) func requestPayout(secret_id: Nat): async Secret.RequestPayoutResult {
+        let staker_id = msg.caller;
+        let r = secretManager.requestPayout(secret_id, staker_id);
+        switch (r) {
+            case (#err(e)) {
+                return r;
+            };
+            case (#ok(payout)) {
+                try {
+                    let ok = await Token.transfer(staker_id, payout, null);
+                    return r;
+                } catch(e) {
+                    // should not happen as author id pays for all payouts
+                    // we reveal the secret anyway but don't payout
+                    return #err(#insufficientFunds("We are sorry that at this point we cannot payout your reward. The shares are revealed anyways. Contact support!"));
+                };
+            };
+        };
+    };
+
 
     // ---------------------------------------------------------------------------------------------
 
     // TODO: remove
-    public shared(msg) func dropTables() {
+    public shared(msg) func dropTables(): async Bool {
         secretManager.secrets := HashMap.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
         stakerManager.stakes := HashMap.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
         stakerManager.stakers := HashMap.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
+        true;
+    };
+
+    public shared(msg) func changeToDemoData(): async Bool {
+        let ok = await dropTables();
+        Demo.addStakers(msg.caller, stakerManager.stakers);
+        Demo.addStakes(msg.caller, stakerManager.stakes);
+        Demo.addSecrets(msg.caller, stakerManager, secretManager.secrets);
+        true;
     };
 
     // System stability
