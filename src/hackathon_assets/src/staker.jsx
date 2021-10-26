@@ -306,7 +306,7 @@ export default function Staker(props) {
       deleteButton.innerHTML = "End stake"
       deleteButton.className = "endStakeButton"
       let newDate = new Date()
-      if (newDate < expiryDate) {
+      if (s.valid) {
         deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
       } else {
         deleteButton.disabled = true;
