@@ -16,7 +16,7 @@ body {
     justify-content: center;
     width: 80%;
     min-width: 550px;
-    max-width: 750px;
+    max-width: 800px;
 }
 
 h2 {
@@ -140,14 +140,28 @@ section {
     display: none;
 }
 
+
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px auto;
+}
+
 .error-div {
-    width: 60%;
+    display: inline-block;
+    justify-content: center;
     font-size: 1rem;
     line-height: 1.5;
     border-radius: 10px;
-    margin: 5px auto;
-    padding: 10px;
+    padding: 10px 20px;
     background: rgba(255, 0, 0, 0.5);
+}
+
+.error-confirm-button {
+    border-radius: 15px;
+    padding: 5px 12px;
+    margin-left: 15px;
 }
 
 .rainbow-button {

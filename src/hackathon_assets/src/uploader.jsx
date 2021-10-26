@@ -166,48 +166,6 @@ export default function Uploader(props) {
         uploadButton.style.pointerEvents = "auto"
     }
 
-    ///////////////////////////// TESTS /////////////////////////////
-
-    // TODO move to a test file
-
-    function testSecretEnDecryption() {
-        const uploaderKeyPair = crypto.generateKeyPair()
-        const uploaderPrivateKey = uploaderKeyPair.privateKey
-        const secret = 'very secret'
-        const encryptedSecret = crypto.encryptSecret(secret, uploaderPrivateKey)
-        const plaintext = crypto.decryptSecret(encryptedSecret, uploaderPrivateKey)
-        console.log('testSecretEnDecryption', secret == plaintext)
-    }
-
-    function testSharingAndReconstruction() {
-         const uploaderKeyPair = crypto.generateKeyPair()
-         const uploaderPrivateKey = uploaderKeyPair.privateKey
-         const uploaderPublicKey = uploaderKeyPair.publicKey
-         const staker1KeyPair = crypto.generateKeyPair()
-         const staker1PrivateKey = staker1KeyPair.privateKey
-         const staker1PublicKey = staker1KeyPair.publicKey
-         const staker2KeyPair = crypto.generateKeyPair()
-         const staker2PrivateKey = staker2KeyPair.privateKey
-         const staker2PublicKey = staker2KeyPair.publicKey
-         const staker3KeyPair = crypto.generateKeyPair()
-         const staker3PrivateKey = staker3KeyPair.privateKey
-         const staker3PublicKey = staker3KeyPair.publicKey
-         const stakerPublicKeys = [staker1PublicKey, staker2PublicKey, staker3PublicKey]
-
-         const keyshares = crypto.computeKeyShares(uploaderPrivateKey, 3)
-         const encryptedKeyShares = crypto.encryptMultipleKeyShares(keyshares, uploaderPrivateKey, stakerPublicKeys)
-
-         // lets say 1 of the 3 keyshares got lost
-         const share1 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[0], staker1PrivateKey, uploaderPublicKey))
-         const share2 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[1], staker2PrivateKey, uploaderPublicKey))
-         const share3 = crypto.base64ToKeyShare(crypto.decryptKeyShare(encryptedKeyShares[2], staker3PrivateKey, uploaderPublicKey))
-
-         const shares = {1: share1, 3: share3}
-         const reconstructedPrivateKey = crypto.reconstructPrivateKey(shares)
-         // can still reconstruct
-         console.log("testSharingAndReconstruction", reconstructedPrivateKey == uploaderPrivateKey)
-    }
-
 
     async function listAllSecrets() {
 
@@ -263,8 +221,8 @@ export default function Uploader(props) {
             } else {
                 let now = new Date()
                 let next_heartbeat = helpers.secondsSinceEpocheToDate(s.last_heartbeat + s.heartbeat_freq)
-                //console.log("next_heartbeat", next_heartbeat)
-                let remainingTimeMS = next_heartbeat - now
+                // console.log("next_heartbeat", next_heartbeat)
+                let remainingTimeMS = new Date(next_heartbeat) - now
                 let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
                 const heartbeatCell = tr.insertCell(-1)
                 heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
