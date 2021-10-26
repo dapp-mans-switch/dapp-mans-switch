@@ -7,6 +7,7 @@ import routToPage from './router'
 import { render } from 'react-dom'
 import Wallet from './wallet'
 import { min } from 'mathjs'
+import { errorPopup } from './errorPopup'
 
 import stillAliveVideo from './../assets/im_alive.mkv'
 import backButtonVideo from './../assets/back_button.mkv'
@@ -25,17 +26,17 @@ export default function Uploader(props) {
 
     function validateInput(secret, reward, expiryTime, heartbeatFreq) {
         if (secret == '') {
-            throw 'secret must not be empty'
+            throw 'Secret must not be empty'
         }
         const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
         if (isNaN(expiryTimeInUTCSecs)) {
-            throw 'expiryTime must not be empty'
+            throw 'Latest reveal date must not be empty'
         }
         // TODO validate expirytime input properly
         // also make sure the date is more than 1 heartbeat in the future?
         const nowInUTCSecs = (new Date().getTime()) / 1_000
         if (expiryTimeInUTCSecs - nowInUTCSecs <= 0) {
-          throw 'expiryTime must be in the future'
+          throw 'Latest reveal date must be in the future'
         }
         const rewardInt = helpers.getPositiveNumber(reward)
         const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
@@ -58,7 +59,7 @@ export default function Uploader(props) {
                 input = validateInput(secret, reward, expiryTime, heartbeatFreq)
             } catch (error) {
                 console.log(error)
-                alert('Please check your input: ' + error)
+                errorPopup('Please check your input: ' + error, 'secret_btn')
                 removeLoadingAnimation()
                 // re-enable upload button
                 uploadButton.style.pointerEvents = "auto"
@@ -84,7 +85,7 @@ export default function Uploader(props) {
             stakes = result['ok']
         }
         if ('err' in result) {
-            alert(`There are no stakes for the set expiry time!`)
+            errorPopup(`There are no stakes for the set expiry time!`, 'secret_btn')
             console.error(result['err'])
             removeLoadingAnimation()
             // re-enable upload button
@@ -95,7 +96,7 @@ export default function Uploader(props) {
         console.log("Stakes", stakes)
         if (stakes.length == 0) {
             // should not be possible, handled above
-            alert("Not enough stakes in system (have to be different from author)")
+            errorPopup("Not enough stakes in system (have to be different from author)", 'secret_btn')
             // re-enable upload button
             uploadButton.style.pointerEvents = "auto"
             return
@@ -134,7 +135,7 @@ export default function Uploader(props) {
         if ('ok' in addSecretResult) {
             let newSecret = addSecretResult['ok']
             console.log("newSecret", newSecret)
-            alert(`Secret with ID ${newSecret.secret_id} uploaded!`)
+            errorPopup(`Secret with ID ${newSecret.secret_id} uploaded!`, 'secret_btn')
             // reset form after successful upload
             setSecret(null)
             setReward(null)
@@ -145,19 +146,19 @@ export default function Uploader(props) {
         if ('err' in addSecretResult) {
             const err = addSecretResult['err']
             if ('invalidStakes' in err) {
-                alert(`Could not upload secret: Uploaded invalid stakes!`) // should not happen as we draw stakes from backend above
+                errorPopup(`Could not upload secret: Uploaded invalid stakes!`, 'secret_btn') // should not happen as we draw stakes from backend above
             } else if ('invalidReward' in err) {
-                alert(`Could not upload secret: Invalid reward ${err['invalidReward']}!`) // should not happen as we validate input
+                errorPopup(`Could not upload secret: Invalid reward ${err['invalidReward']}!`, 'secret_btn') // should not happen as we validate input
             } else if ('invalidHeartbeatFreq' in err) {
-                alert(`Could not upload secret: Invalid heatbeat frequency ${err['invalidHeartbeatFreq']}!`) // should not happen as we validate input
+                errorPopup(`Could not upload secret: Invalid heatbeat frequency ${err['invalidHeartbeatFreq']}!`, 'secret_btn') // should not happen as we validate input
             } else if ('invalidListLengths' in err) {
-                alert(`Could not upload secret: Lengths of lists should be the same!`) // should not happen
+                errorPopup(`Could not upload secret: Lengths of lists should be the same!`, 'secret_btn') // should not happen
             } else if ('invalidPublicKey' in err) {
-                alert(`Could not upload secret: Invalid public key!`) // should not happen as we get it from crypto.js
+                errorPopup(`Could not upload secret: Invalid public key!`, 'secret_btn') // should not happen as we get it from crypto.js
             } else if ('transferError' in err) {
-                alert(`Transfer error: ${err['transferError']}`)
+                errorPopup(`Transfer error: ${err['transferError']}`, 'secret_btn')
             } else {
-                alert(`Something went wrong!`)
+                errorPopup(`Something went wrong!`, 'secret_btn')
             }
             console.error(err)
         }
@@ -308,7 +309,7 @@ export default function Uploader(props) {
             console.log("Cost", rewardInt + Number(secretPrice))
 
         } catch (error) {
-            alert('Input positive reward and date!')
+            errorPopup('Input positive reward and date!', 'availability-btn')
         }
     }
 
@@ -376,7 +377,7 @@ export default function Uploader(props) {
                 <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>
               </form>
 
-                <button onClick={checkAvailability}>Check availability</button>
+                <button id="availability-btn" onClick={checkAvailability}>Check availability</button>
             </div>
 
             <a onClick={() => {routToPage('Main')}}>

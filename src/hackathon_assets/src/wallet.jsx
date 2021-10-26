@@ -34,11 +34,11 @@ export default function Wallet(props) {
     return(
         <div class="wallet-in-app">
             <div>
-                <p>Balance:</p>
+                <p>Wallet Balance:</p>
                 <b id="walletBalance">0 $HRBT</b>
             </div>
             <div>
-                <button id="topUpButton" onClick={buyTokens}>Top Up + 100 $HRBT</button>
+                <button id="topUpButton" onClick={buyTokens}>Top Up</button>
             </div>
         </div>
     );

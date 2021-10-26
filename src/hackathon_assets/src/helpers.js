@@ -19,7 +19,7 @@ export function getIdsOfStakes(stakes) {
 export function getPositiveNumber(string) {
     let num = parseInt(string)
     if (isNaN(num) || num <= 0) {
-        throw 'could not extract positive number'
+        throw 'Please enter a positive number'
     } 
     return num
 }
@@ -27,7 +27,7 @@ export function getPositiveNumber(string) {
 export function getNaturalNumber(string) {
     let num = parseInt(string)
     if (isNaN(num) || num < 0) {
-        throw 'could not extract positive number'
+        throw 'Please enter a positive number'
     } 
     return num
 }
