@@ -36,19 +36,19 @@ export default function Staker(props) {
       console.log("PrivateKey:", keyPair.privateKey)
 
       downloadPrivateKey(keyPair.privateKey)
-      alert(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`)
+      errorPopup(`The private key was saved as a download. \nMake sure to store this file securely, since you will need it to decrypt your share.`, "register_staker_btn", true)
     }
 
     if ('err' in result) {
       const err = result['err']
       if ('alreadyRegistered' in err) {
         let principal = err['alreadyRegistered']
-        alert(`User with principal ${principal.toString()} is already a registered staker!`)
+        errorPopup(`User with principal ${principal.toString()} is already a registered staker!`, "register_staker_btn")
       } else if ('invalidKey' in err) {
         // base64 is guaranteed by crypto.js
-        alert(`Generated public key ${err['invalidKey']} is not a valid key!`)
+        errorPopup(`Generated public key ${err['invalidKey']} is not a valid key!`, "register_staker_btn")
       } else {
-        alert(`Something went wrong!`)
+        errorPopup(`Something went wrong!`, "register_staker_btn")
       }
       console.error("RegisterStakerError:", err)
     }
@@ -78,7 +78,7 @@ export default function Staker(props) {
       secretId = helpers.getNaturalNumber(revealSecretId)
     } catch (error) {
       console.log(error)
-      alert('Secret id must be a positive number!')
+      errorPopup('Secret ID must be a positive number!', 'reveal_secret_share_button')
       removeLoadingAnimation()
       return
     }
@@ -87,7 +87,7 @@ export default function Staker(props) {
     //console.log('relevantSecret', relevantSecret)
 
     if (relevantSecret.len == 0) {
-      alert(`No secret for id ${secretId}!`)
+      errorPopup(`No secret for id ${secretId}!`, 'reveal_secret_share_button')
       removeLoadingAnimation()
       return
     }
@@ -98,12 +98,12 @@ export default function Staker(props) {
     // check if decryption of secret is allowed (time or heartbeat)
     // check if secret already decrypted
     if (secret.hasRevealed) {
-      alert("You already have revealed your share of this secret!")
+      errorPopup("You already have revealed your share of this secret!", 'reveal_secret_share_button', true)
       removeLoadingAnimation()
       return
     }
     if (!secret.shouldReveal) {
-      alert("You should not reveal your shares of this secret yet!")
+      errorPopup("You should not reveal your shares of this secret yet!", 'reveal_secret_share_button', true)
       removeLoadingAnimation()
       return
     }
@@ -122,7 +122,7 @@ export default function Staker(props) {
 
     } catch (error) {
       console.log(`Failed decryption: ${error}`)
-      alert(`Failed decryption: ${error}`)
+      errorPopup(`Failed decryption: ${error}`, 'reveal_secret_share_button')
       removeLoadingAnimation()
       return
     }
@@ -132,26 +132,26 @@ export default function Staker(props) {
     if ('ok' in result) {
       let payout = result['ok']['payout']
       console.log('updatedSecret', result['ok']['secret'])
-      alert(`Successfully revealed your shares for secret with id ${secret.secret_id} with payout ${payout}`)
+      errorPopup(`Successfully revealed your shares for secret with id ${secret.secret_id} with payout ${payout}`, 'reveal_secret_share_button', true)
     }
     if ('err' in result) {
       const err = result['err']
       if ('secretNotFound' in err) {
-        alert(`Secret with id ${err['secretNotFound']} was not found!`)
+        errorPopup(`Secret with id ${err['secretNotFound']} was not found!`, 'reveal_secret_share_button')
       } else if ('invalidDecryptedSHA' in err) {
-        alert(`SHA of decrypted share did not match!`)  // wrong shares, wrong order -> should not happen
+        errorPopup(`SHA of decrypted share did not match!`, 'reveal_secret_share_button')  // wrong shares, wrong order -> should not happen
       } else if ('wrongNumberOfShares' in err) {
-        alert(`Invalid number of shares uploaded!`) // -> should not happen
+        errorPopup(`Invalid number of shares uploaded!`, 'reveal_secret_share_button') // -> should not happen
       } else if ('alreadyRevealed' in err) {
-        alert(`You have already revealed this secret!`)
+        errorPopup(`You have already revealed this secret!`, 'reveal_secret_share_button')
       } else if ('insufficientFunds' in err) {
-        alert(`Insufficient funds: ${err['insufficientFunds']}`)
+        errorPopup(`Insufficient funds: ${err['insufficientFunds']}`, 'reveal_secret_share_button')
       } else if ('revealedTooSoon' in err) {
-        alert(`You should not reveal this secret yet!`)
+        errorPopup(`You should not reveal this secret yet!`, 'reveal_secret_share_button')
       } else if ('tooLate' in err) {
-        alert(`You uploaded the secret shares too late. Maximum is 3 days. You receive no payout!`)
+        errorPopup(`You uploaded the secret shares too late. Maximum is 3 days. You receive no payout!`, 'reveal_secret_share_button', true)
       } else {
-        alert(`Something went wrong!`)
+        errorPopup(`Something went wrong!`, 'reveal_secret_share_button')
       }
       console.error(err)
     }
@@ -198,7 +198,7 @@ export default function Staker(props) {
 
     if ('ok' in result) {
       let newStakeId = result['ok']
-      alert(`Stake with id ${newStakeId} was added!`)
+      errorPopup(`Stake with id ${newStakeId} was added!`, 'add_new_stake_button', true)
       // reset form after successful stake
       setAmount(null)
       setDuration(null)
@@ -207,13 +207,13 @@ export default function Staker(props) {
     if ('err' in result) {
       const err = result['err']
       if ('unknownStaker' in err) {
-        alert(`You (${err['unknownStaker'].toString()}) are not a registered staker!`)
+        errorPopup(`You (${err['unknownStaker'].toString()}) are not a registered staker!`, 'add_new_stake_button')
       } else if ('invalidDuration' in err) {
-        alert(`Could not add a stake with invalid duration ${err['invalidDuration']}`)
+        errorPopup(`Could not add a stake with invalid duration ${err['invalidDuration']}`, 'add_new_stake_button')
       } else if ('transferError' in err) {
-        alert(`Failed token transfer: ${err['transferError']}`)
+        errorPopup(`Failed token transfer: ${err['transferError']}`, 'add_new_stake_button')
       } else {
-        alert(`Something went wrong!`)
+        errorPopup(`Something went wrong!`, 'add_new_stake_button')
       }
       console.error(result['err'])
     }
