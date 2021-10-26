@@ -239,7 +239,7 @@ section {
     padding: 30px 10px 30px 10px;
     line-height: 1;
     width: 50%;
-    min-width: 380px;
+    min-width: 350px;
     border-radius: 20px;
     background: rgba(38, 0, 255, 0.7);
     backdrop-filter: blur(8px);
@@ -247,6 +247,17 @@ section {
         -9px -9px 16px  rgba(255,255,255, 0.5);
 }
 
+.topup-button {
+    border-radius: 15px;
+    padding: 10px;
+    line-height: 1.5;
+    background-color: rgba(255, 255, 255, 0.838);
+}
+
+.wallet-loading-animation {
+    bottom: 25px;
+    right: -100px;
+}
 
 form {
     padding: 0 50px 0 50px;

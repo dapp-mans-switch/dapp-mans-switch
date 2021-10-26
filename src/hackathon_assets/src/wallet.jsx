@@ -16,9 +16,12 @@ export default function Wallet(props) {
     // top up balance (+100 $HRBT)
     async function buyTokens() {
         appendLoadingAnimation("topUpButton", false)
+        let spinner = document.getElementById("loadAnimation")
+        spinner.classList.add("wallet-loading-animation")
         await token.buyIn(100)
         getBalance()
         removeLoadingAnimation()
+        
     }
 
     // make getBalance a global window-function
@@ -38,7 +41,7 @@ export default function Wallet(props) {
                 <b id="walletBalance">0 $HRBT</b>
             </div>
             <div>
-                <button id="topUpButton" onClick={buyTokens}>Top Up</button>
+                <button id="topUpButton" className="topup-button" onClick={buyTokens}><b style={{fontSize:1.2+'rem'}}>Top Up</b><br/>+100 $HRBT</button>
             </div>
         </div>
     );
