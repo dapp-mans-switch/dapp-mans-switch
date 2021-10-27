@@ -12,6 +12,7 @@ import { hackathon } from '../../declarations/hackathon/index'
 export default function Main() {
   const [amount, setAmount] = React.useState(0)
   let canisters = auth.canisters
+  
 
   // returns principal id of the user's browser (dfx identity api)
   async function whoami() {
@@ -34,6 +35,16 @@ export default function Main() {
   React.useEffect(async () => {
     window.scrollTo(0,0);
 
+    const videosPreload = ['./../assets/key-flip.mkv', './../assets/back_button.mkv']
+    videosPreload.forEach((vid) => {
+      if (!window[vid]) {
+        var newVid = document.createElement("video");
+        newVid.setAttribute("src", vid);
+        newVid.src = vid;
+        window[vid] = newVid;
+      }
+    })
+
     // uncomment next line to use with auth
     // await auth.auth(); let x = await auth.getCanisters()
 
@@ -54,7 +65,7 @@ export default function Main() {
 
 
       <div className="panel">
-        <video autoPlay loop muted className="key-flip-video">
+        <video autoPlay loop muted className="key-flip-video" type="video/webm">
           <source src={keyFlipVideo}/>
         </video>
 
