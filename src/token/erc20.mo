@@ -16,15 +16,11 @@ actor {
     private stable let tkDecimals : Nat8 = 0;
     // private stable let tkTotalSupply : Nat = 1_000_000_000;
 
-
+     /*
+    * This function is for demo purposes. It generates and hands out $HRBT for free.
+    * In the future and for real world use, we would exchange $HRBT for $ICP or cycles.
+    */
 	public shared({caller}) func buyIn(amount : Nat) : async Nat {
-		// TODO
-		//  _____ ___  ____   ___
-		// |_   _/ _ \|  _ \ / _ \
-		//   | || | | | | | | | | |
-		//   | || |_| | |_| | |_| |
-		//   |_| \___/|____/ \___/
-
         let balance = _balanceOf(caller);
 		balances.put(caller, balance + amount);
         return _balanceOf(caller);
