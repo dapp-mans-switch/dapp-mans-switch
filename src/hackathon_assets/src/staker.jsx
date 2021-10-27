@@ -355,11 +355,13 @@ export default function Staker(props) {
     });
   }
 
+  const interval = setInterval(listAllRelevantSecrets, 60*1000)
 
   /**
    * Populates the 'My Secret Shares' table.
    */
   async function listAllRelevantSecrets() {
+    console.log("listAllRelevantSecrets")
     let relevantSecrets = await hackathon.listRelevantSecrets()
     relevantSecrets.sort(function(a, b) {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
@@ -494,6 +496,10 @@ export default function Staker(props) {
     renderRegisterXORStakerPanels()
   }, []);
 
+  function goBack() {
+    clearInterval(interval)
+    routToPage('Main')
+  }
 
   /**
    * Decides what view is to be rendered based on registration status.
@@ -515,7 +521,7 @@ export default function Staker(props) {
   return (
     <div class="eventHorizon">
       <div class="header-n-nav">
-        <a onClick={() => {routToPage('Main')}}>
+        <a onClick={goBack}>
           <video autoPlay loop muted class="back-button-video">
             <source src={backButtonVideo}/>
           </video>
@@ -571,7 +577,7 @@ export default function Staker(props) {
         </div>
       </div>
 
-      <a onClick={() => {routToPage('Main')}}>
+      <a onClick={goBack}>
         <video autoPlay loop muted class="back-button-big">
           <source src={backButtonVideo}/>
         </video>

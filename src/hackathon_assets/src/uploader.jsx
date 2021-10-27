@@ -166,8 +166,10 @@ export default function Uploader(props) {
         uploadButton.style.pointerEvents = "auto"
     }
 
+    const interval = setInterval(listAllSecrets, 30*1000)
 
     async function listAllSecrets() {
+        console.log("listAllSecrets")
 
         let secretsWithInfo = await hackathon.listMySecretsPlusRevealInfo()
         secretsWithInfo.sort(function(a, b) {
@@ -303,11 +305,15 @@ export default function Uploader(props) {
         createWallet()
       }, [])
 
+    function goBack() {
+        clearInterval(interval)
+        routToPage('Main')
+    }
 
     return (
         <div class="eventHorizon">
             <div class="header-n-nav">
-                <a onClick={() => {routToPage('Main')}}>
+                <a onClick={goBack}>
                     <video autoPlay loop muted class="back-button-video">
                         <source src={backButtonVideo}/>
                     </video>
@@ -361,7 +367,7 @@ export default function Uploader(props) {
                 {/* <button id="availability-btn" onClick={checkAvailability}>Check availability</button> */}
             </div>
 
-            <a onClick={() => {routToPage('Main')}}>
+            <a onClick={goBack}>
                 <video autoPlay loop muted class="back-button-big">
                     <source src={backButtonVideo}/>
                 </video>
