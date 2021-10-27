@@ -24,13 +24,6 @@ actor Hackathon {
     type Secret = Types.Secret;
     type RelevantSecret = Types.RelevantSecret;
 
-	// example call to Token canister
-	// TODO remove
-	public func idk() : async Text {
-		let sym = await Token.symbol();
-		return sym;
-	};
-
     public query func identity() : async Principal {
 		_this();
 	};
@@ -295,7 +288,8 @@ actor Hackathon {
     * Params:
     *   - payload : Enrypted secret.
     *   - uploader_public_key: Public key of secret encryption.
-    *   - reward: TODO maybe remove
+    *   - reward: amount of token caller transfers to this canister. In the future
+    *       this should be payed out proportionately to stakes
     *   - expiry_time: timestamp when secret WILL be revealed (seconds since 1970)
     *   - heartbeat_freq: the frequency with which the author has to send a heartbeat in order
     *       to keep the secret alive (seconds)
