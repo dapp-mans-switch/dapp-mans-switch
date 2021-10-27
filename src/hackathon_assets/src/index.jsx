@@ -70,34 +70,36 @@ export default function Main() {
       </div>
 
       <div className="panel explainer">
-        <p><b>Staker 💰</b> deposits $HRBT token to receive key-shares. The bigger the stake, the higher the probability.
-        Through key-shares you get involved in decrypting a secret, rewarding you with a juicy payout in $HRBT.</p>
-        <p><b>Uploader 🥷🏼</b> enters secret to be held secure. Higher rewards payed by you result in more staker keeping the secret secure.</p>
-        <p><b>Spectator 👁</b> gets insight into all revealed secrets. Everybody is a spectator. Even if you do not have an ICP identity yet.</p>
+        <p><b>Staker 💰</b> stakes $HRBT tokens to receive key-shares. The bigger the stake, the higher the probability to receive shares.
+        Through key-shares you get involved in decrypting a Secret, rewarding you with a juicy payout in $HRBT.</p>
+        <p><b>Uploader 🥷🏼</b> enters a Secret to be held secure. Higher rewards payed by you result in more Stakers keeping the Secret secure.</p>
+        <p><b>Spectator 👁</b> gets insight into all revealed Secrets. Everybody is a spectator, and no ICP identity is necessary.</p>
       </div>
 
       <div className="description-and-wallet">
         <div className="panel explainer-next-to-wallet">
-          <p>The Heartbeat Token ($HRBT) 🫀 conforms to the ERC20 protocol. It manifests trust between Staker and Uploaders.
+          <p>The Heartbeat Token ($HRBT) 🫀 conforms to the ERC20 protocol. It manifests trust between Stakers and Uploaders.
             Try it out and top up! 💸</p>
         </div>
         <div id="my-wallet"/>
       </div>
 
       <div className="panel explainer">
-        <h3>How it works</h3>
-        <p>Secrets are posted by the Uploader. For every secret a private and a public key are generated.
-        While the public key is stored onchain, this is not possible for the private key, since it would allow other participants to decrypt the secret.
-        In order to avoid a single trusted entity, the private key is split up into n <b>key-shares</b> using <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir&apos;s Secret Sharing</a> 🫂 </p>
-        <p>The shares are distributed among a multiplicity of staker. If an uploader fails to confirm his lifelines within the time-frame defined by him/her,
-        the staker holding the key-shares are incentivized by a reward (in $HRBT) to decrypt it.
-        The private key associated with the secret can only be reconstructed, if a predefined ratio of key-shares has been decrypted.
-        This makes it impossible for a single attacker to reveal a secret.</p>
+        <h3>How it Works</h3>
+        <p>Secrets are posted by the Uploader. For every Secret a private and a public key are generated.
+        While the public key is stored on-chain, this is not possible for the private key, since it would allow other participants to decrypt Secrets.
+        In order to avoid a single trusted entity, the private key is split up into multiple <b>key-shares</b> among randomly selected Stakers. 🫂 </p>
+        
+        <p>If an Uploader fails to confirm his liveliness within the time-frame defined by him/her,
+        the Stakers holding the key-shares are incentivized by a reward (in $HRBT) to decrypt the Secret.
+        The private key to decrypt the Secret can only be reconstructed if the majority of key-shares has been decrypted.
+        This makes it extremely improbable for a single entity holding less than 51% of the $HRBT tokens to reveal a Secret.</p>
       </div>
 
       <div className="panel explainer">
         <h3>Details ⚙️</h3>
         <p>This is for the nerds.</p>
+        The way that the key-shares are distributed amongst the Stakers is based on <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir&apos;s Secret Sharing</a>.
       </div>
 
       <button onClick={() =>  whoami()}>Who Am I?</button>
