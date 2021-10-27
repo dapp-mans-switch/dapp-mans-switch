@@ -101,6 +101,9 @@ module {
             if (shouldRevealSecret(secret)) {
                 // don't update heartbeat if secret should already be revealed
                 heartbeat := secret.last_heartbeat;
+            } else if (heartbeat > secret.expiry_time) {
+                // maximum hearbeat is expiry time
+                heartbeat := secret.expiry_time;
             };
 
             let newSecret = {

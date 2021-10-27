@@ -1,4 +1,4 @@
-export function errorPopup(message = "An error occurred, please try again later.", elementId, confirm=false) {
+export function errorPopup(message = "An error occurred, please try again later.", elementId, confirm=false, error=true) {
     if (document.getElementById("errorDiv")) {
         return
     }
@@ -28,5 +28,10 @@ export function errorPopup(message = "An error occurred, please try again later.
     } else {
         triggerButton.parentElement.insertBefore(flex, triggerButton.nextSibling)
         setTimeout(() => {document.getElementById("errorDiv").remove()}, 5000)
+    }
+    if (error) {
+        errorDiv.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
+    } else {
+        errorDiv.style.backgroundColor = "rgba(0, 255, 0, 0.5)";
     }
 }
