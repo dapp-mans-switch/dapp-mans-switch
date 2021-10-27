@@ -39,7 +39,7 @@ export default function Main() {
 
     // uncomment next line to use without auth
     let x = await auth.getAnomymousCanisters()
-   
+
     canisters = auth.canisters
     console.log("useEffect Canisters", x, canisters)
     createWallet()
@@ -47,7 +47,7 @@ export default function Main() {
 
 
   return (
-    <div class="eventHorizon">
+    <div className="eventHorizon">
       <h1>Yeet Man’s Switch</h1>
       <h4>Here your secrets are save and sound. As long as you are.</h4>
       <p>Regularly verify that you are alive, otherwise your secret will get published.</p>
@@ -69,43 +69,43 @@ export default function Main() {
         </div>
       </div>
 
-      <div class="panel explainer">
+      <div className="panel explainer">
         <p><b>Staker 💰</b> deposits $HRBT token to receive key-shares. The bigger the stake, the higher the probability.
         Through key-shares you get involved in decrypting a secret, rewarding you with a juicy payout in $HRBT.</p>
         <p><b>Uploader 🥷🏼</b> enters secret to be held secure. Higher rewards payed by you result in more staker keeping the secret secure.</p>
         <p><b>Spectator 👁</b> gets insight into all revealed secrets. Everybody is a spectator. Even if you do not have an ICP identity yet.</p>
       </div>
 
-      <div class="description-and-wallet">
-        <div class="panel explainer-next-to-wallet">
-          <p>The Heartbeat Token ($HRBT) 🫀 conforms to the ERC20 protocol. It manifests trust between Staker and Uploaders. 
+      <div className="description-and-wallet">
+        <div className="panel explainer-next-to-wallet">
+          <p>The Heartbeat Token ($HRBT) 🫀 conforms to the ERC20 protocol. It manifests trust between Staker and Uploaders.
             Try it out and top up! 💸</p>
         </div>
         <div id="my-wallet"/>
       </div>
 
-      <div class="panel explainer">
+      <div className="panel explainer">
         <h3>How it works</h3>
         <p>Secrets are posted by the Uploader. For every secret a private and a public key are generated.
         While the public key is stored onchain, this is not possible for the private key, since it would allow other participants to decrypt the secret.
-        In order to avoid a single trusted entity, the private key is split up into n <b>key-shares</b> using <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret Sharing</a> 🫂 </p>
-        <p>The shares are distributed among a multiplicity of staker. If an uploader fails to confirm his lifelines within the time-frame defined by him/her, 
-        the staker holding the key-shares are incentivized by a reward (in $HRBT) to decrypt it. 
+        In order to avoid a single trusted entity, the private key is split up into n <b>key-shares</b> using <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir&apos;s Secret Sharing</a> 🫂 </p>
+        <p>The shares are distributed among a multiplicity of staker. If an uploader fails to confirm his lifelines within the time-frame defined by him/her,
+        the staker holding the key-shares are incentivized by a reward (in $HRBT) to decrypt it.
         The private key associated with the secret can only be reconstructed, if a predefined ratio of key-shares has been decrypted.
         This makes it impossible for a single attacker to reveal a secret.</p>
-      </div>   
+      </div>
 
-      <div class="panel explainer">
+      <div className="panel explainer">
         <h3>Details ⚙️</h3>
         <p>This is for the nerds.</p>
-      </div>      
+      </div>
 
       <button onClick={() =>  whoami()}>Who Am I?</button>
       <button onClick={async () => {
-        
+
         let hackathonID = await canisters.hackathon.identity();
         let balance = await canisters.token.myBalance();
-        let ok = await canisters.token.approve(hackathonID, balance, []); // should not throw error
+        await canisters.token.approve(hackathonID, balance, []); // should not throw error
         await canisters.hackathon.changeToDemoData();
         console.log("Demo Data!")
         location.reload()
@@ -116,6 +116,6 @@ export default function Main() {
 
     </div>
   );
-};
+}
 
 render(<Main />, document.getElementById("app"));

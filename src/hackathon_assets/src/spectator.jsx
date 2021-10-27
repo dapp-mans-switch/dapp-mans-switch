@@ -11,9 +11,9 @@ export default function Spectator(props) {
   const hackathon = props.canisters.hackathon;
 
   async function listAllSecrets() {
-    
+
     let secrets = await hackathon.listAllSecrets()
-    secrets.sort(function(a, b) { 
+    secrets.sort(function(a, b) {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
 
@@ -26,7 +26,7 @@ export default function Spectator(props) {
       const tabCell = al_tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
-    
+
     const revtable = document.getElementById('revealSecretsTable')
     revtable.innerHTML = ''
     const rev_tr = revtable.insertRow(-1)
@@ -95,10 +95,10 @@ export default function Spectator(props) {
         if (s.expiry_time < now) {
             // secret has expired and cannot be decrypted -> author sent all required heartbeats
             const tr = exptable.insertRow(-1)
-            
+
             const idCell = tr.insertCell(-1)
             idCell.innerHTML = s.secret_id
-            
+
             const expiryCell = tr.insertCell(-1)
             expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
         } else {
@@ -106,23 +106,23 @@ export default function Spectator(props) {
           if (s.last_heartbeat + s.heartbeat_freq < now) {
             console.log(n_revealed)
             const tr = revtable.insertRow(-1)
-    
+
             const idCell = tr.insertCell(-1)
             idCell.innerHTML = s.secret_id
-    
+
             const progressCell = tr.insertCell(-1)
             const minReveal = crypto.minSharesToRecover(n_shares)
             progressCell.innerHTML = (min(n_revealed, minReveal) / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
-          
+
           } else {
             const tr = altable.insertRow(-1)
-    
+
             const idCell = tr.insertCell(-1)
             idCell.innerHTML = s.secret_id
-            
+
             const expiryCell = tr.insertCell(-1)
             expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
-    
+
             const heartbeatCell = tr.insertCell(-1)
             heartbeatCell.innerHTML = helpers.secondsSinceEpocheToDate(s.last_heartbeat).toLocaleString()
           }
@@ -130,25 +130,25 @@ export default function Spectator(props) {
       }
     });
   }
-  
+
   React.useEffect(() => {
     listAllSecrets()
   }, [])
 
 
     return (
-      <div class="eventHorizon">
-        <div class="header-n-nav">
+      <div className="eventHorizon">
+        <div className="header-n-nav">
           <a onClick={() => {routToPage('Main')}}>
-            <video autoPlay loop muted class="back-button-video">
+            <video autoPlay loop muted className="back-button-video">
               <source src={backButtonVideo}/>
             </video>
           </a>
           <h1>Spectator</h1>
         </div>
 
-        Look at other people's Secrets.
-        
+        Look at other people&apos;s Secrets.
+
         <div>
           <a id="staker_button" data-text="Refresh" onClick={() => listAllSecrets()} className="rainbow-button" style={{width: 150}}></a>
         </div>
@@ -166,18 +166,18 @@ export default function Spectator(props) {
             <h2>Secrets with Reveal in Progress &#9201;</h2>
             <table id="revealSecretsTable" cellPadding={5}/>
         </div>
-        
+
         <div className="panel">
             <h2>Expired Secrets &#128274;</h2>
             <table id="expiredSecretsTable" cellPadding={5}/>
         </div>
 
         <a onClick={() => {routToPage('Main')}}>
-          <video autoPlay loop muted class="back-button-big">
+          <video autoPlay loop muted className="back-button-big">
             <source src={backButtonVideo}/>
           </video>
         </a>
 
       </div>
     );
-  };
+  }

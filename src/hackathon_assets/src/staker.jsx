@@ -209,7 +209,7 @@ export default function Staker(props) {
     }
 
     let hackathonID = await hackathon.identity();
-    let ok = await token.approve(hackathonID, amountInt, []); // should not throw error
+    await token.approve(hackathonID, amountInt, []); // should not throw error
     const result = await hackathon.addStake(amountInt, durationInt)
 
     removeLoadingAnimation()
@@ -517,18 +517,18 @@ export default function Staker(props) {
 
 
   return (
-    <div class="eventHorizon">
-      <div class="header-n-nav">
+    <div className="eventHorizon">
+      <div className="header-n-nav">
         <a onClick={goBack}>
-          <video autoPlay loop muted class="back-button-video">
+          <video autoPlay loop muted className="back-button-video">
             <source src={backButtonVideo}/>
           </video>
         </a>
         <h1>Staker</h1>
       </div>
 
-      <div class="description-and-wallet">
-        <div class="description">
+      <div className="description-and-wallet">
+        <div className="description">
           <p>Stake $HRBT to receive secret-shares.</p>
           <p>When you decrypt a secret-share at the right time, you will be richly rewarded.</p>
         </div>
@@ -576,10 +576,10 @@ export default function Staker(props) {
       </div>
 
       <a onClick={goBack}>
-        <video autoPlay loop muted class="back-button-big">
+        <video autoPlay loop muted className="back-button-big">
           <source src={backButtonVideo}/>
         </video>
       </a>
     </div>
   );
-};
+}

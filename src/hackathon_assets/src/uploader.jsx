@@ -4,7 +4,6 @@ import * as crypto from './crypto'
 import sha256 from 'js-sha256'
 import * as helpers from './helpers'
 import routToPage from './router'
-import { render } from 'react-dom'
 import Wallet from './wallet'
 import { min } from 'mathjs'
 import { errorPopup } from './errorPopup'
@@ -121,7 +120,7 @@ export default function Uploader(props) {
         // tokenomics
         let secretBasePrice = Number(await hackathon.getSecretBasePrice());
         let hackathonID = await hackathon.identity();
-        let ok = await token.approve(hackathonID, input.rewardInt + secretBasePrice, []); // should not throw error
+        await token.approve(hackathonID, input.rewardInt + secretBasePrice, []); // should not throw error
 
         // send to backend
         const addSecretResult = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
@@ -311,18 +310,18 @@ export default function Uploader(props) {
     }
 
     return (
-        <div class="eventHorizon">
-            <div class="header-n-nav">
+        <div className="eventHorizon">
+            <div className="header-n-nav">
                 <a onClick={goBack}>
-                    <video autoPlay loop muted class="back-button-video">
+                    <video autoPlay loop muted className="back-button-video">
                         <source src={backButtonVideo}/>
                     </video>
                 </a>
                 <h1>Uploader</h1>
             </div>
 
-            <div class="description-and-wallet">
-                <div class="description">
+            <div className="description-and-wallet">
+                <div className="description">
                     <p>Post your secrets here and regularly send a Heartbeat. Otherwise the stakers will publish your secret.</p>
                 </div>
                 <div id="my-wallet"/>
@@ -368,7 +367,7 @@ export default function Uploader(props) {
             </div>
 
             <a onClick={goBack}>
-                <video autoPlay loop muted class="back-button-big">
+                <video autoPlay loop muted className="back-button-big">
                     <source src={backButtonVideo}/>
                 </video>
             </a>
