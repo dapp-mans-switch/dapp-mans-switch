@@ -360,7 +360,7 @@ export default function Uploader(props) {
             <label htmlFor="heartbeatFreq">Heartbeat frequency (days)</label>
             <span><input id="heartbeatFreq" type="number" autoComplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
             
-            <label htmlFor="expiryTime">Latest reveal date:</label>
+            <label htmlFor="expiryTime">Prove liveliness until:</label>
             <span><input id="expiryTime" type="datetime-local" autoComplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
             
             <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>

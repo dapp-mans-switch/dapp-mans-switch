@@ -83,7 +83,7 @@ export default function Main() {
       <div className="panel explainer">
         <p><b>Staker 💰</b> stakes $HRBT tokens to receive key-shares. The bigger the stake, the higher the probability to receive shares.
         Through key-shares you get involved in decrypting a Secret, rewarding you with a juicy payout in $HRBT.</p>
-        <p><b>Uploader 🥷🏼</b> enters a Secret to be held secure. Higher rewards payed by you result in more Stakers keeping the Secret secure.</p>
+        <p><b>Uploader 🥷🏼</b> enters a Secret to be held secure. Higher rewards paid by you result in more Stakers keeping the Secret secure.</p>
         <p><b>Spectator 👁</b> gets insight into all revealed Secrets. Everybody is a spectator, and no ICP identity is necessary.</p>
       </div>
 
