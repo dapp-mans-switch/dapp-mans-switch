@@ -122,14 +122,22 @@ module {
         });
         stakes.put(4, {
             stake_id=4;
-            valid=false;
+            valid=true;
             public_key=c.puplic_key;
-            expiry_time=now+365*86400;
+            expiry_time=now-86400;
             staker_id=caller;
-            amount=100;
+            amount=50;
         });
         stakes.put(5, {
             stake_id=5;
+            valid=false;
+            public_key=c.puplic_key;
+            expiry_time=now-25*86400;
+            staker_id=caller;
+            amount=50;
+        });
+        stakes.put(6, {
+            stake_id=6;
             valid=true;
             public_key=c.puplic_key;
             expiry_time=now+30*86400;

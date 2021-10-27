@@ -249,9 +249,17 @@ export default function Staker(props) {
    * Ends a given stake.
    * More info in the relevant backend function.
    */
-  async function endStake(id) {
+  async function endStake(stake) {
+    let now = new Date() / 1000;
+    if (stake['expiry_time'] > now) {
+      let ok = confirm("This stake is not expired yet. If you end the stake now, you will not get back all your tokens! Continue?");
+      if (!ok) {
+        return
+      }
+    }
     appendLoadingAnimation("stakerTable", true)
-    const result = await hackathon.endStake(id)
+    let stake_id = stake['stake_id']
+    const result = await hackathon.endStake(stake_id)
 
     removeLoadingAnimation()
     listAllStakes()
@@ -305,7 +313,7 @@ export default function Staker(props) {
   async function listAllStakes() {
     let stakes = await hackathon.listMyStakes()
     stakes.sort(function(a, b) {
-      return - (parseInt(b.staker_id) - parseInt(a.staker_id));
+      return - (parseInt(b.expiry_time) - parseInt(a.expiry_time));
     });
 
     const table = document.getElementById('stakerTable')
@@ -336,7 +344,7 @@ export default function Staker(props) {
         const deleteButton = document.createElement('button')
         deleteButton.innerHTML = "End stake"
         deleteButton.className = "endStakeButton"
-        deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
+        deleteButton.addEventListener("click", () => { endStake(s)})
         deleteButtonCell.appendChild(deleteButton)
       } else {
         //deleteButton.disabled = true;
