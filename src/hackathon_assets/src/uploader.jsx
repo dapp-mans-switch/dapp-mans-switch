@@ -357,7 +357,7 @@ export default function Uploader(props) {
                 <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>
               </form>
 
-                <button id="availability-btn" onClick={checkAvailability}>Check availability</button>
+                {/* <button id="availability-btn" onClick={checkAvailability}>Check availability</button> */}
             </div>
 
             <a onClick={() => {routToPage('Main')}}>

@@ -218,7 +218,7 @@ export default function Staker(props) {
 
     if ('ok' in result) {
       let newStakeId = result['ok']
-      errorPopup(`Stake with id ${newStakeId} was added!`, 'add_new_stake_button', true)
+      errorPopup(`Stake with id ${newStakeId} was added!`, 'add_new_stake_button', true, false)
       // reset form after successful stake
       setAmount(null)
       setDuration(null)
@@ -257,22 +257,22 @@ export default function Staker(props) {
     listAllStakes()
 
     if ('ok' in result) {
-      alert(`End stake with payout ${result['ok']['payout']}`)
+      errorPopup(`End stake with payout ${result['ok']['payout']}`, 'stakerTable', true, false)
     }
     if ('err' in result) {
       const err = result['err']
       if ('stakeNotFound' in err) {
         let stake_id = err['stakeNotFound']
-        alert(`Stake with id ${stake_id} was not found!`)
+        errorPopup(`Stake with id ${stake_id} was not found!`, 'stakerTable')
       } else if ('permissionDenied' in err) {
         // should not happen as staker only sees his stakes.
-        alert(`You don't have permission to end this stake.`)
+        errorPopup(`You don't have permission to end this stake.`, 'stakerTable')
       } else if ('alreadyPayedOut' in err) {
-        alert(`Stake was already ended and payed out!`)
+        errorPopup(`Stake was already ended and payed out!`, 'stakerTable')
       } else if ('insufficientFunds' in err) {
-        alert(`Insufficient funds: ${err['insufficientFunds']}`)
+        errorPopup(`Insufficient funds: ${err['insufficientFunds']}`, 'stakerTable')
       } else {
-        alert(`Something went wrong!`)
+        errorPopup(`Something went wrong!`, 'stakerTable')
       }
       console.error(err)
     }
@@ -449,24 +449,24 @@ export default function Staker(props) {
     const result = await hackathon.requestPayout(secretId)
     removeLoadingAnimation()
     listAllRelevantSecrets()
+    window.getBalance()
     console.log("requestPayout", result)
     if ('ok' in result) {
       const payout = result['ok']
-      alert(`You received a payout of ${payout} tokens!`)
+      errorPopup(`You received a payout of ${payout} tokens!`, 'secretsTable_status_legend', true, false)
     }
     if ('err' in result) {
       const err = result['err']
       if ('alreadyPayedOut' in err) {
-        alert(`The reward for this secret shares was already payed out!`)
+        errorPopup(`The reward for this secret shares was already payed out!`, 'secretsTable_status_legend')
       } else if ('shouldReveal' in err) {
-        alert(`You should reveal the shares of this secret, not request payout!`)
+        errorPopup(`You should reveal the shares of this secret, not request payout!`, 'secretsTable_status_legend')
       } else if ('insufficientFunds' in err) {
-        alert(`Insufficient funds: ${err['insufficientFunds']}`)
+        errorPopup(`Insufficient funds: ${err['insufficientFunds']}`, 'secretsTable_status_legend')
       } else [
-        alert(`Something went wrong!`)
+        errorPopup(`Something went wrong!`, 'secretsTable_status_legend')
       ]
     }
-    window.getBalance()
   }
 
   /**
@@ -547,7 +547,7 @@ export default function Staker(props) {
         <div className="panel">
           <h3>My Secret Shares</h3>
           <table id="secretsTable" cellPadding={5}/>
-          <p>&#9989; ... done, &#10071; ... action possible, &#128147; ... secret author alive. </p>
+          <p id="secretsTable_status_legend">&#9989; ... done, &#10071; ... action possible, &#128147; ... secret author alive. </p>
         </div>
 
         <div className="panel">
