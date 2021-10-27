@@ -20,7 +20,6 @@ export default function Staker(props) {
   const [amount, setAmount] = React.useState('')
   const [duration, setDuration] = React.useState('')
   const [revealSecretId, setRevealSecretId] = React.useState('')
-  const [stakerId, setStakerId] = React.useState('')
   const [stakerPrivateKey, setStakerPrivateKey] = React.useState('')
 
 
@@ -291,7 +290,6 @@ export default function Staker(props) {
 
   /*
   * Writes private key to a file and downloads it.
-  * staker_id is prepended to the file name TODO: no, it's not (yet)
   */
   function downloadPrivateKey(privateKey) {
     if (privateKey == null) {
@@ -398,7 +396,7 @@ export default function Staker(props) {
       const expiresOnCell = tr.insertCell(-1)
       expiresOnCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time)
 
-      
+
       const buttonCell = tr.insertCell(-1)
 
 
