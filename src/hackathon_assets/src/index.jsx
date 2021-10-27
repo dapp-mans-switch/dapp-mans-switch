@@ -95,9 +95,16 @@ export default function Main() {
 
       <button onClick={() =>  whoami()}>Who Am I?</button>
       <button onClick={async () => {
-        await hackathon.changeToDemoData();
+        
+        let hackathonID = await canisters.hackathon.identity();
+        let balance = await canisters.token.myBalance();
+        let ok = await canisters.token.approve(hackathonID, balance, []); // should not throw error
+        await canisters.hackathon.changeToDemoData();
         console.log("Demo Data!")
+        location.reload()
+
         }}>Demo Data!</button>
+
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>

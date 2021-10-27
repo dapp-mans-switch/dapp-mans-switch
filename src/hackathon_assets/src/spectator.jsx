@@ -22,7 +22,7 @@ export default function Spectator(props) {
     const altable = document.getElementById('aliveSecretsTable')
     altable.innerHTML = ''
     const al_tr = altable.insertRow(-1)
-    for (const cn of ['Secret ID', 'Expiry time', 'Last heartbeat']) {
+    for (const cn of ['Secret ID', 'Expires on', 'Last heartbeat']) {
       const tabCell = al_tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
@@ -46,7 +46,7 @@ export default function Spectator(props) {
     const exptable = document.getElementById('expiredSecretsTable')
     exptable.innerHTML = ''
     const exp_tr = exptable.insertRow(-1)
-    for (const cn of ['Secret ID', 'Expiry time']) {
+    for (const cn of ['Secret ID', 'Expires on']) {
       const tabCell = exp_tr.insertCell(-1)
       tabCell.innerHTML = cn
     }
@@ -154,21 +154,21 @@ export default function Spectator(props) {
         </div>
 
         <div className="panel">
-            <h2>Decrypted Secrets</h2>
+            <h2>Decrypted Secrets &#128275;</h2>
             <table id="decryptedSecretsTable" cellPadding={5}/>
         </div>
         <div className="panel">
-            <h2>Secrets with Alive Author</h2>
+            <h2>Secrets with Alive Author &#128147;</h2>
             <table id="aliveSecretsTable" cellPadding={5}/>
         </div>
 
         <div className="panel">
-            <h2>Secrets with Reveal in Progress</h2>
+            <h2>Secrets with Reveal in Progress &#9201;</h2>
             <table id="revealSecretsTable" cellPadding={5}/>
         </div>
         
         <div className="panel">
-            <h2>Expired Secrets</h2>
+            <h2>Expired Secrets &#128274;</h2>
             <table id="expiredSecretsTable" cellPadding={5}/>
         </div>
 

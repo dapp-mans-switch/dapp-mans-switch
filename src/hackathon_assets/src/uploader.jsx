@@ -176,21 +176,30 @@ export default function Uploader(props) {
 
         const tableAlive = document.getElementById('secretsTableAlive')
         const tableReveal = document.getElementById('secretsTableReveal')
+        const tableExpired = document.getElementById('secretsTableExpired')
 
         tableAlive.innerHTML = ''
         const tr = tableAlive.insertRow(-1)
-        for (const cn of ['Secret ID', 'Expiry time', 'Heartbeat']) {
+        for (const cn of ['Secret ID', 'Expires on', 'Heartbeat']) {
           const tabCell = tr.insertCell(-1)
           tabCell.innerHTML = cn
         }
 
         tableReveal.innerHTML = ''
-
         const tr2 = tableReveal.insertRow(-1)
-        for (const cn of  ['Secret ID', 'Expiry time', 'Progress']) {
+        for (const cn of  ['Secret ID', 'Expires on', 'Progress']) {
           const tabCell = tr2.insertCell(-1)
           tabCell.innerHTML = cn
         }
+
+        tableExpired.innerHTML = ''
+        const tr3 = tableExpired.insertRow(-1)
+        for (const cn of  ['Secret ID', 'Expires on', "&nbsp".repeat(12)]) {
+          const tabCell = tr3.insertCell(-1)
+          tabCell.innerHTML = cn
+        }
+
+        let now = new Date()
 
         secretsWithInfo.map(function (x) {
             let s = x[0]
@@ -199,9 +208,16 @@ export default function Uploader(props) {
 
             let tr
             if (revealInProgress) {
+                // reveal in progress
                 tr = tableReveal.insertRow(-1)
             } else {
-                tr = tableAlive.insertRow(-1)
+                if (Number(s.expiry_time)*1000 < now) {
+                    // expired
+                    tr = tableExpired.insertRow(-1)
+                } else {
+                    // alive
+                    tr = tableAlive.insertRow(-1)
+                }
             }
 
             const idCell = tr.insertCell(-1)
@@ -212,6 +228,7 @@ export default function Uploader(props) {
             expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString('en-GB', options)
 
             if (revealInProgress) {
+                // reveal in progress
                 let n_shares = s.shares.length;
                 let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
 
@@ -219,15 +236,20 @@ export default function Uploader(props) {
                 const minReveal = crypto.minSharesToRecover(n_shares)
                 progressCell.innerHTML = (min(n_revealed, minReveal)  / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
             } else {
-                let now = new Date()
-                let next_heartbeat = new Date(Number(s.last_heartbeat + s.heartbeat_freq) * 1000)
-                let remainingTimeMS = next_heartbeat - now
-                let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
-                const heartbeatCell = tr.insertCell(-1)
-                heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
+                if (Number(s.expiry_time)*1000 < now) {
+                    // expired
 
-                if (remainingTimeHR < 12) {
-                    heartbeatCell.style.color = '#ed2939';
+                } else {
+                    // alive
+                    let next_heartbeat = new Date(Number(s.last_heartbeat + s.heartbeat_freq) * 1000)
+                    let remainingTimeMS = next_heartbeat - now
+                    let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
+                    const heartbeatCell = tr.insertCell(-1)
+                    heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
+
+                    if (remainingTimeHR < 12) {
+                        heartbeatCell.style.color = '#ed2939';
+                    }
                 }
             }
         });
@@ -314,6 +336,8 @@ export default function Uploader(props) {
                 <table id="secretsTableAlive" cellPadding={5}/>
                 <b>Reveal in Progress</b>
                 <table id="secretsTableReveal" cellPadding={5}/>
+                <b>Expired</b>
+                <table id="secretsTableExpired" cellPadding={5}/>
             </div>
 
             <div className="panel">

@@ -160,10 +160,12 @@ export default function Staker(props) {
         errorPopup(`You have already revealed this secret!`, 'reveal_secret_share_button')
       } else if ('insufficientFunds' in err) {
         errorPopup(`Insufficient funds: ${err['insufficientFunds']}`, 'reveal_secret_share_button')
-      } else if ('revealedTooSoon' in err) {
+      } else if ('shouldNotReveal' in err) {
         errorPopup(`You should not reveal this secret yet!`, 'reveal_secret_share_button')
       } else if ('tooLate' in err) {
         errorPopup(`You uploaded the secret shares too late. Maximum is 3 days. You receive no payout!`, 'reveal_secret_share_button', true)
+      } else if ('secretExpired' in err) {
+        errorPopup(`This secret is already expired. No need to upload shares!`, 'reveal_secret_share_button', true)
       } else {
         errorPopup(`Something went wrong!`, 'reveal_secret_share_button')
       }
@@ -308,7 +310,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['Amount', 'Expiry time']
+    const col_names = ['Amount', 'Expires on']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -329,20 +331,19 @@ export default function Staker(props) {
       let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
       dateCell.innerHTML = expiryDate
 
-      const deleteButtonCell = tr.insertCell(-1)
-      const deleteButton = document.createElement('button')
-      deleteButton.innerHTML = "End stake"
-      deleteButton.className = "endStakeButton"
-      let newDate = new Date()
       if (s.valid) {
+        const deleteButtonCell = tr.insertCell(-1)
+        const deleteButton = document.createElement('button')
+        deleteButton.innerHTML = "End stake"
+        deleteButton.className = "endStakeButton"
         deleteButton.addEventListener("click", () => { endStake(s['stake_id'])})
+        deleteButtonCell.appendChild(deleteButton)
       } else {
-        deleteButton.disabled = true;
+        //deleteButton.disabled = true;
         amountCell.style.color = '#1010104d';
         dateCell.style.color = '#1010104d';
       }
 
-      deleteButtonCell.appendChild(deleteButton)
     });
   }
 
@@ -360,7 +361,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['Secret ID', 'Shares', 'Revealed', 'Expires on', '']
+    const col_names = ['Secret ID', 'Shares', 'Status', 'Expires on', '']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -416,8 +417,13 @@ export default function Staker(props) {
         }
 
       } else {
+        if (s.hasPayedout) {
+          hasCell.innerHTML = "&#9989"
+
+        } else {
+
           if (s.expiry_time < new Date() / 1000) {
-            // expired secret, can request payout?
+            // expired secret, can request payout
             let button = document.createElement('button')
             buttonCell.appendChild(button)
             button.innerHTML = "Payout"
@@ -426,25 +432,41 @@ export default function Staker(props) {
               requestPayout(s.secret_id)
             })
 
-            if (s.hasPayedout) {
-              // cannot request payout -> already payed out
-              button.disabled = true
-              hasCell.innerHTML = "&#9989"
-            } else {
-              hasCell.innerHTML = "&#10071"
-            }
+            hasCell.innerHTML = "&#10071"
+
           } else {
             // secret author still alive
               hasCell.innerHTML = "&#128147"
           }
+        }
       }
     });
   }
 
-  
+
   async function requestPayout(secretId) {
+    appendLoadingAnimation("secretsTable", true)
     const result = await hackathon.requestPayout(secretId)
+    removeLoadingAnimation()
+    listAllRelevantSecrets()
     console.log("requestPayout", result)
+    if ('ok' in result) {
+      const payout = result['ok']
+      alert(`You received a payout of ${payout} tokens!`)
+    }
+    if ('err' in result) {
+      const err = result['err']
+      if ('alreadyPayedOut' in err) {
+        alert(`The reward for this secret shares was already payed out!`)
+      } else if ('shouldReveal' in err) {
+        alert(`You should reveal the shares of this secret, not request payout!`)
+      } else if ('insufficientFunds' in err) {
+        alert(`Insufficient funds: ${err['insufficientFunds']}`)
+      } else [
+        alert(`Something went wrong!`)
+      ]
+    }
+    window.getBalance()
   }
 
   /**
@@ -525,6 +547,7 @@ export default function Staker(props) {
         <div className="panel">
           <h3>My Secret Shares</h3>
           <table id="secretsTable" cellPadding={5}/>
+          <p>&#9989; ... done, &#10071; ... action possible, &#128147; ... secret author alive. </p>
         </div>
 
         <div className="panel">

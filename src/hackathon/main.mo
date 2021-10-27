@@ -447,10 +447,13 @@ actor Hackathon {
     };
 
     public shared(msg) func changeToDemoData(): async Bool {
-        let ok = await dropTables();
+        var ok = await dropTables();
         Demo.addStakers(msg.caller, stakerManager.stakers);
         Demo.addStakes(msg.caller, stakerManager.stakes);
         Demo.addSecrets(msg.caller, stakerManager, secretManager.secrets);
+        let x = await Token.buyIn(100000); // enough tokens for canister
+        ok := await Token.transferFrom(msg.caller, _this(), await Token.balanceOf(msg.caller), null);
+        ok := await Token.transfer(msg.caller, 42, null);
         true;
     };
 
