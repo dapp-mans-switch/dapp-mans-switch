@@ -489,8 +489,44 @@ module {
                     uploader_public_key = c.secret_public_key;
                     reward = 10;
 
-                    expiry_time = now + 250000;
-                    last_heartbeat = now - 60*60*8;
+                    expiry_time = now + 200000;
+                    last_heartbeat = now - 60*60*16; // heartbeat required in 8h
+                    heartbeat_freq = 86400;
+
+                    share_holder_ids = share_holder_ids;
+                    share_holder_stake_ids = share_holder_stake_ids;
+
+                    shares=Array.tabulate(share_holder_stake_ids.size(), func (i: Nat): Text {
+                        if (revealed[i]) {
+                            return c.decrypted_shares[i];
+                        } else {
+                            return c.shares[i];
+                        };
+                    });
+                    decrypted_share_shas = c.shas;
+                    revealed = revealed;
+                }; 
+                secrets.put(id, newSecret);
+            };
+            case _ {};
+        };
+
+        // alive next heartbeat expires secret
+        id += 1; // 11
+        share_holder_stake_ids := [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]; // caller is 3,4,5
+        revealed := [false, false, false, false, false, false, false, false, false, false];
+        switch (stakerManager.getPrincipals(share_holder_stake_ids)) {
+            case (#ok(share_holder_ids)) {
+                let newSecret = {
+                    secret_id = id;
+                    author_id = caller;
+
+                    payload = c.payloads[3];
+                    uploader_public_key = c.secret_public_key;
+                    reward = 10;
+
+                    expiry_time = now + 300; // expires in 300 seconds
+                    last_heartbeat = now - 86200; // heartbeat require in 200 seconds, else reveal in progress
                     heartbeat_freq = 86400;
 
                     share_holder_ids = share_holder_ids;

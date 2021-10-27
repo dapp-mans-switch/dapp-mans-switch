@@ -173,6 +173,7 @@ export default function Uploader(props) {
         secretsWithInfo.sort(function(a, b) {
           return - (parseInt(b[0].secret_id) - parseInt(a[0].secret_id));
         });
+        //console.log("secretsWithInfo", secretsWithInfo)
 
         const tableAlive = document.getElementById('secretsTableAlive')
         const tableReveal = document.getElementById('secretsTableReveal')

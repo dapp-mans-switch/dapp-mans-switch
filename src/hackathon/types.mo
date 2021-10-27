@@ -39,7 +39,7 @@ module {
 
         shares: [Text]; // en- and decrypted secret shares, which are used to reconstruct private key
         decrypted_share_shas: [Text]; // sha256 hashes of decrypted shares which guarantee that stakers upload correct secret shares
-        revealed: [Bool]; // is true if stake has revealed share or secret expired and reward was paid out
+        revealed: [Bool]; // is true if stake has revealed share or secret expired and reward was paid out, TODO: maybe more descriptive name
     };
 
     /*
