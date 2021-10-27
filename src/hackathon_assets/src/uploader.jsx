@@ -134,7 +134,7 @@ export default function Uploader(props) {
             if ('ok' in addSecretResult) {
                 let newSecret = addSecretResult['ok']
                 console.log("newSecret", newSecret)
-                errorPopup(`Secret with ID ${newSecret.secret_id} uploaded!`, 'secret_btn')
+                errorPopup(`Secret with ID ${newSecret.secret_id} uploaded!`, 'secret_btn', true, false)
                 // reset form after successful upload
                 setSecret(null)
                 setReward(null)

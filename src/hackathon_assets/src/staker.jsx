@@ -46,7 +46,7 @@ export default function Staker(props) {
       console.log("PrivateKey:", keyPair.privateKey)
       
       downloadPrivateKey(keyPair.privateKey)
-      errorPopup(`The private key was saved as a download.\nMake sure to store this file securely, since you will need it to decrypt your key-shares to earn rewards.`, "register_staker_btn", true)
+      //errorPopup(`The private key was saved as a download.\nMake sure to store this file securely, since you will need it to decrypt your key-shares to earn rewards.`, "register_staker_btn", true)
     }
     
     if ('err' in result) {
@@ -145,7 +145,7 @@ export default function Staker(props) {
     if ('ok' in result) {
       let payout = result['ok']['payout']
       console.log('updatedSecret', result['ok']['secret'])
-      errorPopup(`Successfully revealed your shares for secret with id ${secret.secret_id} with payout ${payout}`, 'reveal_secret_share_button', true)
+      errorPopup(`Successfully revealed your shares for secret with id ${secret.secret_id} with payout ${payout}`, 'reveal_secret_share_button', true, false)
     } else if ('err' in result) {
       const err = result['err']
       if ('secretNotFound' in err) {
@@ -296,7 +296,7 @@ export default function Staker(props) {
     }
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(privateKey));
-    element.setAttribute('download', 'yeet_man_switch_private_key');
+    element.setAttribute('download', 'staker-private-key.txt');
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();

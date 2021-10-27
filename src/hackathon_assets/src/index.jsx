@@ -46,10 +46,10 @@ export default function Main() {
     })
 
     // uncomment next line to use with auth
-    // await auth.auth(); let x = await auth.getCanisters()
+    await auth.auth(); let x = await auth.getCanisters()
 
     // uncomment next line to use without auth
-    let x = await auth.getAnomymousCanisters()
+    // let x = await auth.getAnomymousCanisters()
 
     canisters = auth.canisters
     console.log("useEffect Canisters", x, canisters)
@@ -59,7 +59,7 @@ export default function Main() {
 
   return (
     <div className="eventHorizon">
-      <h1>Yeet Man’s Switch</h1>
+      <h1>DApp Man’s Switch</h1>
       <h4>Here your Secrets are save and sound. As long as you are.</h4>
       <p>Regularly verify that you are alive, otherwise your Secret will get published.</p>
 
@@ -104,7 +104,7 @@ export default function Main() {
         <p>If an Uploader fails to confirm his liveliness within the time-frame defined by him/her,
         the Stakers holding the key-shares are incentivized by a reward (in $HRBT) to decrypt the Secret.
         The private key to decrypt the Secret can only be reconstructed if the majority of key-shares has been decrypted.
-        This makes it extremely improbable for a single entity holding less than 51% of the $HRBT tokens to reveal a Secret.</p>
+        This makes it extremely improbable for a single entity holding less than 51% of the $HRBT tokens to reveal a Secret. 🔏</p>
       </div>
 
       <div className="panel explainer">

@@ -3,8 +3,6 @@ import { split, join } from 'shamir'
 import { floor } from 'mathjs'
 import * as asymCrypto from 'asymmetric-crypto'
 
-//export const NUMBER_OF_SHARES = 3
-//const MIN_SHARES_TO_RECOVER = floor(NUMBER_OF_SHARES/2)+1
 
 export function minSharesToRecover(number_of_shares) {
     return floor(number_of_shares/2)+1
