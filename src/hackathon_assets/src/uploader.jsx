@@ -322,7 +322,7 @@ export default function Uploader(props) {
 
             <div className="description-and-wallet">
                 <div className="description">
-                    <p>Post your secrets here and regularly send a Heartbeat. Otherwise the stakers will publish your secret.</p>
+                    <p>Post your Secrets here and regularly send a Heartbeat. Otherwise the Stakers will publish your Secret.</p>
                 </div>
                 <div id="my-wallet"/>
             </div>

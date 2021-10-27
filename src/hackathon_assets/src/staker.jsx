@@ -47,7 +47,7 @@ export default function Staker(props) {
       console.log("PrivateKey:", keyPair.privateKey)
 
       downloadPrivateKey(keyPair.privateKey)
-      errorPopup(`The private key was saved as a download.\nMake sure to store this file securely, since you will need it to decrypt your Secret shares to earn rewards.`, "register_staker_btn", true)
+      errorPopup(`The private key was saved as a download.\nMake sure to store this file securely, since you will need it to decrypt your key-shares to earn rewards.`, "register_staker_btn", true)
     }
 
     if ('err' in result) {
@@ -162,7 +162,7 @@ export default function Staker(props) {
       } else if ('shouldNotReveal' in err) {
         errorPopup(`You should not reveal this secret yet!`, 'reveal_secret_share_button')
       } else if ('tooLate' in err) {
-        errorPopup(`You uploaded the secret shares too late. Maximum is 3 days. You receive no payout!`, 'reveal_secret_share_button', true)
+        errorPopup(`You uploaded the key-shares too late. Maximum is 3 days. You receive no payout!`, 'reveal_secret_share_button', true)
       } else if ('secretExpired' in err) {
         errorPopup(`This secret is already expired. No need to upload shares!`, 'reveal_secret_share_button', true)
       } else {
@@ -466,7 +466,7 @@ export default function Staker(props) {
     if ('err' in result) {
       const err = result['err']
       if ('alreadyPayedOut' in err) {
-        errorPopup(`The reward for this secret shares was already payed out!`, 'secretsTable_status_legend')
+        errorPopup(`The reward for these key-shares was already payed out!`, 'secretsTable_status_legend')
       } else if ('shouldReveal' in err) {
         errorPopup(`You should reveal the shares of this secret, not request payout!`, 'secretsTable_status_legend')
       } else if ('insufficientFunds' in err) {
@@ -529,8 +529,8 @@ export default function Staker(props) {
 
       <div className="description-and-wallet">
         <div className="description">
-          <p>Stake $HRBT to receive secret-shares.</p>
-          <p>When you decrypt a secret-share at the right time, you will be richly rewarded.</p>
+          <p>Stake $HRBT to receive key-shares.</p>
+          <p>When you decrypt a key-share at the right time, you will be richly rewarded.</p>
         </div>
         <div id="my-wallet"/>
       </div>
@@ -557,13 +557,13 @@ export default function Staker(props) {
         </div>
 
         <div className="panel">
-          <h3>My Secret Shares</h3>
+          <h3>My Key-Shares</h3>
           <table id="secretsTable" cellPadding={5}/>
           <p id="secretsTable_status_legend">&#9989; ... done, &#10071; ... action possible, &#128147; ... secret author alive. </p>
         </div>
 
         <div className="panel">
-          <h3>Reveal a Secret Share</h3>
+          <h3>Reveal a Key-Share</h3>
           <form id="reveal-secret-from">
             <label htmlFor="stakerId">Secret ID:</label>
             <span><input id="revealSecretId" type="number" autoComplete='off' onChange={(ev) => setRevealSecretId(ev.target.value)}/></span>
@@ -571,7 +571,7 @@ export default function Staker(props) {
             <label htmlFor="stakerPrivateKey">Your private key:</label>
             <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
           </form>
-          <a id="reveal_secret_share_button" data-text="Reveal Secret Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
+          <a id="reveal_secret_share_button" data-text="Reveal Key Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
         </div>
       </div>
 

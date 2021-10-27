@@ -49,8 +49,8 @@ export default function Main() {
   return (
     <div className="eventHorizon">
       <h1>Yeet Man’s Switch</h1>
-      <h4>Here your secrets are save and sound. As long as you are.</h4>
-      <p>Regularly verify that you are alive, otherwise your secret will get published.</p>
+      <h4>Here your Secrets are save and sound. As long as you are.</h4>
+      <p>Regularly verify that you are alive, otherwise your Secret will get published.</p>
 
 
       <div className="panel">
