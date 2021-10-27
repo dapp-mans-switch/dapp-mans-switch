@@ -241,6 +241,7 @@ section {
 
 .description {
     margin: auto;
+    margin-left: 20px;
     text-align: left;
 }
 

@@ -495,8 +495,8 @@ export default function Staker(props) {
 
       <div class="description-and-wallet">
         <div class="description">
-          <p>Stake $HRBT to receive Secret shares.</p>
-          <p>When you reveal a Secret at the right time, you will be richly rewarded.</p>
+          <p>Stake $HRBT to receive secret-shares.</p>
+          <p>When you decrypt a secret-share at the right time, you will be richly rewarded.</p>
         </div>
         <div id="my-wallet"/>
       </div>
