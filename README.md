@@ -4,7 +4,16 @@ A decentralised dead man's switch on the [Internet Computer](https://dfinity.org
 
 Built in the course of [Dfinity's Reimangining the Internet Hackathon](https://medium.com/dfinity/announcing-the-reimagining-the-internet-hackathon-for-european-students-and-developers-9f5c1950502f).
 
-## How it works
+1. [How it works](#how)
+1. [Methods](#methods)
+1. [Technical Details](#details)
+1. [Demo Mode](#demo)
+1. [How to run](#run)
+
+
+<a name="how"></a>
+
+## How it works 
 
 A dead man's switch (see alternative names) is a switch that is designed to be activated or deactivated if the human operator becomes incapacitated, such as through death, loss of consciousness, or being bodily removed from control [[1]](https://en.wikipedia.org/wiki/Dead_man%27s_switch).
 
@@ -32,6 +41,7 @@ This makes our system *proof of stake*.
 The Internet Computer makes it possible that the above process is run in a completely decentralised and tamper proof manner.
 
 
+<a name="methods"></a>
 
 ## Methods
 
@@ -42,14 +52,20 @@ The Internet Computer makes it possible that the above process is run in a compl
 - React Front-End
 - Motoko Back-End
 
-## Technical Details
 
-## Demo Mode
+<a name="details"></a>
+
+## Technical Details  
+
+
+<a name="demo"></a>
+
+## Demo Mode  
 
 Only possible in local development.
 
-Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to corresponding the local canister id.
-You can look this id up from the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
+Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to the corresponding local canister id.
+You can look this id up in the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
 If you have troubles with the local authentication setup, or don't care to set it up, you can disable authentication in the front-end code, see below.
 
 Once you have the website running, authenticate yourself (ignore if you have disabled authentication).
@@ -103,6 +119,9 @@ In the spectator tab you have an overview of all secrets in the system and their
 
 If you want to start again with the demo data simply click the demo button again.
 
+
+<a name="run"></a>
+
 ## How to run
 
 ### Locally
@@ -112,6 +131,15 @@ If you want to start again with the demo data simply click the demo button again
 * `npm start`
 * go to localhost:8080
 
+
+### Disable Authentication
+
+In `webpack.config.js` you can toggle authentication by setting
+
+```js
+const AUTHENTICATION = false;
+```
+You have to run `npm start` again.
 
 ### Authentication For Local Development
 
@@ -125,7 +153,7 @@ Make sure you have installed:
 
 ```bash
 cd ICP-hackathon
-rm -rf .dfx
+rm -rf .dfx/ # if you have errors
 npm install
 dfx start --clean
 dfx deploy
@@ -133,7 +161,6 @@ dfx deploy
 
 ```bash
 cd internet-identity
-rm -rf .dfx
 npm install
 II_ENV=development dfx deploy --no-wallet --argument '(null)'
 ```
@@ -158,19 +185,9 @@ rm package-lock.json
 ```
 Also, make sure to `npm install` and to have all dependencies for internet identity installed and execute the calls in the given order.
 
-### Disable Authentication
-
-In `src/hackathon_assets/index.jsx` you can toggle authentication in the `React.useEffect` method.
-
-```js
-// uncomment next line to use with auth
-await auth.auth(); await auth.getCanisters()
-
-// uncomment next line to use without auth
-await auth.getAnomymousCanisters()
-```
-
 
 ### On chain
-Like above, but add `--network ic` right after `dfx deploy`.
+* `npm install`
+* `dfx start --background`
+* `dfx deploy --network ic`
 

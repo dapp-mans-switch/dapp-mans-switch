@@ -6,8 +6,11 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 let localCanisters, prodCanisters, canisters;
 
+const AUTHENTICATION = true;
+
 const LOCAL_II_CANISTER =
   "http://rno2w-sqaaa-aaaaa-aaacq-cai.localhost:8000/#authorize";
+
 
 function initCanisterIds() {
   try {
@@ -117,6 +120,7 @@ module.exports = {
       HACKATHON_CANISTER_ID: canisters["hackathon"],
       TOKEN_CANISTER_ID: canisters["token"],
       LOCAL_II_CANISTER,
+      AUTHENTICATION,
       DFX_NETWORK: process.env.DFX_NETWORK || "local"
     }),
     new webpack.ProvidePlugin({
