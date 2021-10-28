@@ -66,7 +66,7 @@ Only possible in local development.
 
 Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to the corresponding local canister id.
 You can look this id up in the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
-If you have troubles with the local authentication setup, or don't care to set it up, you can disable authentication in the front-end code, see below.
+If you have troubles with the local authentication setup, or don't care to set it up, you can disable authentication, see [below](#disableauth).
 
 Once you have the website running, authenticate yourself (ignore if you have disabled authentication).
 You should be able to navigate to the `STAKER` and `UPLOADER` page.
@@ -80,32 +80,32 @@ For demo purposes you can give yourself unlimited $HRBT tokens by clicking `Top 
 
 ### Uploader
 
-On the uploader page you can see in the `My Secrets` table that you have 5 secrets.
-Secret 9 is in the process of being revealed, secret 8 already expired and will not be decrypted. And the rest of the secrets are still alive.
+On the uploader page, you can see in the `My Secrets` table that you have 5 secrets.
+Secret 9 is in the process of being revealed, secret 8 already expired and will not be decrypted. The rest of the secrets are still alive.
 
 In particular, notice secret 11.
 Your last heartbeat expires soon. If you do nothing its state will soon change to `Reveal in Progress`.
 
 To avoid that you can click on the `EVERYBODY STAY CALM! I'M STILL ALIVE!` button. This will update the heartbeats.
-Notice, secret 11 also expires soon. So if you have sent a heartbeat its state will change to `Expired`.
+Note that secret 11 also expires soon. So if you have sent a heartbeat its state will change to `Expired`.
 
 On the bottom of the page, you can create new secrets.
 Make sure you have enough tokens.
 
 ### Staker
 
-On the stake r page you can see in the `My Stakes` table that you currently have 4 stakes.
-One is alredy ended, another one is expired and you can end it and get all your tokens back.
+On the staker page, you can see in the `My Stakes` table that you currently have 4 stakes.
+One already ended, another one is expired and you can end it and get all your tokens back.
 The other two are not expired and you will not get back all your tokens back if you end them.
 
 You can create new stakes in the form on the top of the page.
 Make sure you have enough tokens.
 
-In the `My Key-Shares` table, you have an overview of all secrets where your received a key-share.
+In the `My Key-Shares` table, you have an overview of all secrets where you received a key-share.
 The status indicates that for secret 5 the author is still alive and no action is needed and that for secret 6 you already received your payout.
 
 However, secret 3 and 4 need your attention.
-Secret 4 expired so your are not required to reveal your share. You can simply request your payout and receive tokens.
+Secret 4 expired so you are not required to reveal your share. You can simply request your payout and receive tokens.
 For secret 5 the author sadly could not send the heartbeat in time.
 It is your job to reveal the key-share now.
 Click on the reveal button and input the private key `oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==`.
@@ -130,7 +130,9 @@ If you want to start again with the demo data simply click the demo button again
 * `dfx deploy`
 * `npm start`
 * go to localhost:8080
+* 
 
+<a name="disableauth"></a>
 
 ### Disable Authentication
 
