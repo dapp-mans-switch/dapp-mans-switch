@@ -56,10 +56,10 @@ export default function Main() {
     })
 
     // uncomment next line to use with auth
-    // await auth.auth(); await auth.getCanisters()
+    await auth.auth(); await auth.getCanisters()
 
     // uncomment next line to use without auth
-    await auth.getAnomymousCanisters()
+    // await auth.getAnomymousCanisters()
 
     canisters = auth.canisters
     console.log("useEffect Canisters", canisters)
