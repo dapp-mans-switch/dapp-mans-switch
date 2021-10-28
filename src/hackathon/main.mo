@@ -230,6 +230,14 @@ actor Hackathon {
     };
 
     /*
+    * Returns all secrets
+    * ith additional bool whether reveal process in in progress.
+    */
+    public func listAllSecretsPlusRevealInfo() : async [(Secret,Bool)]  {
+        secretManager.listAllPlusInfo()
+    };
+
+    /*
     * Returns all secret for which were authored by caller.
     */
     public shared query (msg) func listMySecrets() : async [Secret] {
@@ -278,7 +286,7 @@ actor Hackathon {
         #transferError: Text};
     public type AddSecretResult = Result.Result<Secret, AddSecretError>;
 
-    let secretBasePrice: Nat = 10;
+    let secretBasePrice: Nat = 0;
     public query func getSecretBasePrice() : async Nat {
         return secretBasePrice;
     };
@@ -432,8 +440,14 @@ actor Hackathon {
 
     // ---------------------------------------------------------------------------------------------
 
-    // TODO: remove
+
+    // Local development tools
+
+
+    private let LOCAL_CANISTER_ID = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
+
     public shared(msg) func dropTables(): async Bool {
+        assert(_this() == LOCAL_CANISTER_ID); // only in local development
         secretManager.secrets := HashMap.HashMap<Nat, Secret>(0, Nat.equal, Hash.hash);
         stakerManager.stakes := HashMap.HashMap<Nat, Stake>(0, Nat.equal, Hash.hash);
         stakerManager.stakers := HashMap.HashMap<Principal, Text>(0, Principal.equal, Principal.hash);
@@ -441,6 +455,7 @@ actor Hackathon {
     };
 
     public shared(msg) func changeToDemoData(): async Bool {
+        assert(_this() == LOCAL_CANISTER_ID); // only in local development
         var ok = await dropTables();
         Demo.addStakers(msg.caller, stakerManager.stakers);
         Demo.addStakes(msg.caller, stakerManager.stakes);
@@ -451,7 +466,12 @@ actor Hackathon {
         true;
     };
 
+
+    // ---------------------------------------------------------------------------------------------
+
+
     // System stability
+
 
     private stable var _secrets: [(Nat, Secret)] = [];
     private stable var _stakers: [(Principal, Text)] = [];

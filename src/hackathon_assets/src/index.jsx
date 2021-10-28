@@ -31,6 +31,16 @@ export default function Main() {
     render(React.createElement(Wallet, auth.getProps()), document.getElementById('my-wallet'))
   }
 
+  // populates backend with demo data, only possible in local development
+  async function demoMode() {
+    let hackathonID = await canisters.hackathon.identity();
+    let balance = await canisters.token.myBalance();
+    await canisters.token.approve(hackathonID, balance, []); // should not throw error
+    await canisters.hackathon.changeToDemoData();
+    console.log("Demo Data!")
+    location.reload()
+  }
+
   // perform after DOM is built (functional component lifecycle hook)
   React.useEffect(async () => {
     window.scrollTo(0,0);
@@ -46,20 +56,25 @@ export default function Main() {
     })
 
     // uncomment next line to use with auth
-    // await auth.auth(); let x = await auth.getCanisters()
+    // await auth.auth(); await auth.getCanisters()
 
     // uncomment next line to use without auth
-    let x = await auth.getAnomymousCanisters()
+    await auth.getAnomymousCanisters()
 
     canisters = auth.canisters
-    console.log("useEffect Canisters", x, canisters)
+    console.log("useEffect Canisters", canisters)
     createWallet()
+
+    if (process.env.DFX_NETWORK === "ic") {
+      const demoButton = document.getElementById("demoButton");
+      demoButton.remove();
+    }
   }, [])
 
 
   return (
     <div className="eventHorizon">
-      <h1>Dead Man’s Switch</h1>
+      <h1>DApp Man’s Switch</h1>
       <h4>Here your Secrets are save and sound. As long as you are.</h4>
       <p>Regularly verify that you are alive, otherwise your Secret will get published.</p>
 
@@ -83,7 +98,7 @@ export default function Main() {
       <div className="panel explainer">
         <p><b>Staker 💰</b> stakes $HRBT tokens to receive key-shares. The bigger the stake, the higher the probability to receive shares.
         Through key-shares you get involved in decrypting a Secret, rewarding you with a juicy payout in $HRBT.</p>
-        <p><b>Uploader 🥷🏼</b> enters a Secret to be held secure. Higher rewards payed by you result in more Stakers keeping the Secret secure.</p>
+        <p><b>Uploader 🥷🏼</b> enters a Secret to be held secure. Higher rewards paid by you result in more Stakers keeping the Secret secure.</p>
         <p><b>Spectator 👁</b> gets insight into all revealed Secrets. Everybody is a spectator, and no ICP identity is necessary.</p>
       </div>
 
@@ -104,7 +119,7 @@ export default function Main() {
         <p>If an Uploader fails to confirm his liveliness within the time-frame defined by him/her,
         the Stakers holding the key-shares are incentivized by a reward (in $HRBT) to decrypt the Secret.
         The private key to decrypt the Secret can only be reconstructed if the majority of key-shares has been decrypted.
-        This makes it extremely improbable for a single entity holding less than 51% of the $HRBT tokens to reveal a Secret.</p>
+        This makes it extremely improbable for a single entity holding less than 51% of the $HRBT tokens to reveal a Secret. 🔏</p>
       </div>
 
       <div className="panel explainer">
@@ -114,16 +129,7 @@ export default function Main() {
       </div>
 
       <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button>
-      <button className="bottom-page-button demo-data-button" onClick={async () => {
-
-        let hackathonID = await canisters.hackathon.identity();
-        let balance = await canisters.token.myBalance();
-        await canisters.token.approve(hackathonID, balance, []); // should not throw error
-        await canisters.hackathon.changeToDemoData();
-        console.log("Demo Data")
-        location.reload()
-
-        }}>Demo Data</button>
+      <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
 
       <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 

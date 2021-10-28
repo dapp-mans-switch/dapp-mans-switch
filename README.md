@@ -20,7 +20,7 @@ Her private key will be split up with the power of Shamir's Secret Sharing [[2]]
 First and foremost, Bob is interested in money. He finds the concept of this application compelling and sees value in its token, $HRBT.
 He buys $HRBT tokens and volunarily locks them up for a set amount of time. This process is called staking. His commitment signals Alice that he is long enough around to keep her information save. Therefore, Alice gives him a key-share.
 
-Alice decides that is sufficient to prove her well-being once a day.
+Alice decides that it is sufficient to prove her well-being once a day.
 If she fails to send this *heartbeat* then Bob knows that something is up, and reveals his key-share.
 He receives a reward in $HRBT for his action.
 Once the majority of key-share holders have revealed their part of the private key, the secret information is decrypted and visible to everyone.
@@ -29,6 +29,8 @@ Key-shares are distributed among users proportionately to their stake.
 Atleast 51% of key-share holders have to conspire to circumvent the system, and to be able to decrypt a secret.
 This makes our system *proof of stake*.
 
+The Internet Computer makes it possible that the above process is run in a completely decentralised and tamper proof manner.
+
 
 
 ## Methods
@@ -36,11 +38,70 @@ This makes our system *proof of stake*.
 - Users are authenticated with their [Internet Identity](https://identity.ic0.app).
 - Multi-canister application
 - [ERC20](https://github.com/flyq/motoko_token) compliant token canister
-- Random distrbution of key-shares with [cryptographic entropy source](https://sdk.dfinity.org/docs/base-libraries/random), combined with a PRNG for performance
+- Random distribution of key-shares with [cryptographic entropy source](https://sdk.dfinity.org/docs/base-libraries/random), combined with a PRNG for performance
 - React Front-End
 - Motoko Back-End
 
+## Technical Details
 
+## Demo Mode
+
+Only possible in local development.
+
+Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to corresponding the local canister id.
+You can look this id up from the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
+If you have troubles with the local authentication setup, or don't care to set it up, you can disable authentication in the front-end code, see below.
+
+Once you have the website running, authenticate yourself (ignore if you have disabled authentication).
+You should be able to navigate to the `STAKER` and `UPLOADER` page.
+On the start page there is a demo button.
+Clicking it will populate the application with demo data.
+Wait for the page to refresh.
+
+### Wallet
+
+For demo purposes you can give yourself unlimited $HRBT tokens by clicking `Top Up` on the wallet panel.
+
+### Uploader
+
+On the uploader page you can see in the `My Secrets` table that you have 5 secrets.
+Secret 9 is in the process of being revealed, secret 8 already expired and will not be decrypted. And the rest of the secrets are still alive.
+
+In particular, notice secret 11.
+Your last heartbeat expires soon. If you do nothing its state will soon change to `Reveal in Progress`.
+
+To avoid that you can click on the `EVERYBODY STAY CALM! I'M STILL ALIVE!` button. This will update the heartbeats.
+Notice, secret 11 also expires soon. So if you have sent a heartbeat its state will change to `Expired`.
+
+On the bottom of the page, you can create new secrets.
+Make sure you have enough tokens.
+
+### Staker
+
+On the stake r page you can see in the `My Stakes` table that you currently have 4 stakes.
+One is alredy ended, another one is expired and you can end it and get all your tokens back.
+The other two are not expired and you will not get back all your tokens back if you end them.
+
+You can create new stakes in the form on the top of the page.
+Make sure you have enough tokens.
+
+In the `My Key-Shares` table, you have an overview of all secrets where your received a key-share.
+The status indicates that for secret 5 the author is still alive and no action is needed and that for secret 6 you already received your payout.
+
+However, secret 3 and 4 need your attention.
+Secret 4 expired so your are not required to reveal your share. You can simply request your payout and receive tokens.
+For secret 5 the author sadly could not send the heartbeat in time.
+It is your job to reveal the key-share now.
+Click on the reveal button and input the private key `oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==`.
+This key only works in demo mode. Normally you would get a private key when you register as staker.
+
+### Spectator
+
+In the spectator tab you have an overview of all secrets in the system and their current state.
+
+### Start again
+
+If you want to start again with the demo data simply click the demo button again.
 
 ## How to run
 
@@ -48,10 +109,8 @@ This makes our system *proof of stake*.
 * `npm install`
 * `dfx start --background`
 * `dfx deploy`
+* `npm start`
 * go to localhost:8080
-
-### On chain
-Like above, but add `--network ic` right after `dfx deploy`.
 
 
 ### Authentication For Local Development
@@ -99,4 +158,19 @@ rm package-lock.json
 ```
 Also, make sure to `npm install` and to have all dependencies for internet identity installed and execute the calls in the given order.
 
-You can disable authentication in `index.jsx`.
+### Disable Authentication
+
+In `src/hackathon_assets/index.jsx` you can toggle authentication in the `React.useEffect` method.
+
+```js
+// uncomment next line to use with auth
+await auth.auth(); await auth.getCanisters()
+
+// uncomment next line to use without auth
+await auth.getAnomymousCanisters()
+```
+
+
+### On chain
+Like above, but add `--network ic` right after `dfx deploy`.
+

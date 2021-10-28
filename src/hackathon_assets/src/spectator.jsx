@@ -12,9 +12,9 @@ export default function Spectator(props) {
   
   async function listAllSecrets() {
     
-    let secrets = await hackathon.listAllSecrets()
+    let secrets = await hackathon.listAllSecretsPlusRevealInfo()
     secrets.sort(function(a, b) {
-      return - (parseInt(b.secret_id) - parseInt(a.secret_id));
+      return - (parseInt(b[0].secret_id) - parseInt(a[0].secret_id));
     });
     
     console.log("Secrets", secrets)
@@ -51,7 +51,10 @@ export default function Spectator(props) {
       tabCell.innerHTML = cn
     }
     
-    secrets.map(function (s) {
+    secrets.map(function (x) {
+      let s = x[0]
+      let revealInProgress = x[1]
+
       let n_shares = s.shares.length;
       let n_revealed = s.revealed.reduce((a,b) => a + b, 0);
       let canDecrypt = crypto.enoughSharesToDecrypt(n_shares, n_revealed);
@@ -68,16 +71,6 @@ export default function Spectator(props) {
           const reconstructedPrivateKey = crypto.reconstructPrivateKey(keyshares)
           const payload = crypto.decryptSecret(s.payload, reconstructedPrivateKey)
           
-          /* TODO: remove
-          console.log("keyshares", s.shares)
-          
-          console.log("Encrypted Secret", crypto.encryptSecret("Internet Computer Rocks!", reconstructedPrivateKey) )
-          console.log("Encrypted Secret", crypto.encryptSecret("Dfinity is cool!", reconstructedPrivateKey) )
-          console.log("Encrypted Secret", crypto.encryptSecret("I'm glad there is a decentralised Dead Man's Switch!", reconstructedPrivateKey) )
-          console.log("Encrypted Secret", crypto.encryptSecret("Here, is my password: password123", reconstructedPrivateKey) )
-          console.log("Encrypted Secret", crypto.encryptSecret("Wallet key: oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==", reconstructedPrivateKey) )
-          
-          */
           const tr = dectable.insertRow(-1)
           
           const idCell = tr.insertCell(-1)
@@ -91,30 +84,31 @@ export default function Spectator(props) {
         }
       } else {
         // secret cannot be decrypted
-        let now = new Date() / 1000;
-        if (s.expiry_time < now) {
-          // secret has expired and cannot be decrypted -> author sent all required heartbeats
-          const tr = exptable.insertRow(-1)
+        if (revealInProgress) {
+          console.log(n_revealed)
+          const tr = revtable.insertRow(-1)
           
           const idCell = tr.insertCell(-1)
           idCell.innerHTML = s.secret_id
           
-          const expiryCell = tr.insertCell(-1)
-          expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
+          const progressCell = tr.insertCell(-1)
+          const minReveal = crypto.minSharesToRecover(n_shares)
+          progressCell.innerHTML = (min(n_revealed, minReveal) / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
+          
         } else {
-          // secret can be alive or reveal is in progress
-          if (s.last_heartbeat + s.heartbeat_freq < now) {
-            console.log(n_revealed)
-            const tr = revtable.insertRow(-1)
+          let now = new Date() / 1000;
+          if (s.expiry_time < now) {
+            // secret has expired and cannot be decrypted -> author sent all required heartbeats
+            const tr = exptable.insertRow(-1)
             
             const idCell = tr.insertCell(-1)
             idCell.innerHTML = s.secret_id
             
-            const progressCell = tr.insertCell(-1)
-            const minReveal = crypto.minSharesToRecover(n_shares)
-            progressCell.innerHTML = (min(n_revealed, minReveal) / minReveal * 100.0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " %"
-            
+            const expiryCell = tr.insertCell(-1)
+            expiryCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time).toLocaleString()
           } else {
+            // secret is alive
+            
             const tr = altable.insertRow(-1)
             
             const idCell = tr.insertCell(-1)

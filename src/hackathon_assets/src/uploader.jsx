@@ -134,7 +134,7 @@ export default function Uploader(props) {
             if ('ok' in addSecretResult) {
                 let newSecret = addSecretResult['ok']
                 console.log("newSecret", newSecret)
-                errorPopup(`Secret with ID ${newSecret.secret_id} uploaded!`, 'secret_btn')
+                errorPopup(`Secret with ID ${newSecret.secret_id} uploaded!`, 'secret_btn', true, false)
                 // reset form after successful upload
                 setSecret(null)
                 setReward(null)
@@ -308,6 +308,7 @@ export default function Uploader(props) {
         }, [])
         
         function goBack() {
+            console.log("End interval", interval)
             clearInterval(interval)
             routToPage('Main')
         }
@@ -360,7 +361,7 @@ export default function Uploader(props) {
             <label htmlFor="heartbeatFreq">Heartbeat frequency (days)</label>
             <span><input id="heartbeatFreq" type="number" autoComplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
             
-            <label htmlFor="expiryTime">Latest reveal date:</label>
+            <label htmlFor="expiryTime">Prove liveliness until:</label>
             <span><input id="expiryTime" type="datetime-local" autoComplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
             
             <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>

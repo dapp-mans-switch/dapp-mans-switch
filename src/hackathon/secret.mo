@@ -419,6 +419,19 @@ module {
         };
 
         /*
+        * Returns all secrets
+        * ith additional bool whether reveal process in in progress.
+        */
+        public func listAllPlusInfo() : [(Secret,Bool)]  {
+            let allSecrets = Buffer.Buffer<(Secret,Bool)>(0);
+            for ((id, s) in secrets.entries()) {
+                let revealInProgress = shouldRevealSecret(s);   
+                allSecrets.add((s, revealInProgress));
+            };
+            return allSecrets.toArray();
+        };
+
+        /*
         * Returns all secrets which are authored by author_id
         * with additional bool whether reveal process in in progress.
         */
