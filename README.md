@@ -20,7 +20,7 @@ Her private key will be split up with the power of Shamir's Secret Sharing [[2]]
 First and foremost, Bob is interested in money. He finds the concept of this application compelling and sees value in its token, $HRBT.
 He buys $HRBT tokens and volunarily locks them up for a set amount of time. This process is called staking. His commitment signals Alice that he is long enough around to keep her information save. Therefore, Alice gives him a key-share.
 
-Alice decides that is sufficient to prove her well-being once a day.
+Alice decides that it is sufficient to prove her well-being once a day.
 If she fails to send this *heartbeat* then Bob knows that something is up, and reveals his key-share.
 He receives a reward in $HRBT for his action.
 Once the majority of key-share holders have revealed their part of the private key, the secret information is decrypted and visible to everyone.
@@ -29,6 +29,8 @@ Key-shares are distributed among users proportionately to their stake.
 Atleast 51% of key-share holders have to conspire to circumvent the system, and to be able to decrypt a secret.
 This makes our system *proof of stake*.
 
+The Internet Computer makes it possible that the above process is run in a completely decentralised and tamper proof manner.
+
 
 
 ## Methods
@@ -36,10 +38,29 @@ This makes our system *proof of stake*.
 - Users are authenticated with their [Internet Identity](https://identity.ic0.app).
 - Multi-canister application
 - [ERC20](https://github.com/flyq/motoko_token) compliant token canister
-- Random distrbution of key-shares with [cryptographic entropy source](https://sdk.dfinity.org/docs/base-libraries/random), combined with a PRNG for performance
+- Random distribution of key-shares with [cryptographic entropy source](https://sdk.dfinity.org/docs/base-libraries/random), combined with a PRNG for performance
 - React Front-End
 - Motoko Back-End
 
+## Technical Details
+
+## Demo Mode
+
+Only possible in local development.
+
+Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to corresponding the local canister id.
+You can look this id up from the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
+If you have troubles with the local authentication setup, or don't care to set it up, you can disable authentication in the front-end code, see below.
+
+Once you have the website running, authenticate yourself (ignore if you have disabled authentication).
+You should be able to navigate to the `STAKER` and `UPLOADER` page.
+On the start page there is a demo button.
+Clicking it will populate the application with demo data.
+Wait for the page to refresh.
+
+### Wallet
+
+For demo purposes you can give yourself unlimited $HRBT tokens by clicking `Top Up` on the wallet panel.
 
 
 ## How to run
@@ -48,10 +69,8 @@ This makes our system *proof of stake*.
 * `npm install`
 * `dfx start --background`
 * `dfx deploy`
+* `npm start`
 * go to localhost:8080
-
-### On chain
-Like above, but add `--network ic` right after `dfx deploy`.
 
 
 ### Authentication For Local Development
@@ -99,4 +118,19 @@ rm package-lock.json
 ```
 Also, make sure to `npm install` and to have all dependencies for internet identity installed and execute the calls in the given order.
 
-You can disable authentication in `index.jsx`.
+### Disable Authentication
+
+In `src/hackathon_assets/index.jsx` you can toggle authentication in the `React.useEffect` method.
+
+```js
+// uncomment next line to use with auth
+await auth.auth(); await auth.getCanisters()
+
+// uncomment next line to use without auth
+await auth.getAnomymousCanisters()
+```
+
+
+### On chain
+Like above, but add `--network ic` right after `dfx deploy`.
+

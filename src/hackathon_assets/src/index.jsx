@@ -31,6 +31,16 @@ export default function Main() {
     render(React.createElement(Wallet, auth.getProps()), document.getElementById('my-wallet'))
   }
 
+  // populates backend with demo data, only possible in local development
+  async function demoMode() {
+    let hackathonID = await canisters.hackathon.identity();
+    let balance = await canisters.token.myBalance();
+    await canisters.token.approve(hackathonID, balance, []); // should not throw error
+    await canisters.hackathon.changeToDemoData();
+    console.log("Demo Data!")
+    location.reload()
+  }
+
   // perform after DOM is built (functional component lifecycle hook)
   React.useEffect(async () => {
     window.scrollTo(0,0);
@@ -46,14 +56,19 @@ export default function Main() {
     })
 
     // uncomment next line to use with auth
-    await auth.auth(); let x = await auth.getCanisters()
+    // await auth.auth(); await auth.getCanisters()
 
     // uncomment next line to use without auth
-    // let x = await auth.getAnomymousCanisters()
+    await auth.getAnomymousCanisters()
 
     canisters = auth.canisters
-    console.log("useEffect Canisters", x, canisters)
+    console.log("useEffect Canisters", canisters)
     createWallet()
+
+    if (process.env.DFX_NETWORK === "ic") {
+      const demoButton = document.getElementById("demoButton");
+      demoButton.remove();
+    }
   }, [])
 
 
@@ -114,16 +129,7 @@ export default function Main() {
       </div>
 
       <button onClick={() =>  whoami()}>Who Am I?</button>
-      <button onClick={async () => {
-
-        let hackathonID = await canisters.hackathon.identity();
-        let balance = await canisters.token.myBalance();
-        await canisters.token.approve(hackathonID, balance, []); // should not throw error
-        await canisters.hackathon.changeToDemoData();
-        console.log("Demo Data!")
-        location.reload()
-
-        }}>Demo Data!</button>
+      <button id="demoButton" onClick={demoMode}>Demo Mode!</button>
 
       <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 

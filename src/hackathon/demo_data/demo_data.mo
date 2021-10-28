@@ -64,13 +64,13 @@ module {
 
         public let payloads = [
             "W+7emmQbDaJlFCZJ0RUE1SPwlCtIZvi8P+oNvscZ.lcbL2dkCK4k604poc9FYQL2lDqf54fjU", // My top secret.
-            "f1D+5N5327l5Sr84Mkc1J761fA0FLqrrXTKw7duui+s=.ZsrhvWyUJuiMAe32A+DAe7yGC9Bq4pmS", // Give me money for M1 max pls
-            "PqEb5rCVkUi/kwpkaWXR96dAMDvFA+YG+6JO62ZLDdsOMDik2oak5JdetdM=.OXD4/bGDAeEAW/ObImjGqNFP2YpA6mj3",
+            "W+7emmQbDaJlFCZJ0RUE1SPwlCtIZvi8P+oNvscZ.lcbL2dkCK4k604poc9FYQL2lDqf54fjU", // My top secret.
+            "W+7emmQbDaJlFCZJ0RUE1SPwlCtIZvi8P+oNvscZ.lcbL2dkCK4k604poc9FYQL2lDqf54fjU", // My top secret.
             "D1opz1XCuR8KMDdAyM/5MK15JL/RdCCk0XR+avt8WxQpiQG/R12yzw==.uEYRJtaGzee8PkH6yjMA92diXmMCF9tr", // Internet Computer Rocks!
             "D/teXclqFyctXJi3oczZwNN2avM5RfcZuYzJuWbbD48=.gu7vdhIHAOCLa5SAdOj7DnnY9GdzrQyq", // "Dfinity is cool!"
             "5DtI0XCNoNyA7+JBQUgFxa1Vk1Cxj0xlf7u2FiWoR2yVaYx9pL85M69ieIaog6y6W+OGVLu2gU5v8zByFjW2gBtrJp8=.hxaOprRv7T6rPCa/aOmKa+1gk4pYtQXo", // I'm glad there is a decentralised Dead Man's Switch!
             "Td5CfwWglzVnlTzlnQQFzs88MO4OoKj2tqmHaHKPoTt3xqBL5umtVGKr5t3V7Z2Yxw==.0rWQwPo+6unzAQJSskFHlhd34kqYddt3", // Here, is my password: password123
-            "KRmddLAaiFWjyhHt6OtJKfqCTjnSvqtej9B7LVokhpBeTBv//gzLip4BkzpXT1AL7Dt4me7yhYMJ01JoKwWgFK3mGuc8BMgAGQI0bdg0wOf6UdGObnf7wBVNCxKcELtFuMNyFHI39SkGiypTrA4VwlxJVKM=.fxDA63+2UN8A1y81170YtJ4Md2dhhZjf"
+            "KRmddLAaiFWjyhHt6OtJKfqCTjnSvqtej9B7LVokhpBeTBv//gzLip4BkzpXT1AL7Dt4me7yhYMJ01JoKwWgFK3mGuc8BMgAGQI0bdg0wOf6UdGObnf7wBVNCxKcELtFuMNyFHI39SkGiypTrA4VwlxJVKM=.fxDA63+2UN8A1y81170YtJ4Md2dhhZjf" // Wallet key: oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==
         ];
     };
 
@@ -521,7 +521,7 @@ module {
                     secret_id = id;
                     author_id = caller;
 
-                    payload = c.payloads[3];
+                    payload = c.payloads[7];
                     uploader_public_key = c.secret_public_key;
                     reward = 10;
 

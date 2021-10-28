@@ -325,6 +325,8 @@ export default function Staker(props) {
     }
     // const deleteCell = tr.insertCell(-1)
     // deleteCell.innerHTML = "delete"
+
+    let now = new Date() / 1000
     
     stakes.map(function (s) {
       const tr = table.insertRow(-1)
@@ -342,7 +344,13 @@ export default function Staker(props) {
         deleteButton.innerHTML = "End stake"
         deleteButton.className = "endStakeButton"
         deleteButton.addEventListener("click", () => { endStake(s)})
+
+        if (s.expiry_time < now) {
+          deleteButton.style.borderColor = "rgb(0, 209, 80)";
+        }
+
         deleteButtonCell.appendChild(deleteButton)
+
       } else {
         //deleteButton.disabled = true;
         amountCell.style.color = '#1010104d';
@@ -364,7 +372,7 @@ export default function Staker(props) {
       return - (parseInt(b.secret_id) - parseInt(a.secret_id));
     });
     
-    console.log(relevantSecrets)
+    //console.log(relevantSecrets)
     
     const table = document.getElementById('secretsTable')
     
@@ -512,6 +520,7 @@ export default function Staker(props) {
   }, []);
   
   function goBack() {
+    console.log("End interval", interval)
     clearInterval(interval)
     routToPage('Main')
   }

@@ -308,6 +308,7 @@ export default function Uploader(props) {
         }, [])
         
         function goBack() {
+            console.log("End interval", interval)
             clearInterval(interval)
             routToPage('Main')
         }
