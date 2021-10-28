@@ -130,10 +130,10 @@ export default function Main() {
         The way that the key-shares are distributed amongst the Stakers is based on <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir&apos;s Secret Sharing</a>.
       </div>
 
-      <button onClick={() =>  whoami()}>Who Am I?</button>
-      <button id="demoButton" onClick={demoMode}>Demo Mode!</button>
+      <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button>
+      <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
 
-      <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
+      <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>
   );

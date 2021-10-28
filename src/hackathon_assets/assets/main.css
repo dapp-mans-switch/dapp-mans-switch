@@ -316,3 +316,28 @@ table {
     border-color: rgb(0, 209, 80);
     background-color: rgba(255,255,255, 0);
 }
+
+.bottom-page-button {
+    font-family: inherit;
+    font-size: 1.2rem;
+    padding: 5px 13px;
+    margin: 0 8px;
+    border-radius: 20px;
+    border-width: 8px;
+    backdrop-filter: blur(8px);
+}
+
+.who-am-i-button {
+    border: solid rgb(255, 215, 36);
+    background-color:rgba(255, 215, 36, 0.15);
+}
+
+.demo-data-button {
+    border: solid rgb(14, 175, 224);
+    background-color:rgba(14, 175, 224, 0.15);
+}
+
+.logout-button {
+    border: solid rgb(212, 16, 230);
+    background-color:rgba(212, 16, 230, 0.15);
+}
