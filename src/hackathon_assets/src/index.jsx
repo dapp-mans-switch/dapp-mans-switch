@@ -59,7 +59,7 @@ export default function Main() {
 
   return (
     <div className="eventHorizon">
-      <h1>Yeet Man’s Switch</h1>
+      <h1>Dead Man’s Switch</h1>
       <h4>Here your Secrets are save and sound. As long as you are.</h4>
       <p>Regularly verify that you are alive, otherwise your Secret will get published.</p>
 
@@ -113,19 +113,19 @@ export default function Main() {
         The way that the key-shares are distributed amongst the Stakers is based on <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir&apos;s Secret Sharing</a>.
       </div>
 
-      <button onClick={() =>  whoami()}>Who Am I?</button>
-      <button onClick={async () => {
+      <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button>
+      <button className="bottom-page-button demo-data-button" onClick={async () => {
 
         let hackathonID = await canisters.hackathon.identity();
         let balance = await canisters.token.myBalance();
         await canisters.token.approve(hackathonID, balance, []); // should not throw error
         await canisters.hackathon.changeToDemoData();
-        console.log("Demo Data!")
+        console.log("Demo Data")
         location.reload()
 
-        }}>Demo Data!</button>
+        }}>Demo Data</button>
 
-      <button id="logoutButton" onClick={() => auth.logout()}>Logout</button>
+      <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>
 
     </div>
   );
