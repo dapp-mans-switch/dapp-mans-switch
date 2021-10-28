@@ -55,11 +55,13 @@ export default function Main() {
       }
     })
 
-    // uncomment next line to use with auth
-    await auth.auth(); await auth.getCanisters()
+    // set in webpack.config.js
+    if (process.env.AUTHENTICATION) {
+      await auth.auth(); await auth.getCanisters()
 
-    // uncomment next line to use without auth
-    // await auth.getAnomymousCanisters()
+    } else {
+      await auth.getAnomymousCanisters()
+    }
 
     canisters = auth.canisters
     console.log("useEffect Canisters", canisters)
