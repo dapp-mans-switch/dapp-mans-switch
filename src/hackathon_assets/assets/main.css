@@ -239,8 +239,8 @@ section {
 }
 
 .description {
-    margin: auto;
-    margin-left: 20px;
+    margin-left: 10px;
+    margin-right: 20px;
     text-align: left;
 }
 
