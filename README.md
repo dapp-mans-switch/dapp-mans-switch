@@ -48,6 +48,7 @@ The Internet Computer makes it possible that the above process is run in a compl
 - Users are authenticated with their [Internet Identity](https://identity.ic0.app).
 - Multi-canister application
 - [ERC20](https://github.com/flyq/motoko_token) compliant token canister
+- [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing) with [shamir](https://npm.io/package/shamir)
 - Random distribution of key-shares with [cryptographic entropy source](https://sdk.dfinity.org/docs/base-libraries/random), combined with a PRNG for performance
 - React Front-End
 - Motoko Back-End
@@ -55,7 +56,52 @@ The Internet Computer makes it possible that the above process is run in a compl
 
 <a name="details"></a>
 
-## Technical Details  
+## Technical Details 
+
+The $HRBT token is managed by an independent canister and is ERC20 compliant.
+Its implementation is adapted from [flyq](https://github.com/flyq/motoko_token).
+In the future users can exchange $HRBT for cycles, ICP, or any common crypto currency.
+You can find its source code at `src/token`.
+Users are authenticated by their [Internet Identity](https://identity.ic0.app) and the tokens are stored with their principal.
+
+If a users wants to participate as staker in order to receive rewards, a cryptographic key-pair is generated locally at their device as they registers.
+The public key is shared and used to encrypt key-shares, while the private key is to be stored securily and is used to decrypt and reveal the key-shares.
+This makes sure that users can only decrypt and read the key-shares which belong to them.
+
+To receive key-shares and rewards users have to stake their tokens.
+In this process, a custom amount of tokens are temporarily transfered to the wallet of the main canister of this application, implemented in `src/hackathon`.
+Of course, the tokens are transfered back when the users end their stake.
+If they decide to end their stake early, they will only get back half of their staked tokens.
+All active stakes are in the pool to receive key-shares.
+Stakes are managed in `src/hackathon/staker.mo`.
+
+If users want to upload a secret, they can specify a reward, heartbeat frequency, and expiry date.
+Locally at their device, a cryptographic key-pair is generated which is used to encrypt the secret.
+The private-key is split by the means of [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing).
+More than half of the shares are required to reconstruct the private-key and consequently to decrypt the secret.
+A higher reward means more shares are generated, up to 255 currently.
+
+The main canister is called to draw stakes which receive a key-share (see `src/hackathon/secret.mo drawStakes`).
+Only stakes which expiry *after* the secret expiry data are considered in the raffle.
+This guarantees that the key-share holders are long enough around to reveal their share if necessary.
+
+In the lottery, stakes are chosen proportionately to their stake amount at random.
+Basis for that is a Pseudo-Random-Number-Generator (implemented in `src/hackathon/utils/rng.mo`) for efficienct sampling.
+The seed for this procedure is derived from the cryptographic entropy source provided by the Internet Computer (see `Random.blob()`) to ensure a tamper proof distribution of key-shares.
+
+The uploaders can only select the stakes drawn by the main canister.
+This makes sure that distribution of key-shares is fair and cannot be influenced by the uploaders.
+
+Once the uploaders know which stakes and stakers receive a key-share, they encrypt the shares with the public key of the stakers.
+Furthermore, they create a SHA256 hash from the *undecrypted* key-shares.
+This hash is used to verify that when needed the stakers indeed reveal the correct undecrypted key-shares.
+A staker cannot just upload something random and receive a reward.
+
+Once the uploaders have uploaded their secret (managed in `src/hackathon/secret.mo`), they have to proof their liveliness at intervals specified by the heartbeat frequency.
+If they fail to do so, then this signal the stakers that it is time to decrypttheir key-shares with their private key and upload them.
+The main canister only allows to upload decrypted key-shares, if it conforms to the described protocol.
+For their action, stakers are rewarded proportionately to their amount of managed key-shares.
+If the uploaders prove their liveliness until the set expiry time, the secret remains encrypted and stakers aslo receive their payout.
 
 
 <a name="demo"></a>

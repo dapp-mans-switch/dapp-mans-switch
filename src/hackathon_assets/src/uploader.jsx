@@ -74,7 +74,7 @@ export default function Uploader(props) {
         // encrypt the secret
         const encryptedSecret = crypto.encryptSecret(input.secret, uploaderPrivateKey)
         
-        const number_of_shares = min(input.rewardInt, 255); // for now 1 token/stake payout, 255 is maximum crypto.js can handle
+        const number_of_shares = min(input.rewardInt, 255); // 255 is maximum shamir.js can handle
         
         // choose stakers
         // const stakes = await helpers.drawStakes() // <- fails now with this
