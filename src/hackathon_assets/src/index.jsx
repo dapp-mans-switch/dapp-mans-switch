@@ -139,13 +139,13 @@ export default function Main() {
         </p>
         <p>
           If users want to participate as stakers in order to receive rewards, a cryptographic key-pair is generated locally at their device as they registers.
-          The public key is shared and used to encrypt key-shares, while the private key is to be stored securily and is used to decrypt and reveal the key-shares.
+          The public key is shared and used to encrypt key-shares, while the private key is to be stored securely and is used to decrypt and reveal the key-shares.
           This makes sure that users can only decrypt and read the key-shares which belong to them.
         </p>
         <p>
           In order to receive key-shares and rewards, users have to stake their tokens.
-          In this process, a custom amount of tokens are temporarily transfered to the wallet of the main canister.
-          Of course, the tokens are transfered back when the users end their stakes.
+          In this process, a custom amount of tokens are temporarily transferred to the wallet of the main canister.
+          Of course, the tokens are transferred back when the users end their stakes.
           If they decide to end their stakes early, they will only get back half of their staked tokens.
           All active stakes are in the pool to receive key-shares.
         </p>
@@ -163,7 +163,7 @@ export default function Main() {
         </p>
         <p>
           In the lottery, stakes are chosen proportionately to their stake amount at random.
-          Basis for that is a Pseudo-Random-Number-Generator for efficienct sampling.
+          Basis for that is a Pseudo-Random-Number-Generator for efficient sampling.
           The seed for this procedure is derived from the cryptographic entropy source provided by the Internet Computer to ensure a tamper proof distribution of key-shares.
           The uploaders can only select the stakes drawn by the main canister.
           This makes sure that distribution of key-shares is fair and cannot be influenced by the uploaders.
