@@ -256,13 +256,13 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
 
-                    var payout = share_counter;
                     let now = Date.secondsSince1970();
                     if (now - secret.expiry_time > 86400 * 3) {
                         return #err(#tooLate(secret)); // too late
                     };
 
-                    return #ok({secret=newSecret; payout=share_counter});
+                    let payout = share_counter * secret.reward / secret.shares.size(); // the remainder is not payed out
+                    return #ok({secret=newSecret; payout=payout});
                 };
             };
         };
@@ -325,8 +325,7 @@ module {
                     };
                     secrets.put(secret_id, newSecret);
                     
-                    let payout = share_counter;
-
+                    let payout = share_counter * secret.reward / secret.shares.size(); // the remainder is not payed out
                     return #ok(payout);
                 };
             };

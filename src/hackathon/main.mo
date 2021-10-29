@@ -296,8 +296,7 @@ actor Hackathon {
     * Params:
     *   - payload : Enrypted secret.
     *   - uploader_public_key: Public key of secret encryption.
-    *   - reward: amount of token caller transfers to this canister. In the future
-    *       this should be payed out proportionately to stakes
+    *   - reward: amount of token caller transfers to this canister. It is payed out proportionately to stakes.
     *   - expiry_time: timestamp when secret WILL be revealed (seconds since 1970)
     *   - heartbeat_freq: the frequency with which the author has to send a heartbeat in order
     *       to keep the secret alive (seconds)
@@ -321,7 +320,7 @@ actor Hackathon {
         };
         let removed = stakerManager.removeCachedStakes(author_id);
 
-        if (reward == 0) {
+        if ((reward == 0) or (reward < encrypted_shares.size())) {
             return #err(#invalidReward(reward));
         };
         if (heartbeat_freq < 0) {
