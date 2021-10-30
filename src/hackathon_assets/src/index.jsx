@@ -114,7 +114,7 @@ export default function Main() {
           <p>The Heartbeat Token ($HRBT) &#129728; conforms to the ERC20 protocol. It manifests trust between Stakers and Uploaders.
             Try it out and top up! &#128184;</p>
         </div>
-        <div id="my-wallet"/>
+        <div id="my-wallet" style= {{ marginLeft: "40px" }}/>
       </div>
 
       <div className="panel explainer">
