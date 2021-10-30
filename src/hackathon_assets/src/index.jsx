@@ -12,7 +12,7 @@ import { hackathon } from '../../declarations/hackathon/index'
 export default function Main() {
   const [amount, setAmount] = React.useState(0)
   let canisters = auth.canisters
-  
+
 
   // returns principal id of the user's browser (dfx identity api)
   async function whoami() {
@@ -77,8 +77,8 @@ export default function Main() {
   return (
     <div className="eventHorizon">
       <h1>DApp Man’s Switch</h1>
-      <h4>Here your Secrets are save and sound. As long as you are.</h4>
-      <p>Regularly verify that you are alive, otherwise your Secret will get published.</p>
+      <h4>Here your Secrets are safe and sound. As long as you are.</h4>
+      <p>Regularly verify that you are alive, otherwise your Secret will be published.</p>
 
 
       <div className="panel">
@@ -122,7 +122,7 @@ export default function Main() {
         <p>Secrets are posted by the Uploader. For every Secret a private and a public key are generated.
         While the public key is stored on-chain, this is not possible for the private key, since it would allow other participants to decrypt Secrets.
         In order to avoid a single trusted entity, the private key is split up into multiple <b>key-shares</b> among randomly selected Stakers. &#129730; </p>
-        
+
         <p>If an Uploader fails to confirm his liveliness within the time-frame defined by him/her,
         the Stakers holding the key-shares are incentivized by a reward (in $HRBT) to decrypt the Secret.
         The private key to decrypt the Secret can only be reconstructed if the majority of key-shares has been decrypted.
