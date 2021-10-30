@@ -329,15 +329,18 @@ table {
 
 .who-am-i-button {
     border: solid rgb(255, 215, 36);
-    background-color:rgba(255, 215, 36, 0.15);
+    /* border color lightened by 33% */
+    background-color:rgba(255, 246, 205, 0.66);
 }
 
 .demo-data-button {
     border: solid rgb(14, 175, 224);
-    background-color:rgba(14, 175, 224, 0.15);
+    /* border color lightened by 33% */
+    background-color:rgba(158, 228, 249, 0.66);
 }
 
 .logout-button {
     border: solid rgb(212, 16, 230);
-    background-color:rgba(212, 16, 230, 0.15);
+    /* border color lightened by 33% */
+    background-color:rgba(242, 165, 249, 0.66);
 }
