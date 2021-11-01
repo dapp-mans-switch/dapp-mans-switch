@@ -109,7 +109,7 @@ If the uploaders prove their liveliness until the set expiry time, the secret re
 
 Only possible in local development.
 
-NOTE: You will have the best experience using a Chromium-based browser.
+NOTE: You will have the best experience using a Chromium-based browser, such as [Brave](https://brave.com), [ungoogled-chromium](https://github.com/Eloston/ungoogled-chromium) or Chromium. <sup><sub>Chrome is also a Chromium-based browser but it's in your best interest not to use it.</sub></sup>
 
 Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to the corresponding local canister id.
 You can look this id up in the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
