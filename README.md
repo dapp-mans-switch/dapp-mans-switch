@@ -109,6 +109,8 @@ If the uploaders prove their liveliness until the set expiry time, the secret re
 
 Only possible in local development.
 
+NOTE: You will have the best experience using a Chromium-based browser.
+
 Make sure to follow the instructions in the *How to run* chapter and set `LOCAL_CANISTER_ID` in `src/hackathon/main.mo` to the corresponding local canister id.
 You can look this id up in the output of `dfx deploy` (if you have changed `LOCAL_CANISTER_ID`, run `dfx deploy` again).
 If you have troubles with the local authentication setup, or don't care to set it up, you can disable authentication, see [below](#disableauth).
