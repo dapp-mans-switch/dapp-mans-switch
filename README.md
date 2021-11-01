@@ -13,7 +13,7 @@ Built in the course of [Dfinity's Reimangining the Internet Hackathon](https://m
 
 <a name="how"></a>
 
-## How it works 
+## How it works
 
 A dead man's switch (see alternative names) is a switch that is designed to be activated or deactivated if the human operator becomes incapacitated, such as through death, loss of consciousness, or being bodily removed from control [[1]](https://en.wikipedia.org/wiki/Dead_man%27s_switch).
 
@@ -56,7 +56,7 @@ The Internet Computer makes it possible that the above process is run in a compl
 
 <a name="details"></a>
 
-## Technical Details 
+## Technical Details
 
 The $HRBT token is managed by an independent canister and is ERC20 compliant.
 Its implementation is adapted from [flyq](https://github.com/flyq/motoko_token).
@@ -105,7 +105,7 @@ If the uploaders prove their liveliness until the set expiry time, the secret re
 
 <a name="demo"></a>
 
-## Demo Mode  
+## Demo Mode
 
 Only possible in local development.
 
@@ -175,7 +175,7 @@ If you want to start again with the demo data simply click the demo button again
 * `dfx deploy`
 * `npm start`
 * go to localhost:8080
-* 
+*
 
 <a name="disableauth"></a>
 
@@ -238,3 +238,12 @@ Also, make sure to `npm install` and to have all dependencies for internet ident
 * `dfx start --background`
 * `dfx deploy --network ic`
 
+---
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
