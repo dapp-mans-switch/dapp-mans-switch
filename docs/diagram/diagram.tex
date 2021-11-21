@@ -30,7 +30,7 @@
     at (0,0) (sss) {Shamir's Secret Sharing};
   \node[draw, above left=1cm and -6mm of sss] (secret) {\textbf{Secret}};
 
-  \node[draw, right=of sss]          (ks3) {$\KS_3$};
+  \node[draw, right=\spacing of sss] (ks3) {$\KS_3$};
   \node[draw, above=\spacing of ks3] (ks2) {$\KS_2$};
   \node[draw, above=\spacing of ks2] (ks1) {$\KS_1$};
   \node[      below=\spacing of ks3] (kss) {$\ldots$};
@@ -44,11 +44,11 @@
     \draw [arrow] (sss.center) to[out=east, in=west] (ksn.west);
   \end{scope}
 
-  \node[draw, right=of ks3]      (eks3) {$\E(\pk, \KS_3)$};
-  \node[draw, right=of ks2]      (eks2) {$\E(\pk, \KS_2)$};
-  \node[draw, right=of ks1]      (eks1) {$\E(\pk, \KS_1)$};
-  \node[      right=19mm of kss] (ekss) {$\ldots$};
-  \node[draw, right=of ksn]      (eksn) {$\E(\pk, \KS_n)$};
+  \node[draw, right=\spacing of ks3] (eks3) {$\E(\pk_{\includegraphics[width=6pt]{mage.png}}, \KS_3)$};
+  \node[draw, right=\spacing of ks2] (eks2) {$\E(\pk_{\includegraphics[width=5pt]{supervillain.png}}, \KS_2)$};
+  \node[draw, right=\spacing of ks1] (eks1) {$\E(\pk_{\includegraphics[width=6pt]{farmer.png}}, \KS_1)$};
+  \node[      right=2cm of kss]      (ekss) {$\ldots$};
+  \node[draw, right=\spacing of ksn] (eksn) {$\E(\pk_{\includegraphics[width=6pt]{astronaut.png}}, \KS_n)$};
 
   \draw [arrow] (ks1) -- (eks1);
   \draw [arrow] (ks2) -- (eks2);
@@ -65,12 +65,12 @@
     fill=red!20, draw=red!50!black] (event) {};
   \node at (event) {\includegraphics[width=1cm]{hourglass.png}};
 
-  \node[draw, right=4cm of eks3]  (dks3) {$\D(\sk, \KS_3)$};
+  \node[draw, right=39mm of eks3] (dks3) {$\D(\sk_{\includegraphics[width=6pt]{mage.png}}, \KS_3)$};
   % the super villain won't decrypt :^)
   \node[      right=47mm of eks2] (dks2) {\includegraphics[width=5mm]{cross.png}};
-  \node[draw, right=4cm of eks1]  (dks1) {$\D(\sk, \KS_1)$};
+  \node[draw, right=39mm of eks1] (dks1) {$\D(\sk_{\includegraphics[width=6pt]{farmer.png}}, \KS_1)$};
   \node[      right=56mm of ekss] (dkss) {$\ldots$};
-  \node[draw, right=4cm of eksn]  (dksn) {$\D(\sk, \KS_n)$};
+  \node[draw, right=39mm of eksn] (dksn) {$\D(\sk_{\includegraphics[width=6pt]{astronaut.png}}, \KS_n)$};
 
   \tikzset{
     snekline/.style={decorate, decoration={snake,segment length=5mm,post length=1mm}}
@@ -82,7 +82,7 @@
     \draw [arrow, snekline] (sn) -- (dksn);
   \end{scope}
 
-  \node[draw, rounded rectangle, right=15mm of dks3, text width=20mm, align=center]
+  \node[draw, rounded rectangle, right=13mm of dks3, text width=20mm, align=center]
     (decryption) {Secret Decryption};
 
   \node[above=2mm of decryption] (info) {$\geq 50\%$ of Stakers};
@@ -91,13 +91,12 @@
   \draw [arrow] (dks3) to[out=0, in=180] (decryption);
   \draw [arrow] (dksn) to[out=0, in=190] (decryption);
 
-  \node[draw, below right=1cm and -1cm of decryption, text width=20mm, align=center]
-    (pubsecret) {\textbf{Published Secret}};
-
-  \draw [arrow] (decryption) -- (pubsecret);
-
   \node[draw, below=of sn] (esecret) {\E(Secret)};
   \draw[arrow, rounded corners=70pt] (sss.-75) |- (esecret);
   \draw[arrow, rounded corners=70pt] (esecret) -| (decryption.-140);
+
+  \node[draw, below right=1cm and -1cm of decryption, text width=20mm, align=center]
+    (pubsecret) {\textbf{Published Secret}};
+  \draw [arrow] (decryption) -- (pubsecret);
 \end{tikzpicture}
 \end{document}
