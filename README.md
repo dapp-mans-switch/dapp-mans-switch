@@ -4,6 +4,8 @@ A decentralised dead man's switch on the [Internet Computer](https://dfinity.org
 
 Built in the course of [Dfinity's Reimangining the Internet Hackathon](https://medium.com/dfinity/announcing-the-reimagining-the-internet-hackathon-for-european-students-and-developers-9f5c1950502f).
 
+First place 🏆🥇 in Dfinity's Reimangining the Internet Hackathon.
+
 1. [How it works](#how)
 1. [Methods](#methods)
 1. [Technical Details](#details)
