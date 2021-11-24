@@ -199,7 +199,6 @@ If you want to start again with the demo data simply click the demo button again
 * `dfx deploy`
 * `npm start`
 * go to localhost:8080
-*
 
 ### Disable Authentication
 
