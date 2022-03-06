@@ -119,7 +119,7 @@ class Auth {
     }
 
     getProps() {
-        return {canisters: this.canisters}
+        return {canisters: this.canisters, auth: this}
     }
 
     /*

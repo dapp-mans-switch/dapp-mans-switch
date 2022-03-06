@@ -5,6 +5,7 @@ import Staker from './staker'
 import Uploader from './uploader'
 import Main from './index'
 import Spectator from './spectator'
+import HandsOff from './handsoff'
 
 
 // this is the router
@@ -23,6 +24,9 @@ export default function routToPage(pageName, props={}) {
       break
     case 'Spectator':
       render(React.createElement(Spectator, props), document.getElementById('app'))
+      break
+    case 'HandsOff':
+      render(React.createElement(HandsOff, props), document.getElementById('app'))
       break
     default:
   }

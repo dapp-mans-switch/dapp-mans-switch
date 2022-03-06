@@ -6,7 +6,6 @@ import Wallet from './wallet'
 
 
 import keyFlipVideo from './../assets/key-flip.mkv'
-import { hackathon } from '../../declarations/hackathon/index'
 
 
 export default function Main() {
