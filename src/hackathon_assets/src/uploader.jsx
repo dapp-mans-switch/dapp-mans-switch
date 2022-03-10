@@ -325,12 +325,15 @@ export default function Uploader(props) {
             </div>
             
             <div className="description-and-wallet">
-            <div className="description">
-            <p>Post your Secrets here and regularly send a Heartbeat. Otherwise the Stakers will publish your Secret.</p>
-            </div>
-            <div id="my-wallet"/>
+                <div className="description">
+                <p>Post your Secrets here and regularly send a Heartbeat. Otherwise the Stakers will publish your Secret.</p>
+                </div>
+                <div className="full-child-wallet">
+                    <div id="my-wallet"/>
+                </div>
             </div>
             
+
             <div className="panel">
             <h3>Heartbeat</h3>
             <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="rainbow-button" style={{width: 550}}/>

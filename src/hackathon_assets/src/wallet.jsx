@@ -35,7 +35,7 @@ export default function Wallet(props) {
 
 
     return(
-        <div className="wallet-in-app">
+        <div className="wallet">
             <div>
                 <p style={{marginTop: 0}}>Wallet Balance:</p>
                 <b id="walletBalance">0 $HRBT</b>

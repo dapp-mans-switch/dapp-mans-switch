@@ -77,7 +77,9 @@ export default function Main() {
     <div className="eventHorizon">
       <h1>DApp Man’s Switch</h1>
       <h4>Here your Secrets are safe and sound. As long as you are.</h4>
-      <p>Regularly verify that you are alive, otherwise your Secret will be published.</p>
+      <div className="regularly-verify-text">
+        <p>Regularly verify that you are alive, otherwise your Secret will be published.</p>
+      </div>
 
 
       <div className="panel">
@@ -96,11 +98,12 @@ export default function Main() {
         </div>
       </div>
 
+      <div id="my-wallet"/>
+
       {/* <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button> */}
       <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
-
       <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>
-
+      
       <div className="panel explainer">
         <p><b>Staker &#128176;</b> stakes $HRBT tokens to receive key-shares. The bigger the stake, the higher the probability to receive shares.
         Through key-shares you get involved in decrypting a Secret, rewarding you with a juicy payout in $HRBT.</p>
@@ -108,12 +111,9 @@ export default function Main() {
         <p><b>Spectator &#128065;</b> gets insight into all revealed Secrets. Everybody is a spectator, and no ICP identity is necessary.</p>
       </div>
 
-      <div className="description-and-wallet">
-        <div className="panel explainer-next-to-wallet">
-          <p>The Heartbeat Token ($HRBT) &#129728; conforms to the ERC20 protocol. It manifests trust between Stakers and Uploaders.
-            Try it out and top up! &#128184;</p>
-        </div>
-        <div id="my-wallet" style= {{ marginLeft: "40px" }}/>
+      <div className="panel">
+        <p>The Heartbeat Token ($HRBT) &#129728; conforms to the ERC20 protocol. It manifests trust between Stakers and Uploaders.
+          Try it out and top up! &#128184;</p>
       </div>
 
       <div className="panel explainer">

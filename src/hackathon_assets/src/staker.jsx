@@ -548,11 +548,13 @@ export default function Staker(props) {
     </div>
     
     <div className="description-and-wallet">
-    <div className="description">
-    <p>Stake $HRBT to receive key-shares.</p>
-    <p>When you decrypt a key-share at the right time, you will be richly rewarded.</p>
-    </div>
-    <div id="my-wallet"/>
+      <div className="description">
+      <p>Stake $HRBT to receive key-shares.</p>
+      <p>When you decrypt a key-share at the right time, you will be richly rewarded.</p>
+      </div>
+      <div className="full-child-wallet">
+        <div id="my-wallet"/>
+      </div>
     </div>
     
     <div id="register" className="panel" hidden={true}>
@@ -560,7 +562,7 @@ export default function Staker(props) {
     </div>
     
     <div id="signedUp" hidden={true}>
-    <a id="hands_off_button" data-text="Hands-off mode" onClick={handsOff} className="rainbow-button" style={{width: 400}}></a>
+    <a id="hands_off_button" data-text="Hands-off mode" onClick={handsOff} className="rainbow-button" style={{width: 300}}></a>
 
     <div className="panel">
     <h3>Create New Stake</h3>
