@@ -16,11 +16,11 @@ export default function HandsOff(props) {
     const interval = setInterval(loopBody, 30 * 1000)
 
     function printToConsole(str) {
-        let buffer_size = 20
+        let buffer_size = 1327
 
         let now = (new Date()).toLocaleString()
         const handsOffConsole = document.getElementById('hands_off_console')
-        consoleStrs.push(`[${now}] ` + str)
+        consoleStrs.unshift([`[${now}] ` + str])
         if (consoleStrs.length > buffer_size) {
             consoleStrs.shift()
         }
@@ -143,7 +143,6 @@ export default function HandsOff(props) {
     function stop() {
         clearInterval(interval)
         console.log('stop')
-        // routToPage('Main')
     }
 
 
@@ -153,10 +152,10 @@ export default function HandsOff(props) {
     return (
     <div className="eventHorizon">
         <h1>Hands-Off Mode</h1>
-        <h2>{privateKey}</h2>
-        <a id="stop_button" data-text="Stop" onClick={stop} className="rainbow-button" style={{width: 100}}></a>
-
-        <p id='hands_off_console' align='left' style={{'whiteSpace': 'pre-wrap'}}></p>
+        <a id="stop_button" data-text="Stop" onClick={stop => routToPage('Staker', auth.getProps())} className="rainbow-button" style={{width: 100}}></a>
+        <div className="hacker-console panel">
+            <p id='hands_off_console' align='left' className="console-text"></p>
+        </div>
     </div>
     )
 }

@@ -336,7 +336,8 @@ export default function Uploader(props) {
 
             <div className="panel">
             <h3>Heartbeat</h3>
-            <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="rainbow-button" style={{width: 550}}/>
+            <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="big-still-alive-button rainbow-button" style={{width: 550}}/>
+            <a data-text="I'm still alive!" onClick={sendHeartbeat} className="small-still-alive-button rainbow-button" style={{width: 240}}/>
             <video id="still-alive-video" className="still-alive-video">
             <source src={stillAliveVideo}/>
             </video>
@@ -367,7 +368,7 @@ export default function Uploader(props) {
             <label htmlFor="expiryTime">Prove liveliness until:</label>
             <span><input id="expiryTime" type="datetime-local" autoComplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
             
-            <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 260}}/>
+            <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 250}}/>
             </form>
             
             {/* <button id="availability-btn" onClick={checkAvailability}>Check availability</button> */}

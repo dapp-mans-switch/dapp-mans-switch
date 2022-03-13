@@ -147,7 +147,7 @@ export default function Spectator(props) {
     <h1>Spectator</h1>
     </div>
     
-    Look at other people&apos;s Secrets.
+    <p>Look at other people&apos;s Secrets.</p>
     
     <div>
     <a id="staker_button" data-text="Refresh" onClick={() => listAllSecrets()} className="rainbow-button" style={{width: 150}}></a>

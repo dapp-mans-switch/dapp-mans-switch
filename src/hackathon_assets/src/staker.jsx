@@ -530,7 +530,8 @@ export default function Staker(props) {
   function handsOff() {
     clearInterval(interval)
     // for demo mode: oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==
-    let privateKey = prompt('Enter private key to start hands-off mode!', '')
+    // let privateKey = prompt('Enter private key to start hands-off mode!', '')
+    let privateKey = "oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g=="
     props = auth.getProps()
     props.privateKey = privateKey
     routToPage('HandsOff', props)
@@ -558,7 +559,7 @@ export default function Staker(props) {
     </div>
     
     <div id="register" className="panel" hidden={true}>
-    <a id="register_staker_btn" data-text="Register as Staker" onClick={() => registerStaker()} className="rainbow-button" style={{width: 330}}></a>
+    <a id="register_staker_btn" data-text="Register as Staker" onClick={() => registerStaker()} className="rainbow-button" style={{width: 300}}></a>
     </div>
     
     <div id="signedUp" hidden={true}>
@@ -595,7 +596,7 @@ export default function Staker(props) {
     <label htmlFor="stakerPrivateKey">Your private key:</label>
     <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
     </form>
-    <a id="reveal_secret_share_button" data-text="Reveal Key Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 330}}></a>
+    <a id="reveal_secret_share_button" data-text="Reveal Key Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 275}}></a>
     </div>
     </div>
     
