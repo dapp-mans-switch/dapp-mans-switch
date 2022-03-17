@@ -246,8 +246,10 @@ export default function Uploader(props) {
                         let remainingTimeMS = next_heartbeat - now
                         let remainingTimeHR = remainingTimeMS / 1000 / 60 / 60
                         const heartbeatCell = tr.insertCell(-1)
-                        heartbeatCell.innerHTML = remainingTimeHR.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2}) + " h"
-                        // TODO hh:mm instead of hh.frac
+
+                        function pad(n) {return n<10 ? '0'+n : n}
+                        // hh:mm
+                        heartbeatCell.innerHTML = Math.floor(remainingTimeHR) + ":" + pad(Math.floor((remainingTimeHR % 1) * 60)) + " h"
 
                         if (remainingTimeHR < 12) {
                             heartbeatCell.style.color = '#ed2939';
