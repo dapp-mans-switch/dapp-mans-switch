@@ -20,7 +20,7 @@ export function getPositiveNumber(string) {
     let num = parseInt(string)
     if (isNaN(num) || num <= 0) {
         throw 'Please enter a positive number'
-    } 
+    }
     return num
 }
 
@@ -28,7 +28,7 @@ export function getNaturalNumber(string) {
     let num = parseInt(string)
     if (isNaN(num) || num < 0) {
         throw 'Please enter a positive number'
-    } 
+    }
     return num
 }
 
@@ -36,6 +36,13 @@ export function secondsSinceEpocheToDate(string) {
     const d = new Date(parseInt(string) * 1000)
     const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }
     return d.toLocaleString('en-US', options)
+}
+
+export function secondsSinceEpocheToISO8601(string) {
+    function pad(n) {return n<10 ? '0'+n : n}
+    const d = new Date(parseInt(string) * 1000)
+    // why is the month 0 indexed? man..
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes())
 }
 
 export function secondsSinceEpoch() {

@@ -320,7 +320,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('stakerTable')
 
-    const col_names = ['Amount', 'Expires on']
+    const col_names = ['<b>HRBT<b/>', '<b>Expires on<b/>']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -340,13 +340,13 @@ export default function Staker(props) {
 
       const dateCell = tr.insertCell(-1)
 
-      let expiryDate = helpers.secondsSinceEpocheToDate(s['expiry_time'])
+      let expiryDate = helpers.secondsSinceEpocheToISO8601(s['expiry_time'])
       dateCell.innerHTML = expiryDate
 
       if (s.valid) {
         const deleteButtonCell = tr.insertCell(-1)
         const deleteButton = document.createElement('button')
-        deleteButton.innerHTML = "End stake"
+        deleteButton.innerHTML = "End"
         deleteButton.className = "endStakeButton"
         deleteButton.addEventListener("click", () => { endStake(s)})
 
@@ -381,7 +381,7 @@ export default function Staker(props) {
 
     const table = document.getElementById('secretsTable')
 
-    const col_names = ['Secret ID', 'Shares', 'Status', 'Expires on', '']
+    const col_names = ['<b>ID<b/>', '<b>Shares<b/>', '<b>Status<b/>', '<b>Expires on<b/>', '']
     table.innerHTML = ''
 
     const tr = table.insertRow(-1)
@@ -408,7 +408,7 @@ export default function Staker(props) {
       }
 
       const expiresOnCell = tr.insertCell(-1)
-      expiresOnCell.innerHTML = helpers.secondsSinceEpocheToDate(s.expiry_time)
+      expiresOnCell.innerHTML = helpers.secondsSinceEpocheToISO8601(s.expiry_time)
 
 
       const buttonCell = tr.insertCell(-1)
@@ -534,6 +534,7 @@ export default function Staker(props) {
     clearInterval(interval)
     // for demo mode: oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==
     // let privateKey = prompt('Enter private key to start hands-off mode!', '')
+    // TODO: undo
     let privateKey = "oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g=="
     props = auth.getProps()
     props.privateKey = privateKey
@@ -541,7 +542,7 @@ export default function Staker(props) {
   }
 
   return (
-    <div className="eventHorizon">
+    <div className="content">
     <div className="header-n-nav">
     <a onClick={goBack}>
     <video autoPlay loop muted className="back-button-video">
@@ -554,7 +555,7 @@ export default function Staker(props) {
     <div className="description-and-wallet">
       <div className="description">
       <p>Stake $HRBT to receive key-shares.</p>
-      <p>When you decrypt a key-share at the right time, you will be richly rewarded.</p>
+      <p>When you decrypt a key-share at the right time, you will be rewarded.</p>
       </div>
       <div className="full-child-wallet">
         <div id="my-wallet"/>
@@ -566,7 +567,7 @@ export default function Staker(props) {
     </div>
 
     <div id="signedUp" hidden={true}>
-    <a id="hands_off_button" data-text="Hands-off mode" onClick={handsOff} className="rainbow-button" style={{width: 300}}></a>
+    <a id="hands_off_button" data-text="Hands-off mode" onClick={handsOff} className="rainbow-button" style={{width: 250}}></a>
 
     <div className="panel">
     <h3>Create New Stake</h3>
@@ -576,7 +577,7 @@ export default function Staker(props) {
     <label htmlFor="stakeDuration">Duration (days):</label>
     <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
     </form>
-    <a id="add_new_stake_button" data-text="Start stake" onClick={addStake} className="rainbow-button" style={{width: 200}}></a>
+    <a id="add_new_stake_button" data-text="Start stake" onClick={addStake} className="rainbow-button" style={{width: 180}}></a>
     </div>
 
     <div className="panel">
@@ -587,7 +588,7 @@ export default function Staker(props) {
     <div className="panel">
     <h3>My Key-Shares</h3>
     <table id="secretsTable" cellPadding={5}/>
-    <p id="secretsTable_status_legend">&#9989; ... done, &#10071; ... action possible, &#128147; ... secret author alive. </p>
+    <p id="secretsTable_status_legend">&#9989; &#8230; done <br/> &#10071; &#8230; action possible <br/> &#128147; &#8230; secret author alive</p>
     </div>
 
     <div className="panel">
@@ -599,7 +600,7 @@ export default function Staker(props) {
     <label htmlFor="stakerPrivateKey">Your private key:</label>
     <span><input id="stakerPrivateKey" type="text" autoComplete='off' onChange={(ev) => setStakerPrivateKey(ev.target.value)}/></span>
     </form>
-    <a id="reveal_secret_share_button" data-text="Reveal Key Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 275}}></a>
+    <a id="reveal_secret_share_button" data-text="Reveal Key Share" onClick={revealSecretShare} className="rainbow-button" style={{width: 260}}></a>
     </div>
     </div>
 
@@ -611,4 +612,3 @@ export default function Staker(props) {
     </div>
     );
   }
-

@@ -1,7 +1,22 @@
+:root{
+    /* font-size */
+    --fz-root: 1rem; /* rem, everything else should be in em, unless there is a good reason for it not to be */
+    --fz-h1: 2.5em;
+    --fz-h2: 2.0em;
+    --fz-h3: 1.5em;
+    --fz-rainbow-btn: 1.5em;
+}
+
+
+/* mobile layout */
+
+html {
+    font-size: var(--fz-root);
+}
+
 body {
-    font-family: "Tahoma",sans-serif;
-    font-size: 1.5rem;
-    background-color:#E0E5EC;
+    font-family: "Tahoma", sans-serif;
+    background-color :#E0E5EC;
     /* background-image is set in index.html */
     background-attachment: fixed;
     background-size: cover;
@@ -11,47 +26,44 @@ body {
     overscroll-behavior: none;
 }
 
-.eventHorizon {
+.content {
     margin: 0 auto;
     justify-content: center;
-    width: 90%;
+    width: 98%;
     max-width: 800px;
 }
 
 h1 {
-    font-size: 7vw;
+    font-size: clamp(1rem, 7vw, var(--fz-h1));
 }
 
 h2 {
+    font-size: clamp(1rem, 5vw, var(--fz-h2));
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
 h3 {
+    font-size: clamp(1rem, 4vw, var(--fz-h3));
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
-h4 {
-    font-size: 4vw;
-}
-
 p {
+    font-size: clamp(1rem, 4vw, 1em);
     margin: 10px 0;
-    font-size: 4vw;
 }
 
+/* hide "Regularyly verify..." on mobile to reduce clutter */
 .regularly-verify-text {
     display: none;
 }
-
 
 .header-n-nav{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     align-items: center;
 }
-
 
 img {
     max-width: 50vw;
@@ -76,7 +88,7 @@ input {
 textarea {
     border: none;
     outline:none;
-    background-color: rgb(224,229,236,0);    ;
+    background-color: rgb(224,229,236,0);
     height: 80px;
     width: 95%;
     max-width: 95%;
@@ -186,17 +198,19 @@ section {
 .rainbow-button {
     margin: 10px auto;
     padding: 10px 5px;
-    height: 40px;
+    height: clamp(20px, 6vw, 40px);
     background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 20%, #FC4F4F 40%, #f200ff 60%, #9000ff 80%, #00C0FF 100%);
     border-radius: 10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-    font-size: 1em;
+    max-width: 190;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: clamp(1em, 6vw, var(--fz-rainbow-btn));
     box-shadow: 9px 9px 16px rgb(163,177,198,0.6),
-        -9px -9px 16px  rgba(255,255,255, 0.5);
-    }
+                -9px -9px 16px rgba(255,255,255, 0.5);
+    /* width:33%; */
+}
 
 .rainbow-button:after {
     content: attr(data-text);
@@ -253,7 +267,7 @@ section {
 
 .explainer {
     text-align: start;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     padding: 15px 30px;
 }
 
@@ -320,7 +334,7 @@ table {
 .endStakeButton {
     font-family: inherit;
     font-size: 1.2rem;
-    width: 120px;
+    width: 100px;
     height: 40px;
     border-width: 5px;
     border-radius: 10px;
@@ -369,23 +383,32 @@ table {
 
 
 
-/* mobile layout */
+/* desktop layout */
 @media screen and (min-width: 700px) {
     h1 {
-        font-size: 32pt;
+        font-size: var(--fz-h1);
     }
 
-    h4 {
-        font-size: 20pt;
+    h3 {
+        font-size: var(--fz-h3);
     }
-    
+
     p {
         font-size: 16pt;
     }
 
-    /* hide hint to regularly verify if scree is too small */
+    .content {
+        width: 90%;
+    }
+
+    /* we show the hint on desktop */
     .regularly-verify-text {
         display: block;
+    }
+
+    .rainbow-button {
+        font-size: var(--fz-rainbow-btn);
+        max-width: 999;
     }
 
     .description-and-wallet {
@@ -413,10 +436,12 @@ table {
     .small-still-alive-button {
         display: none;
     }
-    
+
     .big-still-alive-button{
         display: flex !important;
     }
-    
 
+    table {
+        table-layout: fixed;
+    }
 }

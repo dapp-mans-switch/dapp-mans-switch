@@ -2,6 +2,7 @@ import * as React from 'react'
 import { render } from 'react-dom'
 import routToPage from './router'
 import * as crypto from './crypto'
+import * as helpers from './helpers'
 
 export default function HandsOff(props) {
 
@@ -13,12 +14,14 @@ export default function HandsOff(props) {
     let consoleStrs = [];
 
     loopBody()
-    const interval = setInterval(loopBody, 30 * 1000)
+    const interval = setInterval(loopBody, 60 * 1000) // run main loop once a minute
 
     function printToConsole(str) {
-        let buffer_size = 1327
+        let buffer_size = 1327 // it's prime !
 
-        let now = (new Date()).toLocaleString()
+        let nowInSeconds = (new Date() / 1000)
+        let now = helpers.secondsSinceEpocheToISO8601(nowInSeconds)
+
         const handsOffConsole = document.getElementById('hands_off_console')
         consoleStrs.unshift([`[${now}] ` + str])
         if (consoleStrs.length > buffer_size) {
@@ -110,7 +113,7 @@ export default function HandsOff(props) {
         try {
             const uploaderPublicKey = secret['uploader_public_key']
             console.log(privateKey)
-        
+
             for (let j = 0; j < secret.relevantShares.length; j++) {
                 decryptedShares.push(crypto.decryptKeyShare(secret.relevantShares[j], privateKey, uploaderPublicKey))
             }
@@ -120,7 +123,7 @@ export default function HandsOff(props) {
             printToConsole(`Reveal secret ${secret.secret_id} FAILED: ${error}.`)
             return
         }
-        
+
         let result = await hackathon.revealAllShares(secret.secret_id, decryptedShares);
         if ('ok' in result) {
             printToConsole(`Reveal secret ${secret.secret_id} OK: Received $HRBT ${result['ok']['payout']}`)
@@ -150,7 +153,7 @@ export default function HandsOff(props) {
     }, [])
 
     return (
-    <div className="eventHorizon">
+    <div className="content">
         <h1>Hands-Off Mode</h1>
         <a id="stop_button" data-text="Stop" onClick={stop => routToPage('Staker', auth.getProps())} className="rainbow-button" style={{width: 100}}></a>
         <div className="hacker-console panel">
