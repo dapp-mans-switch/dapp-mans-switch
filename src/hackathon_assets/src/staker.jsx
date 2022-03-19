@@ -572,9 +572,9 @@ export default function Staker(props) {
     <div className="panel">
     <h3>Create New Stake</h3>
     <form id="staker_form">
-    <label htmlFor="stakeAmount">Amount:</label>
+    <label htmlFor="stakeAmount">Size in $HRBT:</label>
     <span><input id="stakeAmount" type="number" autoComplete='off' onChange={(ev) => setAmount(ev.target.value)}/></span>
-    <label htmlFor="stakeDuration">Duration (days):</label>
+    <label htmlFor="stakeDuration">Duration in days:</label>
     <span><input id="stakeDuration" type="number" autoComplete='off' onChange={(ev) => setDuration(ev.target.value)}/></span>
     </form>
     <a id="add_new_stake_button" data-text="Start stake" onClick={addStake} className="rainbow-button" style={{width: 180}}></a>

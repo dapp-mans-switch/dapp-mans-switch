@@ -347,10 +347,13 @@ export default function Uploader(props) {
 
             <div className="panel">
             <h3>My Secrets</h3>
+            <br/>
             <b>Alive</b>
             <table id="secretsTableAlive" cellPadding={5}/>
+            <br/>
             <b>Reveal in Progress</b>
             <table id="secretsTableReveal" cellPadding={5}/>
+            <br/>
             <b>Expired</b>
             <table id="secretsTableExpired" cellPadding={5}/>
             </div>
@@ -361,13 +364,13 @@ export default function Uploader(props) {
             <textarea id="secret" type="text" autoComplete='off' onChange={(ev) => setSecret(ev.target.value)}/>
             <br/>
 
-            <label htmlFor="reward">Reward ($HRBT)</label>
+            <label htmlFor="reward">Reward in $HRBT</label>
             <span><input id="reward" type="number" autoComplete='off' onChange={(ev) => setReward(ev.target.value)}/></span>
 
-            <label htmlFor="heartbeatFreq">Heartbeat frequency (days)</label>
+            <label htmlFor="heartbeatFreq">Heartbeat frequency in days</label>
             <span><input id="heartbeatFreq" type="number" autoComplete='off' onChange={(ev) => setHeartbeatFreq(ev.target.value)}/></span>
 
-            <label htmlFor="expiryTime">Prove liveliness until:</label>
+            <label htmlFor="expiryTime">Expiration date:</label>
             <span><input id="expiryTime" type="datetime-local" autoComplete='off' onChange={(ev) => setExpiryTime(ev.target.value)}/></span>
 
             <a id="secret_btn" data-text="Upload secret" autoComplete='off' onClick={uploadSecret} className="rainbow-button" style={{width: 220}}/>

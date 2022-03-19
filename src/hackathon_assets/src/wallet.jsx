@@ -21,7 +21,7 @@ export default function Wallet(props) {
         await token.buyIn(100)
         getBalance()
         removeLoadingAnimation()
-        
+
     }
 
     // make getBalance a global window-function

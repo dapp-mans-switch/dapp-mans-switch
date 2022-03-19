@@ -75,7 +75,7 @@ export default function Main() {
 
   return (
     <div className="content">
-      <h1>DApp Man’s Switch</h1>
+      <h1>dApp Man’s Switch</h1>
       <h3>Here your secrets are safe and sound. As long as you are.</h3>
       <div className="regularly-verify-text">
         <p>Regularly verify that you are alive, otherwise your secret will be published.</p>
