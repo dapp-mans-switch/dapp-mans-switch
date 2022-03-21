@@ -10,7 +10,8 @@ import { errorPopup } from './errorPopup'
 
 import stillAliveVideoMov from './../assets/im-alive.mov'
 import stillAliveVideoWebm from './../assets/im-alive.webm'
-import backButtonVideo from './../assets/back_button.mkv'
+import backButtonVideoMov from './../assets/back-button.mov'
+import backButtonVideoWebm from './../assets/back-button.webm'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
 const TEST = false
@@ -321,7 +322,8 @@ export default function Uploader(props) {
             <div className="header-n-nav">
             <a onClick={goBack}>
             <video autoPlay loop muted className="back-button-video">
-            <source src={backButtonVideo}/>
+                <source src={backButtonVideoMov}/>
+                <source src={backButtonVideoWebm}/>
             </video>
             </a>
             <h1>Uploader</h1>
@@ -383,7 +385,8 @@ export default function Uploader(props) {
 
             <a onClick={goBack}>
             <video autoPlay loop muted className="back-button-big">
-            <source src={backButtonVideo}/>
+                <source src={backButtonVideoMov}/>
+                <source src={backButtonVideoWebm}/>
             </video>
             </a>
 

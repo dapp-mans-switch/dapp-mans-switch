@@ -44,16 +44,6 @@ export default function Main() {
   React.useEffect(async () => {
     window.scrollTo(0,0);
 
-    const videosPreload = ['./../assets/key-flip.mkv', './../assets/back_button.mkv']
-    videosPreload.forEach((vid) => {
-      if (!window[vid]) {
-        var newVid = document.createElement("video");
-        newVid.setAttribute("src", vid);
-        newVid.src = vid;
-        window[vid] = newVid;
-      }
-    })
-
     // set in webpack.config.js
     if (process.env.AUTHENTICATION) {
       await auth.auth(); await auth.getCanisters()

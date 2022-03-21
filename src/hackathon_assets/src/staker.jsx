@@ -5,7 +5,8 @@ import * as crypto from './crypto'
 import * as helpers from './helpers'
 import routToPage from './router'
 
-import backButtonVideo from './../assets/back_button.mkv'
+import backButtonVideoMov from './../assets/back-button.mov'
+import backButtonVideoWebm from './../assets/back-button.webm'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 import {errorPopup} from './errorPopup'
 import Wallet from './wallet'
@@ -546,7 +547,8 @@ export default function Staker(props) {
     <div className="header-n-nav">
     <a onClick={goBack}>
     <video autoPlay loop muted className="back-button-video">
-    <source src={backButtonVideo}/>
+      <source src={backButtonVideoMov}/>
+      <source src={backButtonVideoWebm}/>
     </video>
     </a>
     <h1>Staker</h1>
@@ -606,7 +608,8 @@ export default function Staker(props) {
 
     <a onClick={goBack}>
     <video autoPlay loop muted className="back-button-big">
-    <source src={backButtonVideo}/>
+      <source src={backButtonVideoMov}/>
+      <source src={backButtonVideoWebm}/>    
     </video>
     </a>
     </div>
