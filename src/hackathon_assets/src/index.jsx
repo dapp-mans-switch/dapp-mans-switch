@@ -4,8 +4,8 @@ import routToPage from './router'
 import { auth } from './auth'
 import Wallet from './wallet'
 
-
-import keyFlipVideo from './../assets/key-flip.mkv'
+import keyFlipVideoMov from './../assets/key-flip.mov'
+import keyFlipVideoWebm from './../assets/key-flip.webm'
 
 
 export default function Main() {
@@ -83,8 +83,9 @@ export default function Main() {
 
 
       <div className="panel">
-        <video autoPlay loop muted className="key-flip-video" type="video/webm">
-          <source src={keyFlipVideo}/>
+        <video autoPlay loop muted className="key-flip-video">
+          <source src={keyFlipVideoMov}/>
+          <source src={keyFlipVideoWebm}/>
         </video>
 
         <div id="start-if-auth" className="start-page-button-div">

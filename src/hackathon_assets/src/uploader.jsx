@@ -8,7 +8,8 @@ import Wallet from './wallet'
 import { min } from 'mathjs'
 import { errorPopup } from './errorPopup'
 
-import stillAliveVideo from './../assets/im_alive.mkv'
+import stillAliveVideoMov from './../assets/im-alive.mov'
+import stillAliveVideoWebm from './../assets/im-alive.webm'
 import backButtonVideo from './../assets/back_button.mkv'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
@@ -341,7 +342,8 @@ export default function Uploader(props) {
             <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="big-still-alive-button rainbow-button" style={{width: 550}}/>
             <a data-text="I'm still alive!" onClick={sendHeartbeat} className="small-still-alive-button rainbow-button" style={{width: 220}}/>
             <video id="still-alive-video" className="still-alive-video">
-            <source src={stillAliveVideo}/>
+                <source src={stillAliveVideoMov}/>
+                <source src={stillAliveVideoWebm}/>
             </video>
             </div>
 
