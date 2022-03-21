@@ -1,4 +1,5 @@
-import loadingVideo from './../assets/loading.mkv'
+import loadingVideoMov from './../assets/loading.mov'
+import loadingVideoWebm from './../assets/loading.webm'
 
 // elementId: looking for first parent who is a div and append video element
 // position: true = top and false = bottom (string)
@@ -16,10 +17,12 @@ export function appendLoadingAnimation(elementId, position) {
           loadAnim.classList.add('loading-video-bottom')
         }
     
-        let animSource = document.createElement('source')
-        animSource.setAttribute('src', loadingVideo)
-    
-        loadAnim.appendChild(animSource)
+        let animSourceMov = document.createElement('source')
+        let animSourceWebm = document.createElement('source')
+        animSourceMov.setAttribute('src', loadingVideoMov)
+        animSourceWebm.setAttribute('src', loadingVideoWebm)
+        loadAnim.appendChild(animSourceMov)
+        loadAnim.appendChild(animSourceWebm)
     
         document.getElementById(elementId).closest("div").appendChild(loadAnim)
         loadAnim.autoplay = true
