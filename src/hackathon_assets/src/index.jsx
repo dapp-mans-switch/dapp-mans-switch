@@ -94,7 +94,9 @@ export default function Main() {
       {/* <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button> */}
       <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
       <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>
-
+      <a href="https://raw.githubusercontent.com/dapp-mans-switch/dapp-mans-switch/0ef758e7f4d6c76a9cc2a43997835b782a5031aa/docs/litepaper/litepaper.pdf">
+        <button className="bottom-page-button litepaper-button" id="demoButton">Download Litepaper</button>
+      </a>
       <div className="panel explainer">
         <p><b>Staker &#128176;</b> stakes $HRBT tokens to receive key-shares. The bigger the stake, the higher the probability to receive shares.
         Through key-shares you get involved in decrypting a secret, rewarding you with a juicy payout in $HRBT.</p>

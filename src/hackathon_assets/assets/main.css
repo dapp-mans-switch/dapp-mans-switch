@@ -371,6 +371,13 @@ table {
     background-color:rgba(158, 228, 249, 0.66);
 }
 
+.litepaper-button {
+    margin-top: 10px;
+    border: solid rgb(14, 224, 126);
+    /* border color lightened by 33% */
+    background-color:rgba(51, 199, 63, 0.66);
+}
+
 .logout-button {
     border: solid rgb(212, 16, 230);
     /* border color lightened by 33% */
