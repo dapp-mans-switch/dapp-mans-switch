@@ -26,24 +26,35 @@ export default function Uploader(props) {
     const [heartbeatFreq, setHeartbeatFreq] = React.useState('')
 
     function validateInput(secret, reward, expiryTime, heartbeatFreq) {
+        // secret
         if (secret == '') {
             throw 'Secret must not be empty.'
         }
-        const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
-        if (isNaN(expiryTimeInUTCSecs)) {
-            throw 'Expiration date must be set.'
-        }
-        // TODO validate expirytime input properly
-        // also make sure the date is more than 1 heartbeat in the future?
-        const nowInUTCSecs = (new Date().getTime()) / 1_000
-        if (expiryTimeInUTCSecs - nowInUTCSecs <= 0) {
-            throw 'Expiration date must be in the future.'
-        }
+
+        // heartbeat frequency
+        const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
+
+        // reward
         const rewardInt = helpers.getPositiveNumber(reward)
         if (rewardInt <= 1) {
           throw 'Reward must be an integer larger than 1.'
         }
-        const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
+
+        // expiration date
+        // TODO validate expirytime input properly
+        const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
+        if (isNaN(expiryTimeInUTCSecs)) {
+            throw 'Expiration date must be set.'
+        }
+        const nowInUTCSecs = (new Date().getTime()) / 1_000
+        if (expiryTimeInUTCSecs - nowInUTCSecs <= 0) {
+            throw 'Expiration date must be in the future.'
+        }
+        const heartbeatFreqInSecs = heartbeatFreqInt * (24*60*60)
+        if ((expiryTimeInUTCSecs - nowInUTCSecs) - heartbeatFreqInSecs <= 60) {
+            throw 'Expiration date must be more than 1 heatbeat in the future.'
+        }
+
         return {secret, rewardInt, expiryTimeInUTCSecs, heartbeatFreqInt}
     }
 
