@@ -37,11 +37,10 @@ export default function Uploader(props) {
         // reward
         const rewardInt = helpers.getPositiveNumber(reward)
         if (rewardInt <= 1) {
-          throw 'Reward must be an integer larger than 1.'
+            throw 'Reward must be an integer larger than 1.'
         }
 
         // expiration date
-        // TODO validate expirytime input properly
         const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
         if (isNaN(expiryTimeInUTCSecs)) {
             throw 'Expiration date must be set.'
@@ -142,7 +141,7 @@ export default function Uploader(props) {
         const addSecretResult = await hackathon.addSecret(encryptedSecret, uploaderPublicKey, input.rewardInt,
             input.expiryTimeInUTCSecs, input.heartbeatFreqInt * 86400, encryptedKeyShares, keysharesShas, stakeIds)
 
-
+        // what's up with this big indented block?
             removeLoadingAnimation()
             listAllSecrets()
             window.getBalance()
