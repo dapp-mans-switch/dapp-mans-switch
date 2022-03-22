@@ -2,10 +2,10 @@
 
 1) `git clone https://github.com/dapp-mans-switch/dapp-mans-switch.git`
 2) `cd dapp-mans-switch`
-3) `npm install`
+3) `yarn install`
 4) `dfx start [--clean]`
 5) `dfx deploy`
-6) `[npm start]` for fast local frontend debugging
+6) `[yarn start]` for fast local frontend debugging
 
 
 ## Troubleshooting
