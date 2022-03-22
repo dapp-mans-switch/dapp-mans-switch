@@ -27,19 +27,22 @@ export default function Uploader(props) {
 
     function validateInput(secret, reward, expiryTime, heartbeatFreq) {
         if (secret == '') {
-            throw 'Secret must not be empty'
+            throw 'Secret must not be empty.'
         }
         const expiryTimeInUTCSecs = (new Date(expiryTime)).getTime() / 1_000
         if (isNaN(expiryTimeInUTCSecs)) {
-            throw 'Latest reveal date must not be empty'
+            throw 'Expiration date must be set.'
         }
         // TODO validate expirytime input properly
         // also make sure the date is more than 1 heartbeat in the future?
         const nowInUTCSecs = (new Date().getTime()) / 1_000
         if (expiryTimeInUTCSecs - nowInUTCSecs <= 0) {
-            throw 'Latest reveal date must be in the future'
+            throw 'Expiration date must be in the future.'
         }
         const rewardInt = helpers.getPositiveNumber(reward)
+        if (rewardInt <= 1) {
+          throw 'Reward must be an integer larger than 1.'
+        }
         const heartbeatFreqInt = helpers.getPositiveNumber(heartbeatFreq)
         return {secret, rewardInt, expiryTimeInUTCSecs, heartbeatFreqInt}
     }
