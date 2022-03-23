@@ -8,6 +8,8 @@ Built in the course of [Dfinity's Reimangining the Internet Hackathon](https://m
 
 [First place winners](https://twitter.com/encodeclub/status/1463243417530601475) 🏆🥇.
 
+Read the litepaper [here](docs/litepaper/litepaper.pdf).
+
 ---
 
 1. [What's a Dead Man's Switch?](#whats-a-dead-mans-switch)
