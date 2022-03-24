@@ -93,10 +93,10 @@ export default function Main() {
 
       {/* <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button> */}
       <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
-      <a href="https://raw.githubusercontent.com/dapp-mans-switch/dapp-mans-switch/0ef758e7f4d6c76a9cc2a43997835b782a5031aa/docs/litepaper/litepaper.pdf">
+      <a href="https://raw.githubusercontent.com/dapp-mans-switch/dapp-mans-switch/0ef758e7f4d6c76a9cc2a43997835b782a5031aa/docs/litepaper/litepaper.pdf" rel="noreferrer">
         <button className="bottom-page-button litepaper-button" id="demoButton">Litepaper</button>
       </a>
-      <a href="https://www.youtube.com/watch?v=YAi1gTIxemo">
+      <a href="https://www.youtube.com/watch?v=YAi1gTIxemo" rel="noreferrer">
         <button className="bottom-page-button into-video-button" id="demoButton">Intro Video</button>
       </a>
       <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>
