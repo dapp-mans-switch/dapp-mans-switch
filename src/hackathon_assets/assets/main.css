@@ -373,9 +373,9 @@ table {
 
 .litepaper-button {
     margin-top: 10px;
-    border: solid rgb(14, 224, 126);
+    border: solid rgb(0, 146, 0);
     /* border color lightened by 33% */
-    background-color:rgba(51, 199, 63, 0.66);
+    background-color:rgba(32, 251, 32, 0.66);
 }
 
 .logout-button {
@@ -384,6 +384,12 @@ table {
     background-color:rgba(242, 165, 249, 0.66);
 }
 
+.into-video-button {
+    margin-top: 10px;
+    border: solid rgb(187, 1, 1);
+    /* border color lightened by 33% */
+    background-color:rgba(236, 58, 58, 0.66);
+}
 
 
 /* desktop layout */
