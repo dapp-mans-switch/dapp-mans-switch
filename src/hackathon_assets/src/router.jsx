@@ -6,6 +6,7 @@ import Uploader from './uploader'
 import Main from './index'
 import Spectator from './spectator'
 import HandsOff from './handsoff'
+import About from './about'
 
 
 // this is the router
@@ -27,6 +28,9 @@ export default function routToPage(pageName, props={}) {
       break
     case 'HandsOff':
       render(React.createElement(HandsOff, props), document.getElementById('app'))
+      break
+    case 'About':
+      render(React.createElement(About, props), document.getElementById('app'))
       break
     default:
   }
