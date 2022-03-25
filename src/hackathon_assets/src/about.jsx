@@ -1,5 +1,5 @@
 import * as React from 'react'
-import routToPage from './router'
+import routeToPage from './router'
 
 import backButtonVideoMov from './../assets/back-button.mov'
 import backButtonVideoWebm from './../assets/back-button.webm'
@@ -10,7 +10,7 @@ export default function About() {
   history.pushState({}, '')
 
   function goBack() {
-    routToPage('Main')
+    routeToPage('Main')
   }
 
   return (

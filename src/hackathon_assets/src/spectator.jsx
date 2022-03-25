@@ -1,5 +1,5 @@
 import * as React from 'react'
-import routToPage from './router'
+import routeToPage from './router'
 import * as helpers from './helpers'
 import * as crypto from './crypto'
 import { min } from 'mathjs'
@@ -133,7 +133,7 @@ export default function Spectator(props) {
   }, [])
 
   function goBack() {
-    routToPage('Main')
+    routeToPage('Main')
   }
 
   return (
@@ -173,7 +173,7 @@ export default function Spectator(props) {
     <table id="expiredSecretsTable" cellPadding={5}/>
     </div>
 
-    <a onClick={() => {routToPage('Main')}}>
+    <a onClick={() => {routeToPage('Main')}}>
     <video autoPlay loop muted className="back-button-big">
       <source src={backButtonVideoMov}/>
       <source src={backButtonVideoWebm}/>

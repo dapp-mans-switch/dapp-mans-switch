@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { render } from 'react-dom'
-import routToPage from './router'
+import routeToPage from './router'
 import { auth } from './auth'
 import Wallet from './wallet'
 
@@ -79,13 +79,13 @@ export default function Main() {
         </video>
 
         <div id="start-if-auth" className="start-page-button-div">
-          <a id="staker_button" data-text="Staker" onClick={() => routToPage('Staker', auth.getProps())} className="rainbow-button" style={{width: 150}}></a>
-          <a id="uploader_button" data-text="Uploader" onClick={() => routToPage('Uploader', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
-          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
+          <a id="staker_button" data-text="Staker" onClick={() => routeToPage('Staker', auth.getProps())} className="rainbow-button" style={{width: 150}}></a>
+          <a id="uploader_button" data-text="Uploader" onClick={() => routeToPage('Uploader', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
+          <a id="spectator_button" data-text="Spectator" onClick={() => routeToPage('Spectator', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
         </div>
         <div id="start-if-not-auth" className="start-page-button-div">
           <a id="loginButton" data-text="Authenticate" className="rainbow-button" style={{width: 220}}></a>
-          <a id="spectator_button" data-text="Spectator" onClick={() => routToPage('Spectator', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
+          <a id="spectator_button" data-text="Spectator" onClick={() => routeToPage('Spectator', auth.getProps())} className="rainbow-button" style={{width: 180}}></a>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function Main() {
       {/* <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button> */}
       <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
 
-      <button className="bottom-page-button demo-data-button" id="demoButton" onClick={() => routToPage('About', auth.getProps())}>About</button>
+      <button className="bottom-page-button demo-data-button" id="demoButton" onClick={() => routeToPage('About', auth.getProps())}>About</button>
 
       <a href="https://raw.githubusercontent.com/dapp-mans-switch/dapp-mans-switch/0ef758e7f4d6c76a9cc2a43997835b782a5031aa/docs/litepaper/litepaper.pdf" rel="noreferrer">
         <button className="bottom-page-button litepaper-button" id="demoButton">Litepaper</button>

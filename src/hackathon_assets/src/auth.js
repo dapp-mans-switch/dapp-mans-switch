@@ -3,7 +3,7 @@ import { AuthClient } from "@dfinity/auth-client";
 import * as hackathon from '../../declarations/hackathon';
 import * as token from '../../declarations/token';
 
-import routToPage from './router'
+import routeToPage from './router'
 
 
 class Auth {
@@ -45,7 +45,7 @@ class Auth {
 
     makeLoginButton() {
         const loginButton = document.getElementById("loginButton");
-        
+
         const days = BigInt(1);
         const hours = BigInt(24);
         const nanoseconds = BigInt(3600000000000);
@@ -78,7 +78,7 @@ class Auth {
             console.log("return cached canisters")
             return this.cansisters
         }
-        
+
         const identity = await this.authClient.getIdentity();
 
         //console.log("Get canister for identity", identity.getPrincipal().toString())
@@ -95,7 +95,7 @@ class Auth {
 
         this.canistersInitialised = true
         this.canisters = {hackathon: hackathonActor, token: tokenActor};
-        
+
         console.log("Intitialised canisters in auth")
 
         return this.canisters
@@ -128,8 +128,8 @@ class Auth {
         const identity = await this.authClient.getIdentity();
         return identity;
     }*/
-    
-    async logout() {      
+
+    async logout() {
         await this.authClient.logout();
         this.cansisters = undefined
         this.authClient = undefined

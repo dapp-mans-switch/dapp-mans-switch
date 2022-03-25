@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import * as crypto from './crypto'
 import sha256 from 'js-sha256'
 import * as helpers from './helpers'
-import routToPage from './router'
+import routeToPage from './router'
 import Wallet from './wallet'
 import { min } from 'mathjs'
 import { errorPopup } from './errorPopup'
@@ -326,7 +326,7 @@ export default function Uploader(props) {
     function goBack() {
         console.log("End interval", interval)
         clearInterval(interval)
-        routToPage('Main')
+        routeToPage('Main')
     }
 
     return (

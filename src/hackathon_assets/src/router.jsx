@@ -10,9 +10,9 @@ import About from './about'
 
 
 // this is the router
-// import and call routToPage(<name of page(string)>) from any component
+// import and call routeToPage(<name of page(string)>) from any component
 // pass hackathon actor in props
-export default function routToPage(pageName, props={}) {
+export default function routeToPage(pageName, props={}) {
   switch(pageName) {
     case 'Main':
       render(<Main />, document.getElementById('app'))

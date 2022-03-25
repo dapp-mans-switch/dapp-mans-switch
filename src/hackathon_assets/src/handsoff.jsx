@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { render } from 'react-dom'
-import routToPage from './router'
+import routeToPage from './router'
 import * as crypto from './crypto'
 import * as helpers from './helpers'
 
@@ -155,7 +155,7 @@ export default function HandsOff(props) {
     return (
     <div className="content">
         <h1>Hands-Off Mode</h1>
-        <a id="stop_button" data-text="Stop" onClick={stop => routToPage('Staker', auth.getProps())} className="rainbow-button" style={{width: 100}}></a>
+        <a id="stop_button" data-text="Stop" onClick={stop => routeToPage('Staker', auth.getProps())} className="rainbow-button" style={{width: 100}}></a>
         <div className="hacker-console panel">
             <p id='hands_off_console' align='left' className="console-text"></p>
         </div>

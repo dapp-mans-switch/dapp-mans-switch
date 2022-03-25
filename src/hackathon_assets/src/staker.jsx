@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 
 import * as crypto from './crypto'
 import * as helpers from './helpers'
-import routToPage from './router'
+import routeToPage from './router'
 
 import backButtonVideoMov from './../assets/back-button.mov'
 import backButtonVideoWebm from './../assets/back-button.webm'
@@ -528,7 +528,7 @@ export default function Staker(props) {
   function goBack() {
     console.log("End interval", interval)
     clearInterval(interval)
-    routToPage('Main')
+    routeToPage('Main')
   }
 
   function handsOff() {
@@ -539,7 +539,7 @@ export default function Staker(props) {
     let privateKey = "oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g=="
     props = auth.getProps()
     props.privateKey = privateKey
-    routToPage('HandsOff', props)
+    routeToPage('HandsOff', props)
   }
 
   return (
@@ -609,7 +609,7 @@ export default function Staker(props) {
     <a onClick={goBack}>
     <video autoPlay loop muted className="back-button-big">
       <source src={backButtonVideoMov}/>
-      <source src={backButtonVideoWebm}/>    
+      <source src={backButtonVideoWebm}/>
     </video>
     </a>
     </div>
