@@ -34,23 +34,23 @@ body {
 }
 
 h1 {
-    font-size: clamp(1rem, 7vw, var(--fz-h1));
+    font-size: clamp(var(--fz-root), 7vw, var(--fz-h1));
 }
 
 h2 {
-    font-size: clamp(1rem, 5vw, var(--fz-h2));
+    font-size: clamp(var(--fz-root), 5vw, var(--fz-h2));
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
 h3 {
-    font-size: clamp(1rem, 4vw, var(--fz-h3));
+    font-size: clamp(var(--fz-root), 4vw, var(--fz-h3));
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
 p {
-    font-size: clamp(1rem, 4vw, 1em);
+    font-size: clamp(var(--fz-root), 4vw, 1em);
     margin: 10px 0;
 }
 
@@ -179,7 +179,7 @@ section {
 .error-div {
     display: inline-block;
     justify-content: center;
-    font-size: 1rem;
+    font-size: var(--fz-root);
     line-height: 1.5;
     border-radius: 10px;
     padding: 10px 20px;
@@ -353,42 +353,46 @@ table {
     font-family: inherit;
     font-size: 1.2rem;
     padding: 5px 13px;
-    margin: 0 8px;
+    margin: 10px 8px;
     border-radius: 20px;
     border-width: 8px;
     backdrop-filter: blur(8px);
 }
 
-.who-am-i-button {
+#aboutButton {
+    border: solid rgb(230, 195, 0);
+    /* border color lightened by 33% */
+    background-color:rgba(255, 238, 143, 0.5);
+}
+
+#demoButton {
+    border: solid rgb(14, 175, 224);
+    /* border color lightened by 33% */
+    background-color:rgba(158, 228, 249, 0.5);
+}
+
+#introVideoButton {
+    border: solid rgb(187, 10, 10);
+    /* border color lightened by 33% */
+    background-color:rgba(248, 118, 118, 0.5);
+}
+
+#litepaperButton {
+    border: solid rgb(0, 146, 0);
+    /* border color lightened by 33% */
+    background-color:rgba(59, 251, 59, 0.5);
+}
+
+#logoutButton {
+    border: solid rgb(212, 16, 230);
+    /* border color lightened by 33% */
+    background-color:rgba(242, 165, 249, 0.5);
+}
+
+#whoAmIButton {
     border: solid rgb(255, 215, 36);
     /* border color lightened by 33% */
     background-color:rgba(255, 246, 205, 0.66);
-}
-
-.demo-data-button {
-    border: solid rgb(14, 175, 224);
-    /* border color lightened by 33% */
-    background-color:rgba(158, 228, 249, 0.66);
-}
-
-.litepaper-button {
-    margin-top: 10px;
-    border: solid rgb(0, 146, 0);
-    /* border color lightened by 33% */
-    background-color:rgba(32, 251, 32, 0.66);
-}
-
-.logout-button {
-    border: solid rgb(212, 16, 230);
-    /* border color lightened by 33% */
-    background-color:rgba(242, 165, 249, 0.66);
-}
-
-.into-video-button {
-    margin-top: 10px;
-    border: solid rgb(187, 1, 1);
-    /* border color lightened by 33% */
-    background-color:rgba(236, 58, 58, 0.66);
 }
 
 
@@ -461,12 +465,12 @@ table {
         right: 60px;
         display: unset;
     }
-    
+
     .loading-video-top{
         top: 20px;
         display: unset;
     }
-    
+
     .loading-video-bottom{
         bottom: 15px;
         display: unset;

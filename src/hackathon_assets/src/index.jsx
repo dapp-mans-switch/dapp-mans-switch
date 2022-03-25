@@ -91,17 +91,17 @@ export default function Main() {
 
       <div id="my-wallet"/>
 
-      {/* <button className="bottom-page-button who-am-i-button" onClick={() =>  whoami()}>Who Am I?</button> */}
+      {/* <button className="bottom-page-button who-am-i-button" id="whoAmIButton" onClick={() =>  whoami()}>Who Am I?</button> */}
       <button className="bottom-page-button demo-data-button" id="demoButton" onClick={demoMode}>Demo Mode!</button>
 
-      <button className="bottom-page-button demo-data-button" id="demoButton" onClick={() => routeToPage('About', auth.getProps())}>About</button>
+      <button className="bottom-page-button about-button" id="aboutButton" onClick={() => routeToPage('About', auth.getProps())}>About</button>
 
       <a href="https://raw.githubusercontent.com/dapp-mans-switch/dapp-mans-switch/0ef758e7f4d6c76a9cc2a43997835b782a5031aa/docs/litepaper/litepaper.pdf" rel="noreferrer">
-        <button className="bottom-page-button litepaper-button" id="demoButton">Litepaper</button>
+        <button className="bottom-page-button litepaper-button" id="litepaperButton">Litepaper</button>
       </a>
 
       <a href="https://www.youtube.com/watch?v=YAi1gTIxemo" rel="noreferrer">
-        <button className="bottom-page-button into-video-button" id="demoButton">Intro Video</button>
+        <button className="bottom-page-button intro-video-button" id="introVideoButton">Intro Video</button>
       </a>
 
       <button className="bottom-page-button logout-button" id="logoutButton" onClick={() => auth.logout()}>Logout</button>

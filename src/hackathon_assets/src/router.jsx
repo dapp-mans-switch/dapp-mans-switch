@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { render } from 'react-dom'
 
-import Staker from './staker'
-import Uploader from './uploader'
+import About from './about'
+import HandsOff from './handsoff'
 import Main from './index'
 import Spectator from './spectator'
-import HandsOff from './handsoff'
-import About from './about'
+import Staker from './staker'
+import Uploader from './uploader'
 
 
 // this is the router
@@ -17,14 +17,14 @@ export default function routeToPage(pageName, props={}) {
     case 'Main':
       render(<Main />, document.getElementById('app'))
       break
+    case 'Spectator':
+      render(React.createElement(Spectator, props), document.getElementById('app'))
+      break
     case 'Staker':
       render(React.createElement(Staker, props), document.getElementById('app'))
       break
     case 'Uploader':
       render(React.createElement(Uploader, props), document.getElementById('app'))
-      break
-    case 'Spectator':
-      render(React.createElement(Spectator, props), document.getElementById('app'))
       break
     case 'HandsOff':
       render(React.createElement(HandsOff, props), document.getElementById('app'))
