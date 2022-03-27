@@ -6,7 +6,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 let localCanisters, prodCanisters, canisters;
 
-const AUTHENTICATION = false;
+const AUTHENTICATION = true;
 
 const LOCAL_II_CANISTER =
   "http://rno2w-sqaaa-aaaaa-aaacq-cai.localhost:8000/#authorize";
