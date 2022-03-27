@@ -141,6 +141,7 @@ textarea {
 
 .start-page-button-div {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
 }
 
@@ -417,6 +418,11 @@ table {
     /* we show the hint on desktop */
     .regularly-verify-text {
         display: block;
+    }
+
+    /* start page's rainbow buttons have enough room on desktop to be next to one another */
+    .start-page-button-div {
+        flex-direction: row;
     }
 
     .rainbow-button {
