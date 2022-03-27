@@ -485,9 +485,9 @@ export default function Staker(props) {
         errorPopup(`You should reveal the shares of this secret, not request payout!`, 'secretsTable_status_legend')
       } else if ('insufficientFunds' in err) {
         errorPopup(`Insufficient funds: ${err['insufficientFunds']}`, 'secretsTable_status_legend')
-      } else [
+      } else {
         errorPopup(`Something went wrong!`, 'secretsTable_status_legend')
-      ]
+      }
     }
   }
 

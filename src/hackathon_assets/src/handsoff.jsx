@@ -61,12 +61,26 @@ export default function HandsOff(props) {
             printToConsole(`End stake ${stake_id} OK: Received $HRBT ${result['ok']['payout']}.`)
         }
         if ('err' in result) {
-            // console.log(result)
-            printToConsole(`End stake ${stake_id} FAILED: ${result['err']}`)
+            console.log('endStake:', result['err'])
+            // TODO: refactor
+            let errMsg = ''
+            if ('stakeNotFound' in err) {
+                let stake_id = err['stakeNotFound']
+                errMsg = `Stake with id ${stake_id} was not found!`
+              } else if ('permissionDenied' in err) {
+                errMsg = `You don't have permission to end this stake.`
+              } else if ('alreadyPayedOut' in err) {
+                errMsg = `Stake was already ended and payed out!`
+              } else if ('insufficientFunds' in err) {
+                errMsg = `Insufficient funds: ${err['insufficientFunds']}`
+              } else {
+                errMsg = `Something went wrong!`
+              }
+            printToConsole(`End stake ${stake_id} FAILED: ${errMsg}`)
         }
     }
 
-    async function revealSecretsIfNecessary() {
+    async function revealSecretsIfNecessary() {
         let relevantSecrets = await hackathon.listRelevantSecrets()
 
         let activeSecrets = 0
@@ -74,7 +88,7 @@ export default function HandsOff(props) {
         let shouldRevealSecrets = []
         relevantSecrets.map(function (s) {
             if (s.shouldReveal) {
-                if (!s.hasRevealed) {
+                if (!s.hasRevealed && !s.hasPayedout) {
                     // reveal
                     shouldRevealSecrets.push(s)
                 }
@@ -105,7 +119,19 @@ export default function HandsOff(props) {
             printToConsole(`Request payout for secret ${secretId} OK: Received $HRBT ${result['ok']}.`)
         }
         if ('err' in result) {
-            printToConsole(`Request payout for secret ${secretId} FAILED: ${result['err']}.`)
+            // TODO: refactor
+            let errMsg = ''
+            if ('alreadyPayedOut' in err) {
+                errMsg = `The reward for these key-shares was already payed out!`
+              } else if ('shouldReveal' in err) {
+                errMsg = `You should reveal the shares of this secret, not request payout!`
+              } else if ('insufficientFunds' in err) {
+                errMsg = `Insufficient funds: ${err['insufficientFunds']}`
+              } else {
+                errMsg = `Something went wrong!`
+              }
+            console.log('requestPayout:', result['err'])
+            printToConsole(`Request payout for secret ${secretId} FAILED: ${errMsg}.`)
         }
     }
 
@@ -130,7 +156,29 @@ export default function HandsOff(props) {
         if ('ok' in result) {
             printToConsole(`Reveal secret ${secret.secret_id} OK: Received $HRBT ${result['ok']['payout']}`)
         } else if ('err' in result) {
-            printToConsole(`Reveal secret ${secret.secret_id} FAILED: ${result['err']}`)
+            console.log('revealSecret:', result['err'])
+            // TODO: refactor
+            let errMsg = ''
+            if ('secretNotFound' in err) {
+                errMsg = `Secret with id ${err['secretNotFound']} was not found!`
+              } else if ('invalidDecryptedSHA' in err) {
+                errMsg = `SHA of decrypted share did not match!`
+              } else if ('wrongNumberOfShares' in err) {
+                errMsg = `Invalid number of shares uploaded!`
+              } else if ('alreadyRevealed' in err) {
+                errMsg = `You have already revealed this secret!`
+              } else if ('insufficientFunds' in err) {
+                errMsg = `Insufficient funds: ${err['insufficientFunds']}`
+              } else if ('shouldNotReveal' in err) {
+                errMsg = `You should not reveal this secret yet!`
+              } else if ('tooLate' in err) {
+                errMsg = `You uploaded the key-shares too late. Maximum is 3 days. You receive no payout!`
+              } else if ('secretExpired' in err) {
+                errMsg = `This secret is already expired. No need to upload shares!`
+              } else {
+                errMsg = `Something went wrong!`
+              }
+            printToConsole(`Reveal secret ${secret.secret_id} FAILED: ${errMsg}`)
         }
     }
 
