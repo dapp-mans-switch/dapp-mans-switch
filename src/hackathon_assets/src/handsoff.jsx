@@ -43,7 +43,7 @@ export default function HandsOff(props) {
             if (s.valid) {
                 validStakes += 1
             }
-            if (s.expiry_time > now) {
+            if (s.expiry_time < now) {
                 stakesToEnd.push(s)
             }
         })
