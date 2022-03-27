@@ -4,7 +4,7 @@ import * as helpers from './helpers'
 import * as crypto from './crypto'
 import { min } from 'mathjs'
 
-import backButtonVideoMov from './../assets/back-button.mov'
+// import backButtonVideoMov from './../assets/back-button.mov'
 import backButtonVideoWebm from './../assets/back-button.webm'
 
 export default function Spectator(props) {
@@ -141,7 +141,7 @@ export default function Spectator(props) {
     <div className="header-n-nav">
     <a onClick={() => {goBack()}}>
     <video autoPlay loop muted className="back-button-video">
-      <source src={backButtonVideoMov}/>
+      {/* <source src={backButtonVideoMov}/> */}
       <source src={backButtonVideoWebm}/>
     </video>
     </a>
@@ -175,7 +175,7 @@ export default function Spectator(props) {
 
     <a onClick={() => {routeToPage('Main')}}>
     <video autoPlay loop muted className="back-button-big">
-      <source src={backButtonVideoMov}/>
+      {/* <source src={backButtonVideoMov}/> */}
       <source src={backButtonVideoWebm}/>
     </video>
     </a>

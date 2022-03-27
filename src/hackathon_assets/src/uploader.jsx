@@ -8,9 +8,9 @@ import Wallet from './wallet'
 import { min } from 'mathjs'
 import { errorPopup } from './errorPopup'
 
-import stillAliveVideoMov from './../assets/im-alive.mov'
+// import stillAliveVideoMov from './../assets/im-alive.mov'
 import stillAliveVideoWebm from './../assets/im-alive.webm'
-import backButtonVideoMov from './../assets/back-button.mov'
+// import backButtonVideoMov from './../assets/back-button.mov'
 import backButtonVideoWebm from './../assets/back-button.webm'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
@@ -334,7 +334,7 @@ export default function Uploader(props) {
         <div className="header-n-nav">
         <a onClick={goBack}>
             <video autoPlay loop muted className="back-button-video">
-                <source src={backButtonVideoMov}/>
+                {/* <source src={backButtonVideoMov}/> */}
                 <source src={backButtonVideoWebm}/>
             </video>
         </a>
@@ -355,7 +355,7 @@ export default function Uploader(props) {
         <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="big-still-alive-button rainbow-button" style={{width: 550}}/>
         <a data-text="I'm still alive!" onClick={sendHeartbeat} className="small-still-alive-button rainbow-button" style={{width: 220}}/>
         <video id="still-alive-video" className="still-alive-video">
-            <source src={stillAliveVideoMov}/>
+            {/* <source src={stillAliveVideoMov}/> */}
             <source src={stillAliveVideoWebm}/>
         </video>
         </div>
@@ -396,7 +396,7 @@ export default function Uploader(props) {
 
         <a onClick={goBack}>
             <video autoPlay loop muted className="back-button-big">
-                <source src={backButtonVideoMov}/>
+                {/* <source src={backButtonVideoMov}/> */}
                 <source src={backButtonVideoWebm}/>
             </video>
         </a>
