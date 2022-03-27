@@ -535,9 +535,8 @@ export default function Staker(props) {
   function handsOff() {
     clearInterval(interval)
     // for demo mode: oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g==
-    // let privateKey = prompt('Enter private key to start hands-off mode!', '')
-    // TODO: undo
-    let privateKey = "oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g=="
+    let privateKey = prompt('Enter private key to start hands-off mode!', '')
+    // let privateKey = "oM76Mg310VaiM7SLvRIM+OtQSOr900jZB8hfVyZfMgX4l57Vkd7hm1+FCvx1S4eXGG+Q/SwfpC7lZV4LR8EJ7g=="
     props = auth.getProps()
     props.privateKey = privateKey
     routeToPage('HandsOff', props)
