@@ -42,9 +42,10 @@ export default function HandsOff(props) {
         stakes.map(function (s) {
             if (s.valid) {
                 validStakes += 1
-            }
-            if (s.expiry_time < now) {
-                stakesToEnd.push(s)
+
+                if (s.expiry_time < now) {
+                    stakesToEnd.push(s)
+                }
             }
         })
 
@@ -60,6 +61,7 @@ export default function HandsOff(props) {
             printToConsole(`End stake ${stake_id} OK: Received $HRBT ${result['ok']['payout']}.`)
         }
         if ('err' in result) {
+            // console.log(result)
             printToConsole(`End stake ${stake_id} FAILED: ${result['err']}`)
         }
     }
