@@ -4,7 +4,8 @@ import routeToPage from './router'
 import { auth } from './auth'
 import Wallet from './wallet'
 
-// import keyFlipVideoMov from './../assets/key-flip.mov'
+import keyFlipVideoMov from './../assets/key-flip.mov'
+import keyFlipImage from './../assets/key-flip.png'
 import keyFlipVideoWebm from './../assets/key-flip.webm'
 
 
@@ -73,8 +74,8 @@ export default function Main() {
 
 
       <div className="panel">
-        <video autoPlay loop muted className="key-flip-video">
-          {/* <source src={keyFlipVideoMov}/> */}
+        <video autoPlay loop muted className="key-flip-video" poster={keyFlipImage}>
+          <source src={keyFlipVideoMov}/>
           <source src={keyFlipVideoWebm}/>
         </video>
 

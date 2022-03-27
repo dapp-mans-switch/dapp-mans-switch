@@ -1,7 +1,8 @@
 import * as React from 'react'
 import routeToPage from './router'
 
-// import backButtonVideoMov from './../assets/back-button.mov'
+import backButtonVideoMov from './../assets/back-button.mov'
+import backButtonImage from './../assets/back-button.png'
 import backButtonVideoWebm from './../assets/back-button.webm'
 
 export default function About() {
@@ -17,8 +18,8 @@ export default function About() {
     <div className="content">
       <div className="header-n-nav">
         <a onClick={() => {goBack()}}>
-        <video autoPlay loop muted className="back-button-video">
-          {/* <source src={backButtonVideoMov}/> */}
+        <video autoPlay loop muted className="back-button-video" poster={backButtonImage}>
+          <source src={backButtonVideoMov}/>
           <source src={backButtonVideoWebm}/>
         </video>
         </a>

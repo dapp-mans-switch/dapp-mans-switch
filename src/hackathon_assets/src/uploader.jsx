@@ -8,9 +8,11 @@ import Wallet from './wallet'
 import { min } from 'mathjs'
 import { errorPopup } from './errorPopup'
 
-// import stillAliveVideoMov from './../assets/im-alive.mov'
+import stillAliveVideoMov from './../assets/im-alive.mov'
+import stillAliveImage from './../assets/im-alive.png'
 import stillAliveVideoWebm from './../assets/im-alive.webm'
-// import backButtonVideoMov from './../assets/back-button.mov'
+import backButtonVideoMov from './../assets/back-button.mov'
+import backButtonImage from './../assets/back-button.png'
 import backButtonVideoWebm from './../assets/back-button.webm'
 import {appendLoadingAnimation, removeLoadingAnimation} from './loadingAnimation'
 
@@ -333,8 +335,8 @@ export default function Uploader(props) {
         <div className="content">
         <div className="header-n-nav">
         <a onClick={goBack}>
-            <video autoPlay loop muted className="back-button-video">
-                {/* <source src={backButtonVideoMov}/> */}
+            <video autoPlay loop muted className="back-button-video" poster={backButtonImage}>
+                <source src={backButtonVideoMov}/>
                 <source src={backButtonVideoWebm}/>
             </video>
         </a>
@@ -354,8 +356,8 @@ export default function Uploader(props) {
         <h3>Heartbeat</h3>
         <a data-text="Everybody stay calm! I'm still alive!" onClick={sendHeartbeat} className="big-still-alive-button rainbow-button" style={{width: 550}}/>
         <a data-text="I'm still alive!" onClick={sendHeartbeat} className="small-still-alive-button rainbow-button" style={{width: 220}}/>
-        <video id="still-alive-video" className="still-alive-video">
-            {/* <source src={stillAliveVideoMov}/> */}
+        <video id="still-alive-video" className="still-alive-video" poster={stillAliveImage}>
+            <source src={stillAliveVideoMov}/>
             <source src={stillAliveVideoWebm}/>
         </video>
         </div>
@@ -395,8 +397,8 @@ export default function Uploader(props) {
         </div>
 
         <a onClick={goBack}>
-            <video autoPlay loop muted className="back-button-big">
-                {/* <source src={backButtonVideoMov}/> */}
+            <video autoPlay loop muted className="back-button-big" poster={backButtonImage}>
+                <source src={backButtonVideoMov}/>
                 <source src={backButtonVideoWebm}/>
             </video>
         </a>
