@@ -33,11 +33,6 @@ export default function About() {
         <p><b>Spectator &#128065;</b> gets insight into all revealed secrets. Everybody is a spectator, and no ICP identity is necessary.</p>
       </div>
 
-      <div className="panel">
-        <p>The Heartbeat Token ($HRBT) &#129728; conforms to the ERC20 protocol. It manifests trust between Stakers and Uploaders.
-          Try it out and top up! &#128184;</p>
-      </div>
-
       <div className="panel explainer">
         <h3>How it Works</h3>
         <p>Secrets are posted by the Uploader. For every secret a private and a public key are generated.
