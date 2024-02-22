@@ -1,6 +1,6 @@
 # dApp Man's Switch
 
-https://izxpb-2iaaa-aaaai-qasea-cai.raw.ic0.app/
+https://izxpb-2iaaa-aaaai-qasea-cai.icp0.io/
 
 A decentralised dead man's switch on the [Internet Computer](https://dfinity.org).
 
